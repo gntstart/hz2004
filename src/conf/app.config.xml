@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<app>
+<![CDATA[
+
+{
+   "loginType":"2",
+   "app_chkurl":"http://192.168.0.117:8080/hz2004qxgl/check.jsp?appid=1234567890",
+   "all_qxglurl":"http://192.168.0.117:8080/hz2004qxgl",
+   "kdsqyTimerSkip":"60000",
+   "kdsqyLocalDQBM":"3407",
+   "success":true,
+   "kdsqyList":[
+     {
+       "dqbm":"3401",
+       "dqmc":"合肥",
+        "isnew":"0",
+       "hz2004":"http://192.168.0.164:7001/hz2004axis"
+     },
+     {
+       "dqbm":"3407",
+       "dqmc":"铜陵",
+        "isnew":"1",
+             "hz2004":"http://192.168.0.155:9999/rkxt"
+     },
+     {
+       "dqbm":"3402",
+       "dqmc":"蚌埠测试",
+       "isnew":"0",
+       "hz2004":"http://192.168.0.164:7001/hz2004axis"
+     }
+   ]
+}
+
+]]>
+</app>

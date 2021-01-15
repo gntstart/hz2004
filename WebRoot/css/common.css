@@ -1,0 +1,69 @@
+.otherfile {
+	background-image:url(images/3.gif) !important;
+}
+.otherfile {
+	background-image:url(images/3.gif) !important;
+}
+ .changeplus
+{
+	background-color: #007979;
+}
+.changediv
+{
+	background-color: #F79709;
+}
+ .changeplusRed
+{
+	background-color: #ff0000;
+}
+ .changeplusGreen
+{
+	background-color: #00ff00;
+}
+
+p.fzrk {
+	font-family: 方正宋体-人口信息_扩充,方正宋体-人口信息
+}
+
+.icon-close {
+	background-image:url(../images/close.jpg) !important;
+}
+
+.icon-save {
+	background-image:url(../images/save.jpg) !important;
+}
+
+.icon-change {
+	background-image:url(../images/change.jpg) !important;
+}
+
+.icon-gpy {
+	background-image:url(../images/gpy.png) !important;
+}
+
+.icon-view {
+	background-image:url(../images/view.png) !important;
+}
+.dataview-thumb-wrap{
+	background: #ffffff;
+	width: 120px;
+	float: left;
+	margin: 1px;
+	margin-right: 2;
+	padding: 5px;
+	cursor:pointer;
+}
+
+.dataview-x-view-over{
+    border:1px solid #00FF00;
+    background: #aaaaaa repeat-x left top;
+    padding: 4px;
+    cursor:pointer;
+}
+
+.dataview-x-view-selected{
+	background: #eff000 no-repeat right bottom;
+	border:1px solid #ff0000;
+	padding: 4px;
+	cursor:pointer;
+}

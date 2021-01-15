@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inherit-compiler-output="true" inheritJdk="true">
+	<output-test url="file://$MODULE_DIR$/classes/test/rkxt"/>
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="Tomcat 9.0.10" scope="PROVIDED"/>
+	<levels>
+		<level name="ant-1.7.1" value="project"/>
+		<level name="Tomcat 9.0.10" value="application_server_libraries"/>
+	</levels>
+</component>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql>
+	<!-- 迁出人员查询 -->
+	<queryKdsQczxxx>
+	<![CDATA[
+		from PoHJYW_QCZXXXB a
+		where a.kdqqy_dqbm=:qwdq
+		#if(!$ut.isns($hjywid))
+			and a.hjywid=$hjywid
+		#end
+		#if(!$ut.isns($kdqqy_cgbz))
+			and a.kdqqy_cgbz=:kdqqy_cgbz
+		#end
+		order by a.hhid, a.xm
+	]]>
+	</queryKdsQczxxx>
+	
+	<!-- 功能点查询 -->
+	<queryCzrkjbxx>
+         	from HJXX_CZRKJBXXB a
+         	where a.ryzt = '0' 
+           		and a.cxbz = '0'
+           		and a.jlbz = '1'
+           		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = :hh
+	    		#end
+           	order by a.xm
+	</queryCzrkjbxx>
+	
+	<queryKdqqy>
+	<![CDATA[
+		from HZ_ZJ_SB a where a.ywlb='14'
+		#if(!$ut.isns($to_startdate_czsj))
+	      		and czsj >= :to_startdate_czsj
+	    	#end
+	    	#if(!$ut.isns($to_enddate_czsj))
+	      		and czsj <= :to_enddate_czsj
+	    	#end
+	    	#if(!$ut.isns($bsqrsfz))
+	      		and bsqrsfz = :bsqrsfz
+	    	#end
+	    	#if(!$ut.isns($bsqrxm))
+	      		and bsqrxm = :bsqrxm
+	    	#end
+	    	#if(!$ut.isns($lhsfz))
+	      		and lhsfz = :lhsfz
+	    	#end
+	    	#if(!$ut.isns($pch))
+	      		and pch = :pch
+	    	#end
+	    	#if(!$ut.isns($bsqrsjhm))
+	      		and bsqrsjhm = :bsqrsjhm
+	    	#end
+	    	#if(!$ut.isns($clbs))
+	      		and a.clbs = :clbs
+	    	#end
+	    	#if(!$ut.isns($to_startdate_clsj))
+	      		and clsj >= :to_startdate_clsj
+	    	#end
+	    	#if(!$ut.isns($to_enddate_clsj))
+	      		and clsj <= :to_enddate_clsj
+	    	#end
+	    	order by a.czsj asc
+	]]>
+	</queryKdqqy>
+	
+	<queryJlxJwh>
+	<![CDATA[
+		select b,c
+         	from XT_JLXJWHDZXXB a,
+               		XT_JLXXXB      b,
+               		XT_JWHXXB    c
+         	where (a.jlxdm = b.dm)
+           		and (a.jwhdm = c.dm)
+           		and (a.qybz = '1')
+          		and (b.qybz = '1')
+           		and (c.qybz = '1')
+           		$ut.linkSjfw()
+           	order by b.dm
+         ]]>
+	</queryJlxJwh>
+</sql>

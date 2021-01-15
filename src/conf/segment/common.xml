@@ -1,0 +1,6739 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql>
+	<!-- 用户查询 -->
+	<queryPoXT_YHXXB>
+		from PoXT_YHXXB 
+			where yhzt='0'
+		#if(!$ut.isns($search_code))
+			and (
+				yhdlm like :%search_code% 
+	           		or yhxm like :%search_code%
+	           		or jyh like :%search_code%
+			)
+		#else
+			and 0=1
+		#end
+	</queryPoXT_YHXXB>
+	
+	<!-- 派出所查询 -->
+	<queryPcs>
+	<![CDATA[
+		from PoXT_DWXXB a 
+		where 1=1
+		#if(!$ut.isns($whflg)&&1 == $whflg)
+			and dwjb='0'
+		#end
+		#if(!$ut.isns($search_code))
+			and (
+				dm like :search_code% 
+	           		or mc like :%search_code% 
+	           		or wbpy like :search_code% 
+	           		or zwpy like :search_code%
+			)
+		#end
+		$ut.linkSjfwNew('dm')
+	]]>
+		
+	</queryPcs>
+		<!-- 派出所查询 -->
+	<queryJlxxxb>
+	<![CDATA[
+		from PoXT_JLXXXB 
+		where qybz='1'
+		#if(!$ut.isns($search_code))
+			and (
+				dm like :search_code% 
+	           		or mc like :%search_code% 
+	           		or wbpy like :search_code% 
+	           		or zwpy like :search_code%
+			)
+		#end
+   		$ut.linkSjfwNew("dm")
+	]]>
+	</queryJlxxxb>
+	
+	<!-- 乡镇街道查询 -->
+	<queryXzjd>
+	<![CDATA[
+		from PoXT_XZJDXXB 
+		where qybz='1'
+		#if(!$ut.isns($search_code))
+			and (
+				dm like :search_code% 
+	           		or mc like :%search_code% 
+	           		or wbpy like :search_code% 
+	           		or zwpy like :search_code%
+			)
+		#end
+		$ut.linkSjfwNew('dm')
+	]]>
+	
+	</queryXzjd>
+	<!-- 行政区划派出所级联检索 -->
+	<queryXzqhPcs>
+	<![CDATA[
+		select a ,b from PoXT_XZQHB a, PoXT_DWXXB b
+		where a.dm = b.qhdm 
+		and (a.qybz = '1')
+	    and (b.qybz = '1') and 
+		(a.dm like :search_code% or a.mc like :%search_code% or a.zwpy like :search_code% or a.wbpy like :search_code%)
+         ]]>
+	</queryXzqhPcs>
+	<!-- 街路巷查询 -->
+	<queryJlxJwh>
+		<![CDATA[
+			select b,c
+	         	from PoXT_JLXJWHDZXXB a,
+	               	PoXT_JLXXXB   b,
+	               	PoXT_JWHXXB   c
+	         	where (a.jlxdm = b.dm)
+	           		and (a.jwhdm = c.dm)
+	           		and (a.qybz = '1')
+	          		and (b.qybz = '1')
+	           		and (c.qybz = '1')
+	           		$ut.linklhSjfw("")
+	           		#if(!$ut.isns($search_code))
+	           			and (
+	           				b.dm like :search_code% 
+	           				or b.mc like :%search_code% 
+	           				or b.wbpy like :search_code% 
+	           				or b.zwpy like :search_code%
+	           			)
+	           		#end
+	           	order by b.dm
+         ]]>
+	</queryJlxJwh>
+	<!-- 居委会派出所乡镇街道查询 -->
+	<searchJwhPcsXzjd>
+		<![CDATA[
+	           select c,b
+	         	from PoXT_JLXJWHDZXXB a,
+	               	PoXT_JLXXXB   b,
+	               	PoXT_JWHXXB   c
+	         	where (a.jlxdm = b.dm)
+	           		and (a.jwhdm = c.dm)
+	           		and (a.qybz = '1')
+	          		and (b.qybz = '1')
+	           		and (c.qybz = '1')
+	           		#if(!$ut.isns($jcwh))
+		      			and c.dm = '${jcwh}'
+		    		#end
+	           		$ut.linklhSjfw("")
+	           		#if(!$ut.isns($search_code))
+	           			and (
+	           				c.dm like :search_code% 
+	           				or c.mc like :%search_code% 
+	           				or c.wbpy like :search_code% 
+	           				or c.zwpy like :search_code%
+	           			)
+	           		#end
+	           	order by c.dm,b.dm
+         ]]>
+	</searchJwhPcsXzjd>
+	<!-- 警务责任区查询 -->
+	<queryJwzrq>
+		from PoXT_JWZRQXXB 
+			where 1=1
+		#if(!$ut.isns($search_code))
+			and (
+				dm like :search_code% 
+	           		or mc like :%search_code% 
+	           		or wbpy like :search_code% 
+	           		or zwpy like :search_code%
+			)
+		#end
+		$ut.linkSjfwNew('dm')
+	</queryJwzrq>
+	<!-- 通用人信息查询 -->
+	<queryPoHJXX_CZRKJBXXB_NEW>
+		<![CDATA[
+			#if(!$ut.isns($hhnbid))
+				#if($pageIndex=='1')
+			         	from PoHJXX_CZRKJBXXB a
+			         		where a.ryzt = '0' 
+			         		and a.cxbz = '0'
+			           		and a.jlbz = '1'
+			           		#if(!$ut.isns($where))
+				      			and ${where}
+				    		#end
+			           		#if(!$ut.isns($xm))
+					          	#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm 
+				           		#else
+						      		and a.xm = :xm
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($gmsfhm))
+				    			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and gmsfhm = :gmsfhm
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($hh))
+				      			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and a.hh = '${hh}'
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($hhnbid))
+				      			and a.hhnbid = '${hhnbid}'
+				    		#end
+				    		#if(!$ut.isns($csrq))
+				      			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and a.csrq = :csrq
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($rynbid))
+				      			and a.rynbid = '${rynbid}'
+				    		#end
+				    		#if(!$ut.isns($_more))
+				    			$ut.new_n_allsfz($allsfz,$pageIndex, $hlx)
+				    		#else
+				    			$ut.new_allsfz($allsfz,$pageIndex,$hlx)
+				    		#end
+				    		order by a.xm
+				    #else
+				    	 	from PoHJXX_CZRKJBXXB a
+			         		where a.ryzt = '0' 
+			         		and a.cxbz = '0'
+			           		and a.jlbz = '1'
+			           		#if(!$ut.isns($where))
+				      			and ${where}
+				    		#end
+			           		#if(!$ut.isns($xm))
+					          	#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm 
+				           		#else
+						      		and a.xm = :xm
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($gmsfhm))
+				    			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and gmsfhm = :gmsfhm
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($hh))
+				      			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and a.hh = '${hh}'
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($hhnbid))
+				      			and a.hhnbid = '${hhnbid}'
+				    		#end
+				    		#if(!$ut.isns($csrq))
+				      			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and a.csrq = :csrq
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($rynbid))
+				      			and a.rynbid = '${rynbid}'
+				    		#end
+				    		$ut.new_n_allsfz($allsfz,$pageIndex, $hlx)
+				    		order by a.xm
+				#end
+			#else
+				from PoHJXX_CZRKJBXXB a
+			         	where a.ryzt = '0' 
+			           		and a.cxbz = '0'
+			           		and a.jlbz = '1'
+			           		#if(!$ut.isns($where))
+				      			and ${where}
+				    		#end
+			           		#if(!$ut.isns($xm))
+					      		and a.xm = :xm
+				    		#end
+				    		#if(!$ut.isns($gmsfhm))
+				      			and gmsfhm = :gmsfhm
+				    		#end
+				    		#if(!$ut.isns($hh))
+				      			and a.hh = '${hh}'
+				    		#end
+				    		#if(!$ut.isns($hhnbid))
+				      			and a.hhnbid = '${hhnbid}'
+				    		#end
+				    		#if(!$ut.isns($hhid))
+				      			and a.hhid = '${hhid}'
+				    		#end
+				    		#if(!$ut.isns($csrq))
+				      			and a.csrq = :csrq
+				    		#end
+				    		#if(!$ut.isns($rynbid))
+				      			and a.rynbid = '${rynbid}'
+				    		#end
+				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
+			           	order by a.xm
+			           #end
+         ]]>
+	</queryPoHJXX_CZRKJBXXB_NEW>
+	
+	<!-- 通用人信息查询 -->
+	<queryPoHJXX_CZRKJBXXB>
+		<![CDATA[
+			#if(!$ut.isns($hhnbid))
+			         from PoHJXX_CZRKJBXXB a
+			         	where a.ryzt = '0' 
+			         		and a.cxbz = '0'
+			           		and a.jlbz = '1'
+			           		and (a.yhzgx != '01' and a.yhzgx != '02' and a.yhzgx != '03')
+			           		#if(!$ut.isns($xm))
+					          	#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm 
+				           		#else
+						      		and a.xm = :xm
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($gmsfhm))
+				    			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and gmsfhm = :gmsfhm
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($hh))
+				      			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and a.hh = '${hh}'
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($hhnbid))
+				      			and a.hhnbid = '${hhnbid}'
+				    		#end
+				    		#if(!$ut.isns($csrq))
+				      			#if(!$ut.isns($jqcx))
+						      		and gmsfhm = :jqgmsfhm
+				           		#else
+					      			and a.csrq = :csrq
+						    	#end
+				    		#end
+				    		#if(!$ut.isns($rynbid))
+				      			and a.rynbid = '${rynbid}'
+				    		#end
+				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
+			           	order by a.xm
+			#else
+				from PoHJXX_CZRKJBXXB a
+			         	where a.ryzt = '0' 
+			           		and a.cxbz = '0'
+			           		and a.jlbz = '1'
+			           		#if(!$ut.isns($xm))
+					      		and a.xm = :xm
+				    		#end
+				    		#if(!$ut.isns($gmsfhm))
+				      			and gmsfhm = :gmsfhm
+				    		#end
+				    		#if(!$ut.isns($hh))
+				      			and a.hh = '${hh}'
+				    		#end
+				    		#if(!$ut.isns($hhnbid))
+				      			and a.hhnbid = '${hhnbid}'
+				    		#end
+				    		#if(!$ut.isns($hhid))
+				      			and a.hhid = '${hhid}'
+				    		#end
+				    		#if(!$ut.isns($csrq))
+				      			and a.csrq = :csrq
+				    		#end
+				    		#if(!$ut.isns($rynbid))
+				      			and a.rynbid = '${rynbid}'
+				    		#end
+				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
+			           	order by a.xm
+			           #end
+         ]]>
+	</queryPoHJXX_CZRKJBXXB>
+	
+	<!-- 特殊，单独查询户主 -->
+	<queryPoHJXX_CZRKJBXXB_HZ>
+	<![CDATA[
+			         from PoHJXX_CZRKJBXXB a
+			         	where a.ryzt = '0' 
+			         	and a.cxbz = '0'
+			           		and a.jlbz = '1'
+			           		#if(!$ut.isns($kdq_gmsfhm))
+			           			and (a.yhzgx = '01' or a.yhzgx = '02' or a.yhzgx = '03' or gmsfhm in ($ut.in($kdq_gmsfhm)) )
+			           		#else
+			           			and (a.yhzgx = '01' or a.yhzgx = '02' or a.yhzgx = '03')
+			           		#end
+			           		
+			           		#if(!$ut.isns($jqcx))
+				           	#else
+				           		#if(!$ut.isns($xm))
+							      	and a.xm = :xm
+					    		#end
+					    		#if(!$ut.isns($gmsfhm))
+							      	and gmsfhm = :gmsfhm
+					    		#end
+					    		#if(!$ut.isns($hh))
+					      			and a.hh = '${hh}'
+					    		#end
+					    		#if(!$ut.isns($csrq))
+					      			and a.csrq = :csrq
+					    		#end
+						    #end
+				    		#if(!$ut.isns($hhnbid))
+				      			and a.hhnbid = '${hhnbid}'
+				    		#end
+				    		#if(!$ut.isns($rynbid))
+				      			and a.rynbid = '${rynbid}'
+				    		#end
+				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
+			           	order by a.xm
+         ]]>
+	</queryPoHJXX_CZRKJBXXB_HZ>
+	<!-- 特殊，集体户 -->
+	<queryPoHJXX_CZRKJBXXB_JTH>
+	<![CDATA[
+			         from PoHJXX_CZRKJBXXB a
+			         	where a.hhnbid = '${hhnbid}' 
+			         		and a.ryzt = '0' 
+			         		and a.cxbz = '0'
+			           		and a.jlbz = '1'
+				    		$ut.n_allsfz($allsfz,$pageIndex,$hlx)
+			           	order by a.xm
+         ]]>
+	</queryPoHJXX_CZRKJBXXB_JTH>
+	<!-- 特殊，单独精确查询 -->
+	<queryPoHJXX_CZRKJBXXB_JCCZ>
+	<![CDATA[
+			         from PoHJXX_CZRKJBXXB a
+			         	where a.hhnbid = ${hhnbid} and a.ryzt = '0' and a.cxbz = '0' and a.jlbz = '1'
+			           		and  (
+			           			(a.yhzgx = '01' or a.yhzgx = '02' or a.yhzgx = '03')
+			           			#if(!$ut.isns($xm))
+							      	or a.xm = :xm
+					    		#end
+					    		#if(!$ut.isns($kdq_gmsfhm))
+							      	or gmsfhm in ($ut.in($kdq_gmsfhm))
+					    		#end
+					    		#if(!$ut.isns($gmsfhm))
+							      	or gmsfhm = :gmsfhm
+					    		#end
+			           		)
+         ]]>
+	</queryPoHJXX_CZRKJBXXB_JCCZ>
+	
+	<!-- 套打表查询  单人-->
+	<queryLodops>
+		<![CDATA[
+         	from PoHJXX_CZRKJBXXB a
+         	where 1 = 1 
+           		
+	    		#if(!$ut.isns($rynbid))
+	      			and a.rynbid = '${rynbid}'
+	    		#end
+	    		
+         ]]>
+	</queryLodops>
+	<!-- 套打表查询  全户-->
+	<queryLodopf>
+	<![CDATA[
+         	from PoHJXX_CZRKJBXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($hhnbid))
+		      		and a.hhnbid = '${hhnbid}'
+		      	#else
+		      		and a.hhnbid is null
+		    	#end
+		    	and jlbz='1'
+	    		and cxbz = '0'
+	    		and ryzt = '0'
+	    		order by yhzgx, rynbid
+         ]]>
+	</queryLodopf>	
+	<!-- 套打表查询  多人-->
+	<queryLodopMore>
+	<![CDATA[
+         	from PoHJXX_CZRKJBXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($hhnbid))
+		      		and a.hhnbid = '${hhnbid}'
+		    	#end
+		    	#if(!$ut.isns($rynbid))
+					and a.rynbid in ($rynbid)
+				#end
+	    		order by yhzgx, rynbid
+         ]]>
+	</queryLodopMore>
+	<queryLodopfByRynbid>
+	<![CDATA[
+         	select a from PoHJXX_CZRKJBXXB a
+         		where 1 = 1 
+		    	#if(!$ut.isns($rynbid))
+					and a.hhnbid = ( select b.hhnbid
+		            from PoHJXX_CZRKJBXXB b
+		           where b.rynbid = $rynbid)
+				#end
+				and jlbz='1'
+	    		and cxbz = '0'
+	    		and ryzt = '0'	
+	    		order by yhzgx, rynbid
+         ]]>	
+	</queryLodopfByRynbid>	
+	<queryLodopQfBg>
+		<![CDATA[
+         	from PoHJXX_CZRKJBXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($hhnbid))
+		      		and a.hhnbid = '${hhnbid}'
+		    	#end
+				and jlbz='1'
+	    		and cxbz = '0'
+	    		and ryzt = '0'	
+	    		order by yhzgx, rynbid
+         ]]>	
+	</queryLodopQfBg>
+	<queryLodopHz>
+		<![CDATA[
+         	from PoHJXX_CZRKJBXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($hhnbid))
+		      		and a.hhnbid = '${hhnbid}'
+		    	#end
+		    	and (yhzgx = '01' or yhzgx = '02' or yhzgx = '03')
+				and jlbz='1'
+	    		and cxbz = '0'
+	    		and ryzt = '0'	
+         ]]>	
+	</queryLodopHz>	
+	<zqzList>
+		<![CDATA[
+         	from PoHJSP_ZQZXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($spywid))
+	      			and a.spywid = '${spywid}'
+	    		#end
+         ]]>	
+	</zqzList>
+	<!-- 打印模板查询-->
+	<queryPoLODOP>
+	<![CDATA[
+         	from PoLODOP a
+         	where 1 = 1 
+         	#if(!$ut.isns($lodopId))
+      			and a.lodopId = '${lodopId}'
+    		#end
+    		#if(!$ut.isns($cjsj_start))
+      			and a.cjsj >= $cjsj_start
+    		#end
+    		#if(!$ut.isns($cjsj_end))
+      			and a.cjsj <= $cjsj_end
+    		#end
+    		#if(!$ut.isns($xgsj_start))
+      			and a.xgsj >= $xgsj_start
+    		#end
+    		#if(!$ut.isns($xgsj_end))
+      			and a.xgsj <= $xgsj_end
+    		#end
+    		#if(!$ut.isns($zxbz))
+      			and a.zxbz = $zxbz
+    		#end
+    		order by id
+         ]]>
+	</queryPoLODOP>	
+	<!-- 通用户信息查询 -->
+	<queryPoHJXX_HXXB>
+		<![CDATA[
+         	from PoHJXX_HXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($hhnbid))
+	      			and a.hhnbid = '${hhnbid}'
+	    		#end
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = '${hh}'
+	    		#end
+           	order by a.hh
+         ]]>
+	</queryPoHJXX_HXXB>
+	
+	<!-- 户籍审批申请查询（审批入户） -->
+	<queryPoHJSP_HJSPSQB>
+		<![CDATA[
+			from PoHJSP_HJSPSQB a
+			where spjg='1' and lsbz='0'
+			#if(!$ut.isns($where))
+      				and $where
+    			#end
+			#if(!$ut.isns($xm))
+		      		and a.xm = :xm
+		    	#end
+		    	#if(!$ut.isns($gmsfhm))
+		      		and a.gmsfhm = :gmsfhm
+		    	#end
+		    	#if(!$ut.isns($_start_slrq))
+		      		and a.slrq >= :_start_slrq
+		    	#end
+		    	#if(!$ut.isns($_end_slrq))
+		      		and a.slrq <= :_end_slrq
+		    	#end
+		    	order by slrq desc
+		]]>
+	</queryPoHJSP_HJSPSQB>
+	
+	<queryPoHJSP_HJSPZB>
+		<![CDATA[
+			from PoHJSP_HJSPZB a
+			where spywid='${spywid}'
+			order by xm
+		]]>
+	</queryPoHJSP_HJSPZB>
+	
+	<queryPoXT_XTKZCSB>
+		<![CDATA[
+			from PoXT_XTKZCSB a
+			where 1 = 1 
+				#if(!$ut.isns($kzlb))
+					and a.kzlb = :kzlb
+				#end
+		]]>
+	</queryPoXT_XTKZCSB>
+	
+	<queryPoHZ_ZJ_SB>
+		<![CDATA[
+			from PoHZ_ZJ_SB a
+			where 0=0
+			#if(!$ut.isns($clbs))
+				and a.clbs = :clbs
+			#end
+			#if(!$ut.isns($ywlb))
+				and a.ywlb = :ywlb
+			#end
+			#if(!$ut.isns($czdw))
+				and a.czdw = :czdw
+			#end
+			#if(!$ut.isns($hzywid))
+				and a.id = $hzywid
+			#end
+			#if(!$ut.isns($pch))
+				and a.pch = :pch
+			#end
+		]]>
+	</queryPoHZ_ZJ_SB>
+	<queryPoHZ_ZJ_SBZB>
+		<![CDATA[
+			from PoHZ_ZJ_SBZB a
+			where 0=0
+			#if(!$ut.isns($hzywid))
+				and a.id = $hzywid
+			#end
+			#if(!$ut.isns($pch))
+				and a.pch = :pch
+			#end
+		]]>
+	</queryPoHZ_ZJ_SBZB>
+	
+	<queryRhflxx>
+		<![CDATA[
+			from PoHJXX_RHFLXXB a
+			where 1 = 1 
+			    #if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+	    		$ut.linkSjfw('')
+				#if(!$ut.isns($xm))
+					and a.xm = :xm
+				#end
+				#if(!$ut.isns($rhfl_jcwh))
+					and a.rhfl_jcwh = :rhfl_jcwh
+				#end
+				#if(!$ut.isns($xb))
+					and a.xb = :xb
+				#end
+				#if(!$ut.isns($slrid))
+					and a.slrid = $slrid
+				#end
+				#if(!$ut.isns($csrq))
+					and a.csrq = :csrq
+				#end
+				#if(!$ut.isns($gmsfhm))
+					and a.gmsfhm = :gmsfhm
+				#end
+				#if(!$ut.isns($rhflzt))
+					and a.rhflzt = :rhflzt
+				#end
+				#if(!$ut.isns($sldw))
+					and a.sldw = :sldw
+				#end
+				#if(!$ut.isns($rhfl_ssxq))
+					and a.rhfl_ssxq = :rhfl_ssxq
+				#end
+				#if(!$ut.isns($zxrid))
+					and a.zxrid = $zxrid
+				#end
+				#if(!$ut.isns($rhfl_jlx))
+					and a.rhfl_jlx = :rhfl_jlx
+				#end
+				#if(!$ut.isns($rhfl_mlxz))
+					and a.rhfl_mlxz = :rhfl_mlxz
+				#end
+				#if(!$ut.isns($rhfl_pcs))
+					and a.rhfl_pcs = :rhfl_pcs
+				#end
+				#if(!$ut.isns($zxdw))
+					and a.zxdw = :zxdw
+				#end
+				#if(!$ut.isns($rhfl_xzjd))
+					and a.rhfl_xzjd = :rhfl_xzjd
+				#end
+				#if(!$ut.isns($rhfl_mlxz))
+					and a.rhfl_mlxz like :%rhfl_mlxz%
+				#end
+				#if(!$ut.isns($_start_slsj))
+					and a.slsj >= :_start_slsj
+				#end
+				#if(!$ut.isns($_end_slsj))
+					and a.slsj < :_end_slsj
+				#end
+				#if(!$ut.isns($_start_zxsj))
+					and a.zxsj >= :_start_zxsj
+				#end
+				#if(!$ut.isns($_end_zxsj))
+					and a.zxsj < :_end_zxsj
+				#end
+				#if(!$ut.isns($rynbids))
+					and a.rynbid in ($rynbids)
+				#end
+				#if(!$ut.isns($ryid))
+					and a.ryid = '${ryid}'
+				#end
+		]]>
+	</queryRhflxx>
+		
+	<!-- 查询户信息 -->
+	<queryhxx>
+		<![CDATA[
+			select b,a from PoHJXX_HXXB b,PoHJXX_MLPXXXXB a
+         	where 1 = 1 
+         		and a.mlpnbid = b.mlpnbid
+         		$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+	    		#if(!$ut.isns($hh))
+	      			and b.hh = '${hh}'
+	    		#end
+	    		#if(!$ut.isns($hhnbid))
+	      			and b.hhnbid = '${hhnbid}'
+	    		#end
+	    		#if(!$ut.isns($hhid))
+	      			and b.hhid = '${hhid}'
+	    		#end
+	    		#if(!$ut.isns($hlx))
+	      			and b.hlx = '${hlx}'
+	    		#end 
+	    		#if(!$ut.isns($_end_jhsj))
+	      			and b.jhsj <'${_end_jhsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_jhsj))
+	      			and b.jhsj >='${_start_jhsj}'
+	    		#end
+	    		#if(!$ut.isns($_end_chsj))
+	      			and b.chsj< '${_end_chsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_chsj))
+	      			and b.chsj>='${_start_chsj}' 
+	    		#end
+	    		#if(!$ut.isns($mlpnbid))
+	      			and b.mlpnbid = '${mlpnbid}'
+	    		#end
+	    		#if(!$ut.isns($hhzt))
+	      			and b.hhzt = '${hhzt}'
+	    		#end
+	    		and b.jlbz = '1' 
+				and b.cxbz = '0'
+			order by b.hh
+		]]>
+	</queryhxx>
+	
+	<!-- 查询户详细信息 -->
+	<queryhxxxx>
+		<![CDATA[
+			select a,b,c from PoHJXX_HXXB a,PoHJXX_MLPXXXXB b,PoXT_JLXXXB c
+         	where 1 = 1 
+         		and a.mlpnbid = b.mlpnbid
+         		and b.jlx = c.dm
+         		$ut.linkSjfwNew('b.ssxq')
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = '${hh}'
+	    		#end
+	    		#if(!$ut.isns($hhnbid))
+	      			and a.hhnbid = '${hhnbid}'
+	    		#end
+	    		#if(!$ut.isns($hlx))
+	      			and a.hlx = '${hlx}'
+	    		#end 
+	    		#if(!$ut.isns($_end_jhsj))
+	      			and a.jhsj <'${_end_jhsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_jhsj))
+	      			and a.jhsj >='${_start_jhsj}'
+	    		#end
+	    		#if(!$ut.isns($_end_chsj))
+	      			and a.chsj< '${_end_chsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_chsj))
+	      			and a.chsj>='${_start_chsj}' 
+	    		#end
+	    		#if(!$ut.isns($mlpnbid))
+	      			and a.mlpnbid = '${mlpnbid}'
+	    		#end
+	    		#if(!$ut.isns($hhzt))
+	      			and a.hhzt = '${hhzt}'
+	    		#end
+	    		#if(!$ut.isns($jthmc))
+	      			and c.bz like :%jthmc%
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and b.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($zrq))
+	      			and b.zrq = :zrq
+	    		#end
+	    		#if(!$ut.isns($xzjd))
+	      			and b.xzjd = :xzjd
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and b.jcwh = :jcwh
+	    		#end
+	    		#if(!$ut.isns($jlx))
+	      			and b.jlx = :jlx
+	    		#end
+	    		#if(!$ut.isns($mlph))
+	      			and b.mlph like :%mlph%
+	    		#end
+	    		#if(!$ut.isns($mlxz))
+	      			and b.mlxz like :%mlxz%
+	    		#end
+	    		and a.jlbz = '1' 
+				and a.cxbz = '0'
+				and c.qybz = '1'
+			order by a.hh
+		]]>
+	</queryhxxxx>
+	
+	<queryPzxxycl>
+		<![CDATA[
+			select a,b from PoHJXX_PZRZB a,PoZJYW_SLXXB b
+         	where 1 = 1  and a.nbslid = b.nbslid
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         	
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = '${gmsfhm}'
+	    		#end
+	    		#if(!$ut.isns($slh))
+	      			and a.slh = '${slh}'
+	    		#end
+	    		#if(!$ut.isns($yhdw))
+	      			and a.yhdw = '${yhdw}'
+	    		#end
+	    		#if(!$ut.isns($zzlx))
+	      			and b.zzlx = '${zzlx}'
+	    		#end
+	    		#if(!$ut.isns($_end_rksj))
+	      			and a.rksj <'${_end_rksj}'
+	    		#end
+	    		#if(!$ut.isns($_start_rksj))
+	      			and a.rksj >='${_start_rksj}'
+	    		#end
+	    		#if(!$ut.isns($_end_yxqxqsrq))
+	      			and b.yxqxqsrq< '${_end_yxqxqsrq}'
+	    		#end
+	    		#if(!$ut.isns($_start_yxqxqsrq))
+	      			and b.yxqxqsrq>='${_start_yxqxqsrq}' 
+	    		#end
+	    		#if(!$ut.isns($lqfs))
+	      			and b.lqfs = '${lqfs}'
+	    		#end
+	    		#if(!$ut.isns($slzt))
+	      			and b.slzt = '${slzt}'
+	    		#end  
+		]]>
+	</queryPzxxycl>
+	
+	<querytfbdcx>
+	<![CDATA[
+	    from PoWW_TFBDJGXXB where 0=0
+	    #if(!$ut.isns($xm))
+	      	and xm = '${xm}'
+	    #end
+	    #if(!$ut.isns($gmsfhm))
+	      	and gmsfhm = '${gmsfhm}'
+	    #end
+	    #if(!$ut.isns($pcs))
+	      	and pcs = '${pcs}'
+	    #end
+	    #if(!$ut.isns($_end_czsj))
+	      	and czsj <'${_end_czsj}'
+	    #end
+	    #if(!$ut.isns($_start_czsj))
+	      	and czsj >='${_start_czsj}'
+	    #end
+	    #if(!$ut.isns($czrid))
+	      	and czrid = '${czrid}'
+	    #end
+	    #if(!$ut.isns($cljg))
+	      	and cljg = '${cljg}'
+	    #end
+	    #if(!$ut.isns($clsm))
+	      	and clsm = '${clsm}'
+	    #end
+	    #if(!$ut.isns($_end_clsj))
+	      	and clsj <'${_end_clsj}'
+	    #end
+	    #if(!$ut.isns($_start_clsj))
+	      	and clsj >='${_start_clsj}'
+	    #end
+	    #if(!$ut.isns($shrid))
+	      	and shrid = '${shrid}'
+	    #end
+	    #if(!$ut.isns($_end_shsj))
+	      	and shsj <'${_end_shsj}'
+	    #end
+	    #if(!$ut.isns($_start_shsj))
+	      	and shsj >='${_start_shsj}'
+	    #end
+	    #if(!$ut.isns($czrip))
+	      	and czrip = '${czrip}'
+	    #end
+	    #if(!$ut.isns($czrdw))
+	      	and czrdw = '${czrdw}'
+	    #end
+	    #if(!$ut.isns($czrdlm))
+	      	and czrdlm = '${czrdlm}'
+	    #end
+	    #if(!$ut.isns($bdywbh))
+	      	and bdywbh = '${bdywbh}'
+	    #end
+	    #if(!$ut.isns($clrid))
+	      	and clrid = '${clrid}'
+	    #end
+	    #if(!$ut.isns($clrip))
+	      	and clrip = '${clrip}'
+	    #end
+	    #if(!$ut.isns($ssxq))
+	      	and ssxq = '${ssxq}'
+	    #end
+	    #if(!$ut.isns($jlx))
+	      	and jlx = '${jlx}'
+	    #end
+	    #if(!$ut.isns($mlph))
+	      	and mlph = '${mlph}'
+	    #end
+	    #if(!$ut.isns($mlxz))
+	      	and mlxz = '${mlxz}'
+	    #end
+	    #if(!$ut.isns($zrq))
+	      	and zrq = '${zrq}'
+	    #end
+	    #if(!$ut.isns($xzjd))
+	      	and xzjd = '${xzjd}'
+	    #end
+	    #if(!$ut.isns($jcwh))
+	      	and jcwh = '${jcwh}'
+	    #end
+	    #if(!$ut.isns($pptj))
+	      	and pptj = '${pptj}'
+	    #end
+	    #if(!$ut.isns($bdyj))
+	      	and bdyj = '${bdyj}'
+	    #end
+	    #if(!$ut.isns($bdyj))
+	      	and bdyj = '${bdyj}'
+	    #end
+	]]>
+	</querytfbdcx>
+	
+	<querydkxxrzcx>
+	<![CDATA[
+	  from PoZZZJ_DKRZB where 0=0
+	  #if(!$ut.isns($gmsfhm))
+	      	and gmsfhm = '${gmsfhm}'
+	  #end
+	  #if(!$ut.isns($xb))
+	      	and xb = '${xb}'
+	  #end
+	  #if(!$ut.isns($csrq))
+	      	and csrq = '${csrq}'
+	  #end
+	   #if(!$ut.isns($yxqx))
+	      	and yxqx = '${yxqx}'
+	  #end
+	  #if(!$ut.isns($qfjg))
+	      	and qfjg = '${qfjg}'
+	  #end
+	  #if(!$ut.isns($zz))
+	      	and zz = '${zz}'
+	  #end
+	  #if(!$ut.isns($zz1yzjg))
+	      	and zz1yzjg = '${zz1yzjg}'
+	  #end
+	  #if(!$ut.isns($zz1zjsbbh))
+	      	and zz1zjsbbh = '${zz1zjsbbh}'
+	  #end
+	  #if(!$ut.isns($zz4zjsbbh))
+	      	and zz4zjsbbh = '${zz4zjsbbh}'
+	  #end
+	  #if(!$ut.isns($zz1zjzz))
+	      	and zz1zjzz = '${zz1zjzz}'
+	  #end
+	  #if(!$ut.isns($zz2yzjg))
+	      	and zz2yzjg = '${zz2yzjg}'
+	  #end
+	  #if(!$ut.isns($zz2zjsbbh))
+	      	and zz2zjsbbh = '${zz2zjsbbh}'
+	  #end
+	  #if(!$ut.isns($zz2czydn))
+	      	and zz2czydn = '${zz2czydn}'
+	  #end
+	  #if(!$ut.isns($zz2xrrq))
+	      	and zz2xrrq = '${zz2xrrq}'
+	  #end
+	  #if(!$ut.isns($zz2zjzz))
+	      	and zz2zjzz = '${zz2zjzz}'
+	  #end
+	  #if(!$ut.isns($zz3yzjg))
+	      	and zz3yzjg = '${zz3yzjg}'
+	  #end
+	  #if(!$ut.isns($zz3zjsbbh))
+	      	and zz3zjsbbh = '${zz3zjsbbh}'
+	  #end
+	  #if(!$ut.isns($zz3czydn))
+	      	and zz3czydn = '${zz3czydn}'
+	  #end
+	  #if(!$ut.isns($zz3xrrq))
+	      	and zz3xrrq = '${zz3xrrq}'
+	  #end
+	  #if(!$ut.isns($zz3zjzz))
+	      	and zz3zjzz = '${zz3zjzz}'
+	  #end
+	  #if(!$ut.isns($zz4yzjg))
+	      	and zz4yzjg = '${zz4yzjg}'
+	  #end
+	  #if(!$ut.isns($zz1czydn))
+	      	and zz1czydn = '${zz1czydn}'
+	  #end
+	  #if(!$ut.isns($zz1xrrq))
+	      	and zz1xrrq = '${zz1xrrq}'
+	  #end
+	  #if(!$ut.isns($zz4czydn))
+	      	and zz4czydn = '${zz4czydn}'
+	  #end
+	  #if(!$ut.isns($zz4xrrq))
+	      	and zz4xrrq = '${zz4xrrq}'
+	  #end
+	  #if(!$ut.isns($zz4zjzz))
+	      	and zz4zjzz = '${zz4zjzz}'
+	  #end
+	]]>
+	</querydkxxrzcx>
+	
+	<queryxkxxrzcx>
+	<![CDATA[
+	   from PoHZSMK_XKRZ where 0=0
+	   
+	]]>
+	</queryxkxxrzcx>
+	
+	<queryrzxxcx>
+		<![CDATA[
+			select a,b from PoDZZJ_CZRZB a,PoDZZJ_CZYXXB b
+         	where 1 = 1  and a.czyid = b.czyid
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         	
+	    		#if(!$ut.isns($czdz))
+	      			and a.czdz = '${czdz}'
+	    		#end
+	    		#if(!$ut.isns($czip))
+	      			and a.czip = '${czip}'
+	    		#end
+	    		#if(!$ut.isns($czydlm))
+	      			and b.czydlm = '${czydlm}'
+	    		#end
+	    		#if(!$ut.isns($czyxm))
+	      			and b.czyxm = '${czyxm}'
+	    		#end
+	    		#if(!$ut.isns($czydwdm))
+	      			and b.czydwdm = '${czydwdm}'
+	    		#end
+	    		#if(!$ut.isns($czysfhm))
+	      			and b.czysfhm = '${czysfhm}'
+	    		#end
+	    		#if(!$ut.isns($_end_czsj))
+	      			and a.czsj <'${_end_czsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_czsj))
+	      			and a.czsj >='${_start_czsj}'
+	    		#end
+	    		#if(!$ut.isns($sbglh))
+	      			and b.sbglh = '${sbglh}'
+	    		#end
+	    		#if(!$ut.isns($_end_zcsj))
+	      			and b.zcsj< '${_end_zcsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_zcsj))
+	      			and b.zcsj>='${_start_zcsj}' 
+	    		#end
+	    		#if(!$ut.isns($_end_zxsj))
+	      			and b.zxsj< '${_end_zxsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_zxsj))
+	      			and b.zxsj>='${_start_zxsj}' 
+	    		#end
+	    		#if(!$ut.isns($czyzt))
+	      			and b.czyzt = '${czyzt}'
+	    		#end  
+		]]>
+	</queryrzxxcx>
+	
+	<querypzxx>
+	<![CDATA[
+	   from PoHJXX_PZRZB where 0=0
+       #if(!$ut.isns($where))
+       		and ${where}
+   	   #end	   
+	   #if(!$ut.isns($gmsfhm))
+	      	and gmsfhm = '${gmsfhm}'
+	   #end
+	   #if(!$ut.isns($pzrzid))
+	      	and pzrzid = '${pzrzid}'
+	   #end
+	    #if(!$ut.isns($slh))
+	      	and slh = '${slh}'
+	   #end
+	    #if(!$ut.isns($yhdw))
+	      	and yhdw = '${yhdw}'
+	   #end
+	    #if(!$ut.isns($_end_bcsj))
+	      	and bcsj <'${_end_bcsj}'
+	   #end
+	     #if(!$ut.isns($_start_bcsj))
+	      	and bcsj >='${_start_bcsj}'
+	   #end
+	   ]]>
+	</querypzxx>
+	
+	<queryzjadress>
+	 <![CDATA[
+	    from PoZZZJ_ZZZJRZB where 1=1
+	    $ut.linkSjfwNew('a.ssxq')
+       	#if(!$ut.isns($where))
+   			and ${where}
+   		#end	    
+	    #if(!$ut.isns($xm))
+	      	and xm = '${xm}'
+	    #end
+	    #if(!$ut.isns($gmsfhm))
+	      	and gmsfhm = '${gmsfhm}'
+	    #end
+	    #if(!$ut.isns($xb))
+	      	and xb = '${xb}'
+	    #end
+	     #if(!$ut.isns($csrq))
+	      	and csrq = '${csrq}'
+	    #end
+	     #if(!$ut.isns($yhid))
+	      	and yhid = '${yhid}'
+	    #end
+	     #if(!$ut.isns($_end_czsj))
+	      	and czsj <'${_end_czsj}'
+	   #end
+	     #if(!$ut.isns($_start_czsj))
+	      	and czsj >='${_start_czsj}'
+	   #end
+	   #if(!$ut.isns($hh))
+	      	and hh = '${hh}'
+	    #end
+	    #if(!$ut.isns($jlx))
+	      	and jlx = '${jlx}'
+	    #end
+	    #if(!$ut.isns($pcs))
+	      	and pcs = '${pcs}'
+	    #end
+	    #if(!$ut.isns($jcwh))
+	      	and jcwh = '${jcwh}'
+	    #end
+	    #if(!$ut.isns($czysfhm))
+	      	and czysfhm = '${czysfhm}'
+	    #end
+	    #if(!$ut.isns($czjg))
+	      	and czjg = '${czjg}'
+	    #end
+	 ]]>
+	</queryzjadress>
+	
+	<queryczyxxcx>
+	 <![CDATA[
+	    from PoDZZJ_CZYXXB where 0=0
+       	#if(!$ut.isns($where))
+   			and ${where}
+   		#end	    
+	    #if(!$ut.isns($czydlm))
+	      	and czydlm = '${czydlm}'
+	    #end
+	    #if(!$ut.isns($czyxm))
+	      	and czyxm = '${czyxm}'
+	    #end
+	    #if(!$ut.isns($czydwdm))
+	      	and czydwdm = '${czydwdm}'
+	    #end
+	    #if(!$ut.isns($czysfhm))
+	      	and czysfhm = '${czysfhm}'
+	    #end
+	    #if(!$ut.isns($sbglh))
+	      	and sbglh = '${sbglh}'
+	    #end
+	    #if(!$ut.isns($_end_zcsj))
+	      	and zcsj <'${_end_zcsj}'
+	   #end
+	     #if(!$ut.isns($_start_zcsj))
+	      	and zcsj >='${_start_zcsj}'
+	   #end
+	   #if(!$ut.isns($_end_zxsj))
+	      	and zxsj <'${_end_zxsj}'
+	   #end
+	     #if(!$ut.isns($_start_zxsj))
+	      	and zxsj >='${_start_zxsj}'
+	   #end
+	   #if(!$ut.isns($czyzt))
+	      	and czyzt = '${czyzt}'
+	    #end
+	 ]]>
+	</queryczyxxcx>
+	
+	<querysfzxx>
+	<![CDATA[
+	   from PoLSSFZ_SLXXB where 0=0
+       	#if(!$ut.isns($where))
+   			and ${where}
+   		#end 	   
+	   #if(!$ut.isns($xm))
+	      	and xm = '${xm}'
+	   #end
+	   #if(!$ut.isns($lsslid))
+	      	and lsslid = '${lsslid}'
+	   #end
+	    #if(!$ut.isns($gmsfhm))
+	      	and gmsfhm = '${gmsfhm}'
+	   #end
+	    #if(!$ut.isns($lsjmsfzkh))
+	      	and lsjmsfzkh = '${lsjmsfzkh}'
+	   #end
+	   #if(!$ut.isns($dybz))
+	      	and dybz = '${dybz}'
+	   #end
+	   #if(!$ut.isns($pcs))
+	      	and pcs = '${pcs}'
+	   #end
+	   #if(!$ut.isns($dysj))
+	      	and dysj = '${dysj}'
+	   #end
+	    #if(!$ut.isns($_end_csrq))
+	      	and csrq <'${_end_csrq}'
+	   #end
+	     #if(!$ut.isns($_start_csrq))
+	      	and csrq >='${_start_csrq}'
+	   #end
+	   #if(!$ut.isns($qfjg))
+	      	and qfjg = '${qfjg}'
+	   #end
+	    #if(!$ut.isns($_end_yxqxqsrq))
+	      	and yxqxqsrq <'${_end_yxqxqsrq}'
+	   #end
+	     #if(!$ut.isns($_start_yxqxqsrq))
+	      	and yxqxqsrq >='${_start_yxqxqsrq}'
+	   #end
+	   #if(!$ut.isns($_end_yxqxjzrq))
+	      	and yxqxjzrq <'${_end_yxqxjzrq}'
+	   #end
+	     #if(!$ut.isns($_start_yxqxjzrq))
+	      	and yxqxjzrq >='${_start_yxqxjzrq}'
+	   #end
+	   #if(!$ut.isns($_end_czsj))
+	      	and czsj <'${_end_czsj}'
+	   #end
+	     #if(!$ut.isns($_start_czsj))
+	      	and czsj >='${_start_czsj}'
+	   #end
+	   #if(!$ut.isns($czyip))
+	      	and czyip = '${czyip}'
+	   #end
+	   #if(!$ut.isns($dyrid))
+	      	and dyrid = '${dyrid}'
+	   #end
+	   #if(!$ut.isns($dyrip))
+	      	and dyrip = '${dyrip}'
+	   #end
+	   #if(!$ut.isns($mz))
+	      	and mz = '${mz}'
+	   #end
+	   #if(!$ut.isns($csdssxq))
+	      	and csdssxq = '${csdssxq}'
+	   #end
+	   #if(!$ut.isns($ssxq))
+	      	and ssxq = '${ssxq}'
+	   #end
+	   #if(!$ut.isns($jlx))
+	      	and jlx = '${jlx}'
+	   #end
+	   #if(!$ut.isns($mlph))
+	      	and mlph = '${mlph}'
+	   #end
+	   #if(!$ut.isns($mlxz))
+	      	and mlxz = '${mlxz}'
+	   #end
+	   #if(!$ut.isns($xzjd))
+	      	and xzjd = '${xzjd}'
+	   #end
+	   #if(!$ut.isns($jcwh))
+	      	and jcwh = '${jcwh}'
+	   #end
+	   #if(!$ut.isns($czyid))
+	      	and czyid = '${czyid}'
+	   #end
+	   #if(!$ut.isns($zz))
+	      	and zz = '${zz}'
+	   #end
+	   #if(!$ut.isns($xb))
+	      	and xb = '${xb}'
+	   #end
+	   ]]>
+	</querysfzxx>
+	
+	<queryMlpxx>
+		<![CDATA[
+			from PoHJXX_MLPXXXXB a 
+			where 1=1
+				$ut.linkSjfw('a.ssxq')
+				#if(!$ut.isns($ssxq))
+					and a.ssxq = :ssxq
+				#end
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end				
+				#if(!$ut.isns($hlx))
+					and a.hlx = :hlx
+				#end
+				#if(!$ut.isns($_start_jhsj))
+					and a.jhsj > :_start_jhsj
+				#end
+				#if(!$ut.isns($_end_jhsj))
+					and a.jhsj < :_end_jhsj
+				#end
+				#if(!$ut.isns($_start_chsj))
+					and a.chsj > :_start_chsj
+				#end
+				#if(!$ut.isns($_end_chsj))
+					and a.chsj < :_end_chsj
+				#end
+				#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+				#if(!$ut.isns($zrq))
+					and a.zrq = :zrq
+				#end
+				#if(!$ut.isns($xzjd))
+					and a.xzjd = :xzjd
+				#end
+				#if(!$ut.isns($jcwh))
+					and a.jcwh = :jcwh
+				#end
+				#if(!$ut.isns($jlx))
+					and a.jlx = :jlx
+				#end
+				#if(!$ut.isns($mlph))
+	      			and (a.mlph like :%mlphToDBC% or a.mlph like :%mlphToSBC%)
+	    		#end
+	    		#if(!$ut.isns($mlxz))
+	    			and (a.mlxz like :%mlxzToDBC% or a.mlxz like :%mlxzToSBC%)
+	    		#end
+				#if(!$ut.isns($dztz))
+					and a.jlbz = '1'
+					and a.mlpzt = '0'
+				#end
+				
+		]]>
+	</queryMlpxx>
+	<!-- 
+		#if(!$ut.isns($sffw))
+							$ut.linkSjfw("")
+				#end
+	 -->
+	 
+	<queryThry>
+		<![CDATA[
+			from PoHJXX_CZRKJBXXB a
+			where 1 = 1 
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end	
+	    		$ut.linkSjfw('')			
+				#if(!$ut.isns($hhnbid))
+					and a.jlbz = '1' 
+					and a.cxbz = '0'
+					and a.hhnbid = $hhnbid
+				#else
+					#if(!$ut.isns($ryid))
+						and a.ryid = $ryid
+					#else
+						#if(!$ut.isns($xm))
+							and a.xm = :xm
+						#end
+         				#if(!$ut.isns($hjywid))
+	      					and a.hjywid = '${hjywid}'
+	    				#end
+						#if(!$ut.isns($xb))
+							and a.xm = :xb
+						#end
+						#if(!$ut.isns($csrq))
+							and a.csrq = :csrq
+						#end
+						#if(!$ut.isns($gmsfhm))
+							and a.gmsfhm = :gmsfhm
+						#end
+						#if(!$ut.isns($rhfl_mlxz))
+							and a.rhfl_mlxz like :%rhfl_mlxz%
+						#end
+						#if(!$ut.isns($_start_slsj))
+							and a.slsj >= :_start_slsj
+						#end
+						#if(!$ut.isns($_end_slsj))
+							and a.slsj < :_end_slsj
+						#end
+						#if(!$ut.isns($_start_zxsj))
+							and a.zxsj >= :_start_zxsj
+						#end
+						#if(!$ut.isns($_end_zxsj))
+							and a.zxsj < :_end_zxsj
+						#end
+					#end
+				#end
+		]]>
+	</queryThry>
+	
+	<!-- 四变信息查询 -->
+	<queryPoHJTJ_RYBDXXB>
+		<![CDATA[
+			from PoV_HJTJ_RYBDXXB a
+			where 1=1
+			#if(!$ut.isns($ryid))
+					and  a.ryid='${ryid}' 
+			#end
+			order by a.slsj
+		]]>
+	</queryPoHJTJ_RYBDXXB>
+<!-- 			select a from PoHJTJ_RYBDXXB a,PoHJXX_CZRKJBXXB b
+			where a.ryid = b.ryid 
+				#if(!$ut.isns($ryid))
+					and  b.ryid='${ryid}' 
+				#end
+				and a.cxbz = '0'
+			order by a.bdrq -->	
+	<!-- 变更更正查询 -->
+	<queryPoHJYW_BGGZXXB>
+		<![CDATA[
+			from PoV_HJYW_BGGZXXB a
+			where 1 = 1
+				#if(!$ut.isns($ryid))
+					and a.ryid='${ryid}' 
+				#end
+		]]>
+	</queryPoHJYW_BGGZXXB>
+	
+	<!-- 户信息查询 -->
+	<queryPoHJXX_HXXB2>
+		<![CDATA[
+         	select a from PoHJXX_HXXB a,PoHJXX_CZRKJBXXB b
+         	where a.hhnbid = b.hhnbid 
+	    		#if(!$ut.isns($rynbid))
+					and b.rynbid = '${rynbid}'
+				#end
+           	order by a.hh
+         ]]>
+	</queryPoHJXX_HXXB2>
+	<!-- 户信息查询 -->
+	<queryPoHJXX_HXXB1>
+		<![CDATA[
+         	from PoHJXX_HXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($hhid))
+					and a.hhid = '${hhid}'
+				#end
+				and a.jlbz = '1'
+				and a.cxbz = '0'
+         ]]>
+	</queryPoHJXX_HXXB1>	
+	<!-- 户成员变动信息查询 -->
+	<queryPoHJYW_HCYBDXXB>
+		<![CDATA[
+			from PoV_HJ_HCYBDXXB a
+			where 1=1
+			#if(!$ut.isns($hhid))
+					and a.hhid = '${hhid}'
+				#end
+			and cxbz='0'
+       
+         ]]>
+	</queryPoHJYW_HCYBDXXB>
+  	<!-- select a from PoHJYW_HCYBDXXB a,PoHJXX_CZRKJBXXB b
+         	where a.hhnbid = b.hhnbid 
+	    		#if(!$ut.isns($rynbid))
+					and b.rynbid = '${rynbid}'
+				#end
+				and a.cxbz = '0'
+           	order by a.hh -->	
+	<!-- 证件信息查询 -->
+	<queryPoZJXX_JMSFZXXB>
+		<![CDATA[
+			from PoV_ZJ_JMSFZXXB a 
+			where 1=1
+			#if(!$ut.isns($ryid))
+				and a.ryid = '${ryid}'
+			#end
+         ]]>
+	</queryPoZJXX_JMSFZXXB>
+         	<!-- select a from PoZJXX_JMSFZXXB a,PoHJXX_CZRKJBXXB b
+         	where a.ryid = b.ryid 
+	    		#if(!$ut.isns($rynbid))
+					and b.rynbid = '${rynbid}'
+				#end
+           	order by a.gmsfhm	 -->
+	<!-- 受理信息查询 -->
+	<queryPoZJYW_SLXXB>
+		<![CDATA[
+         	select a from PoZJYW_SLXXB a,PoHJXX_CZRKJBXXB b
+         	where a.ryid = b.ryid 
+	    		#if(!$ut.isns($ryid))
+					and b.ryid = '${ryid}'
+				#end
+           	order by a.czsj
+         ]]>
+	</queryPoZJYW_SLXXB>
+	<!-- 受理信息查询  -->
+	<queryPoZJYW_SLXXB1>
+		<![CDATA[
+         	from PoZJYW_SLXXB a  
+         	where 1 = 1  
+         		$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+         		#if(!$ut.isns($xm))
+					and a.xm = :xm
+				#end
+				#if(!$ut.isns($slzt))
+					and a.slzt = :slzt
+				#end
+				#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($czendYear))
+					and a.czsj <= :czendYear
+				#end
+				#if(!$ut.isns($flag))
+	      			and a.slh = :slh
+	    		#end
+				#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+				#if(!$ut.isns($startYear))
+	      			and a.csrq >= :startYear
+	    		#end
+	    		#if(!$ut.isns($endYear))
+	      			and a.csrq <= :endYear
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+	    		#if(!$ut.isns($slh))
+	      			and a.slh = :slh
+	    		#end
+	    		#if(!$ut.isns($rynbid))
+	      			and a.rynbid = '${rynbid}'
+	    		#end
+	    		#if(!$ut.isns($yxqxqsstartYear))
+	      			and a.csrq >= :yxqxqsstartYear
+	    		#end
+	    		#if(!$ut.isns($yxqxqsendYear))
+	      			and a.csrq <= :yxqxqsendYear
+	    		#end
+	    		#if(!$ut.isns($zzlx))
+	      			and a.zzlx = :zzlx
+	    		#end
+	    		#if(!$ut.isns($lqfs))
+	      			and a.lqfs = :lqfs
+	    		#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'
+	    		#end
+	    		#if(!$ut.isns($sjrxm))
+	      			and a.sjrxm = :sjrxm
+	    		#end
+	    		#if(!$ut.isns($sjrlxdh))
+	      			and a.sjrlxdh = :sjrlxdh
+	    		#end
+	    		#if(!$ut.isns($sjryb))
+	      			and a.sjryb = :sjryb
+	    		#end
+	    		#if(!$ut.isns($sjrtxdz))
+	      			and a.sjrtxdz = :sjrtxdz
+	    		#end
+	    		#if(!$ut.isns($zzxxcwlb))
+	      			and a.zzxxcwlb = :zzxxcwlb
+	    		#end
+	    		#if(!$ut.isns($cwms))
+	      			and a.cwms = :cwms
+	    		#end
+	    		#if(!$ut.isns($jydw))
+	      			and a.jydw = :jydw
+	    		#end
+	    		#if(!$ut.isns($zlhkzt))
+	      			and a.zlhkzt = :zlhkzt
+	    		#end
+	    		#if(!$ut.isns($hksjstartYear))
+	      			and a.hksj >= :hksjstartYear
+	    		#end
+	    		#if(!$ut.isns($hksjsendYear))
+	      			and a.hksj <= :hksjsendYear
+	    		#end
+	    		#if(!$ut.isns($fjpch))
+	      			and a.fjpch = :fjpch
+	    		#end
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = '${ryid}'
+	    		#end
+	    		#if(1 == $fw1&&1 == $fw2&&1 == $fw3&&1 == $fw4)
+	    		#else
+	    			#if(1 == $fw1)
+	    				#if($ut.isns($fw2))
+	    					#if($ut.isns($fw3))
+	    						#if($ut.isns($fw4))
+	    							and (a.slzt='02' or a.slzt='97' or a.slzt='98' )
+		    					#else
+		    						and (a.slzt='02' or a.slzt='97' or a.slzt='98' or (a.slzt>='93' and a.slzt<='96'))
+		    					#end
+	    					#else
+	    						#if($ut.isns($fw4))
+	    							and (a.slzt in('10' , '12' , '17' , '23' , '25' , '30' , '32' , '62' , '72' , '82' , '91') 
+		    							or a.slzt='02' or a.slzt='97' or a.slzt='98' )
+		    					#else
+		    						and (a.slzt in('10' , '12' , '17' , '23' , '25' , '30' , '32' , '62' , '72' , '82' , '91') 
+		    							or a.slzt='02' or a.slzt='97' or a.slzt='98' or (a.slzt>='93' and a.slzt<='96'))
+		    					#end
+	    					#end
+	    				#else
+	    					#if($ut.isns($fw3))
+	    						#if($ut.isns($fw4))
+	    							and a.slzt not in('10' , '12' , '17' , '23' , '25' , '30' , '32' , '62' , '72' , '82' , '91')
+		    						and a.slzt<'93'
+		    						and a.slzt>'96'
+		    					#else
+		    						and a.slzt not in('10' , '12' , '17' , '23' , '25' , '30' , '32' , '62' , '72' , '82' , '91')
+		    					#end
+	    					#else
+	    						#if($ut.isns($fw4))
+	    							and (a.slzt<'93' or a.slzt>'96')
+		    					#end
+	    					#end
+	    				#end
+	    			#else
+	    				#if($ut.isns($fw2))
+	    					#if($ut.isns($fw3))
+	    						#if(1 == $fw4)
+	    							and a.slzt>='93' and a.slzt<='96'
+		    					#end
+	    					#else
+	    						#if($ut.isns($fw4))
+	    							and a.slzt in('10' , '12' , '17' , '23' , '25' , '30' , '32' , '62' , '72' , '82' , '91')
+		    					#else
+		    						and (a.slzt in('10' , '12' , '17' , '23' , '25' , '30' , '32' , '62' , '72' , '82' , '91') or ( a.slzt>='93' and a.slzt<='96' ))
+		    					#end
+	    					#end
+	    				#else
+	    					#if($ut.isns($fw3))
+	    						#if($ut.isns($fw4))
+	    							and (a.slzt not in('10' , '12' , '17' , '23' , '25' , '30' , '32' , '62' , '72' , '82' , '91')
+	    							and (a.slzt <> '02'  and a.slzt <> '97' and a.slzt <> '98')
+	    							and (a.slzt < '93' or a.slzt > '96'	))
+		    					#else
+		    						and (a.slzt in('10' , '12' , '17' , '23' , '25' , '30' , '32' , '62' , '72' , '82' , '91')
+		    						and (a.slzt <> '02' and a.slzt <> '97' and a.slzt <> '98')
+		    					#end
+	    					#else
+	    						#if($ut.isns($fw4))
+	    							and ((a.slzt <> '02' and a.slzt <> '97' and a.slzt <> '98') and (a.slzt < '93' or a.slzt > '96'))
+	    						#else
+	    							and (a.slzt<>'02' and a.slzt<>'97' and a.slzt<>'98')
+		    					#end
+	    					#end
+	    				#end	    			
+	    			
+	    			#end
+		    		#if(1 == $fw5)
+		      			and a.slzt in ('10', '12', '17', '23', '25', '30', '32', '62', '72', '82', '91')
+		    		#end 
+		    		#if(1 == $fw6)
+		      			and (a.zzlx = '2' and a.czsj < :kzdate ) or (a.zzlx <> '2' and a.czsj < :mzdate ) and a.slzt < '89' and a.slzt <> '02'
+		    		#end
+	    		#end
+         ]]>	
+	</queryPoZJYW_SLXXB1>
+	<!-- 投递信息查询 -->
+	<queryPoZJYW_SLXXB3>
+		<![CDATA[
+         	from PoZJYW_SLXXB a
+         	where 1 = 1  
+         		$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+         		#if(!$ut.isns($xm))
+					and a.xm = :xm
+				#end
+				#if(!$ut.isns($slzt))
+					and a.slzt = :slzt
+				#end
+				#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($czendYear))
+					and a.czsj <= :czendYear
+				#end
+				#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+				#if(!$ut.isns($startYear))
+	      			and a.csrq >= :startYear
+	    		#end
+	    		#if(!$ut.isns($endYear))
+	      			and a.csrq <= :endYear
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+	    		#if(!$ut.isns($slh))
+	      			and a.slh = :slh
+	    		#end
+	    		#if(!$ut.isns($rynbid))
+	      			and a.rynbid = '${rynbid}'
+	    		#end
+	    		#if(!$ut.isns($yxqxqsstartYear))
+	      			and a.csrq >= :yxqxqsstartYear
+	    		#end
+	    		#if(!$ut.isns($yxqxqsendYear))
+	      			and a.csrq <= :yxqxqsendYear
+	    		#end
+	    		#if(!$ut.isns($zzlx))
+	      			and a.zzlx = :zzlx
+	    		#end
+	    		#if(!$ut.isns($lqfs))
+	      			and a.lqfs = :lqfs
+	    		#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'
+	    		#end
+	    		#if(!$ut.isns($sjrxm))
+	      			and a.sjrxm = :sjrxm
+	    		#end
+	    		#if(!$ut.isns($sjrlxdh))
+	      			and a.sjrlxdh = :sjrlxdh
+	    		#end
+	    		#if(!$ut.isns($sjryb))
+	      			and a.sjryb = :sjryb
+	    		#end
+	    		#if(!$ut.isns($sjrtxdz))
+	      			and a.sjrtxdz = :sjrtxdz
+	    		#end
+	    		#if(!$ut.isns($zzxxcwlb))
+	      			and a.zzxxcwlb = :zzxxcwlb
+	    		#end
+	    		#if(!$ut.isns($cwms))
+	      			and a.cwms = :cwms
+	    		#end
+	    		#if(!$ut.isns($jydw))
+	      			and a.jydw = :jydw
+	    		#end
+	    		#if(!$ut.isns($zlhkzt))
+	      			and a.zlhkzt = :zlhkzt
+	    		#end
+	    		#if(!$ut.isns($hksjstartYear))
+	      			and a.hksj >= :hksjstartYear
+	    		#end
+	    		#if(!$ut.isns($hksjsendYear))
+	      			and a.hksj <= :hksjsendYear
+	    		#end
+	    		#if(!$ut.isns($fjpch))
+	      			and a.fjpch = :fjpch
+	    		#end
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = '${ryid}'
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoZJYW_SLXXB3>
+	
+	<!-- 收交信息查询 -->
+	<queryPoZJYW_SJXXB>
+		<![CDATA[
+         	from PoV_ZJ_SJXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end  
+         		#if(!$ut.isns($xm))
+					and a.xm = :xm
+				#end
+				#if(!$ut.isns($startYear))
+	      			and a.csrq >= :startYear
+	    		#end
+	    		#if(!$ut.isns($endYear))
+	      			and a.csrq <= :endYear
+	    		#end
+				#if(!$ut.isns($sjyy))
+					and a.sjyy = :sjyy
+				#end
+				#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($czendYear))
+					and a.czsj <= :czendYear
+				#end
+				#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+				#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+	    		#if(!$ut.isns($zjlb))
+					and a.zjlb = :zjlb
+				#end
+	    		#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoZJYW_SJXXB>
+	
+	<queryslrzxx>
+	<![CDATA[
+	   from PoZJLS_SFZYWCZB where 1=1
+	   #if(!$ut.isns($slh))
+	      and slh = :slh
+	   #end 
+	]]>
+	</queryslrzxx>
+	<!-- 验收信息查询 -->
+	<queryPoZJYW_YSXXB>
+		<![CDATA[
+         	from PoV_ZJ_YSXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end  
+         		#if(!$ut.isns($xm))
+					and a.xm = :xm
+				#end
+				#if(!$ut.isns($slh))
+					and a.slh = :slh
+				#end
+				#if(!$ut.isns($startYear))
+	      			and a.csrq >= :startYear
+	    		#end
+	    		#if(!$ut.isns($endYear))
+	      			and a.csrq <= :endYear
+	    		#end
+	    		#if(!$ut.isns($zzxxcwlb))
+					and a.zzxxcwlb = :zzxxcwlb
+				#end
+	    		#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($czendYear))
+					and a.czsj <= :czendYear
+				#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'
+	    		#end
+	    		#if(!$ut.isns($slstartYear))
+	      			and a.slsj >= :slstartYear
+	    		#end
+	    		#if(!$ut.isns($slendYear))
+	      			and a.slsj <= :slendYear
+	    		#end
+	    		#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+	    		#if(!$ut.isns($slrid))
+					and a.slrid = $slrid
+				#end
+	    		#if(!$ut.isns($yszt))
+					and a.yszt = :yszt
+				#end
+           	order by a.xm
+         ]]>	
+	</queryPoZJYW_YSXXB>
+	<!-- 领取发放信息查询 -->
+	<queryPoZJYW_LQFFXXB>
+		<![CDATA[
+         	from PoV_ZJ_LQFFXXB a 
+         	where 1=1
+         		$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end  
+         		#if(!$ut.isns($xm))
+					and a.xm = :xm
+				#end
+				#if(!$ut.isns($slh))
+					and a.slh = :slh
+				#end
+				#if(!$ut.isns($_start_lqrq))
+	      			and a.lqrq >= :_start_lqrq
+	    		#end
+	    		#if(!$ut.isns($_end_lqrq))
+	      			and a.lqrq <= :_end_lqrq
+	    		#end
+	    		#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($czendYear))
+					and a.czsj <= :czendYear
+				#end
+				#if(!$ut.isns($lqrxm))
+					and a.lqrxm = :lqrxm
+				#end
+				#if(!$ut.isns($slrid))
+					and a.slrid = $slrid
+				#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czrid = '${czyid}'
+	    		#end
+	    		#if(!$ut.isns($lqrsfhm))
+					and a.lqrsfhm = :lqrsfhm
+				#end
+	    		#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+	    		#if(!$ut.isns($slstartYear))
+	      			and a.slsj >= :slstartYear
+	    		#end
+	    		#if(!$ut.isns($slendYear))
+	      			and a.slsj <= :slendYear
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoZJYW_LQFFXXB>
+	<!-- 挂失信息查询 -->
+	<queryPoZJYW_GSXXB>
+		<![CDATA[
+         	from PoV_ZJ_GSXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end  
+         		#if(!$ut.isns($xm))
+					and a.xm = :xm
+				#end
+				#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($czendYear))
+					and a.czsj <= :czendYear
+				#end
+				#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+				#if(!$ut.isns($zjlb))
+	      			and a.zjlb = :zjlb
+	    		#end
+				#if(!$ut.isns($_start_ysrq))
+	      			and a.ysrq >= :_start_ysrq
+	    		#end
+	    		#if(!$ut.isns($_end_ysrq))
+	      			and a.ysrq <= :_end_ysrq
+	    		#end
+				#if(!$ut.isns($gsrxm))
+					and a.gsrxm = :gsrxm
+				#end
+				#if(!$ut.isns($gsrgmsfhm))
+					and a.gsrgmsfhm = :gsrgmsfhm
+				#end
+				#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+				#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'
+	    		#end
+           	order by a.xm
+         ]]>		
+	</queryPoZJYW_GSXXB>
+	<!-- 制证反馈信息查询 -->
+	<queryPoZJYW_ZZHKXXB>
+		<![CDATA[
+			from PoV_ZJ_ZZHKXXB a
+			where 1=1
+				$ut.linkSjfw('a.ssxq')
+				#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+				#if(!$ut.isns($gmsfhm))
+					and a.gmsfhm = :gmsfhm
+				#end
+				#if(!$ut.isns($xm))
+					and a.xm = :xm
+				#end
+				#if(!$ut.isns($slzt))
+					and a.slzt = :slzt
+				#end
+				#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+				#if(!$ut.isns($_start_zzdwffrq))
+					and a.zzdwffrq >= :_start_zzdwffrq
+				#end
+				#if(!$ut.isns($_end_zzdwffrq))
+					and a.zzdwffrq <= :_end_zzdwffrq
+				#end
+				#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($_end_czsj))
+					and a.czsj <= :_end_czsj
+				#end
+				#if(!$ut.isns($ssxq))
+					and a.ssxq = :ssxq
+				#end
+				#if(!$ut.isns($slh))
+					and a.slh = :slh
+				#end
+				#if(!$ut.isns($czyid))
+					and a.czyid = '${czyid}'
+				#end
+			order by a.xm
+		]]>
+	</queryPoZJYW_ZZHKXXB>
+	<!-- 质量反馈信息查询 -->
+	<queryPoZJYW_SLXXB2>
+		<![CDATA[
+         	from PoZJYW_SLXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('a.ssxq')
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($slzt))
+	      			and a.slzt = :slzt
+	    		#end
+	    		#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($_end_czsj))
+					and a.czsj <= :_end_czsj
+				#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($startYear))
+	      			and a.csrq <= :startYear
+	    		#end
+	    		#if(!$ut.isns($endYear))
+	      			and a.csrq >= :endYear
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+				#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end	    		
+	    		#if(!$ut.isns($slh))
+	      			and a.slh = :slh
+	    		#end
+				#if(!$ut.isns($yxqxqsstartYear))
+	      			and a.yxqxqsrq >= :yxqxqsstartYear
+	    		#end
+	    		#if(!$ut.isns($yxqxqsendYear))
+	      			and a.yxqxqsrq <= :yxqxqsendYear
+	    		#end	    		
+	    		#if(!$ut.isns($zzlx))
+	      			and a.zzlx = :zzlx
+	    		#end
+	    		#if(!$ut.isns($lqfs))
+	      			and a.lqfs = :lqfs
+	    		#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'
+	    		#end
+	    		#if(!$ut.isns($zzxxcwlb))
+	      			and a.zzxxcwlb = :zzxxcwlb
+	    		#end
+				#if(!$ut.isns($jydw))
+	      			and a.jydw = :jydw
+	    		#end
+	    		#if(!$ut.isns($jyrxm))
+	      			and a.jyrxm = :jyrxm
+	    		#end
+	    		#if(!$ut.isns($_start_jyrq))
+	      			and a.jyrq >= :_start_jyrq
+	    		#end
+	    		#if(!$ut.isns($_end_jyrq))
+	      			and a.jyrq <= :_end_jyrq
+	    		#end
+	    		#if(!$ut.isns($cldw))
+	      			and a.cldw = :cldw
+	    		#end
+	    		#if(!$ut.isns($clqk))
+	      			and a.clqk = :clqk
+	    		#end	
+	    		#if(!$ut.isns($clrqstartYear))
+	      			and a.clrq >= :clrqstartYear
+	    		#end
+	    		#if(!$ut.isns($clrqsendYear))
+	      			and a.clrq <= :clrqsendYear
+	    		#end
+	    		#if(!$ut.isns($zlhkzt))
+	      			and a.zlhkzt = :zlhkzt
+	    		#end
+	    		#if(!$ut.isns($hksjstartYear))
+	      			and a.hksj >= :hksjstartYear
+	    		#end
+	    		#if(!$ut.isns($hksjsendYear))
+	      			and a.hksj <= :hksjsendYear
+	    		#end	    		
+         		and ((a.zzxxcwlb is not null) or (a.zlhkzt is not null))
+           	order by a.xm
+         ]]>	
+	</queryPoZJYW_SLXXB2>
+	<!-- 分检结果查询 -->
+	<queryPoWW_FJJGRZB>
+		<![CDATA[
+         	from PoWW_FJJGRZB a
+         	where 1 = 1
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+	    		$ut.linkSjfw('')
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($fjpch))
+	      			and a.fjpch = :fjpch
+	    		#end
+	    		#if(!$ut.isns($slh))
+	      			and a.slh = :slh
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($slzt))
+	      			and a.slzt = :slzt
+	    		#end
+	    		#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($_end_czsj))
+					and a.czsj <= :_end_czsj
+				#end
+	    		#if(!$ut.isns($czrid))
+	      			and a.czrid = '${czrid}'
+	    		#end
+	    		#if(!$ut.isns($czrip))
+	      			and a.czrip = :czrip
+	    		#end
+	    		#if(!$ut.isns($czrdw))
+	      			and a.czrdw = :czrdw
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+           	order by a.xm
+         ]]>		
+	</queryPoWW_FJJGRZB>
+	<!-- 分发接收信息查询 -->
+	<queryPoZJYW_FFJSXXB>
+		<![CDATA[
+         	from PoZJYW_FFJSXXB a
+         	where 1 = 1
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+	    		$ut.linkSjfw('a.ssxq')
+         		#if(!$ut.isns($fjpch))
+	      			and a.fjpch = :fjpch
+	    		#end
+	    		#if(!$ut.isns($slh))
+	      			and a.slh = :slh
+	    		#end
+	    		#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($czendYear))
+					and a.czsj <= :czendYear
+				#end
+	    		#if(!$ut.isns($czrid))
+	      			and a.czrid = '${czrid}'
+	    		#end
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+				#if(!$ut.isns($czrdw))
+	      			and a.czrdw = :czrdw
+	    		#end       	
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+         		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+         		#if(!$ut.isns($slzt))
+	      			and a.slzt = :slzt
+	    		#end
+         		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+         		#if(!$ut.isns($cxbz))
+	      			and a.cxbz = :cxbz
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoZJYW_FFJSXXB>
+	<!-- 身份证信息查询 -->
+	<queryPoV_ZJ_JMSFZXXB>
+		<![CDATA[
+         	from PoV_ZJ_JMSFZXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('a.ssxq')
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($zjlb))
+	      			and a.zjlb = :zjlb
+	    		#end
+	    		#if(!$ut.isns($zjzt))
+	      			and a.zjzt = :zjzt
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+           	order by a.xm
+         ]]>			
+	</queryPoV_ZJ_JMSFZXXB>
+	<!-- 重号信息查询 -->
+	<queryPoV_HJ_CHCLXXB>
+		<![CDATA[
+         	from PoV_HJ_CHCLXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('a.ssxq')
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+         		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($clfs))
+	      			and a.clfs = :clfs
+	    		#end
+	    		#if(!$ut.isns($bchrxm))
+	      			and a.bchrxm = :bchrxm
+	    		#end
+	    		#if(!$ut.isns($bchrszpcs))
+	      			and a.bchrszpcs = :bchrszpcs
+	    		#end
+	    		#if(!$ut.isns($slstartYear))
+	      			and a.slsj >= :slstartYear
+	    		#end
+	    		#if(!$ut.isns($slendYear))
+	      			and a.slsj <= :slendYear
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoV_HJ_CHCLXXB>
+	<!-- 身份号分配信息查询 -->
+	<queryPoHJYW_GMSFHMSXMFPXXB>
+		<![CDATA[
+         	from PoV_HJ_GMSFHMSXMFPXXB a
+         	where 1 = 1
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+         		#if(!$ut.isns($xb))
+	      			and a.xb = :xb
+	    		#end
+	    		#if(!$ut.isns($slstartYear))
+	      			and a.slsj >= :slstartYear
+	    		#end
+	    		#if(!$ut.isns($slendYear))
+	      			and a.slsj <= :slendYear
+	    		#end
+	    		#if(!$ut.isns($startYear))
+	      			and a.csrq >= :startYear
+	    		#end
+	    		#if(!$ut.isns($endYear))
+	      			and a.csrq <= :endYear
+	    		#end
+	    		#if(!$ut.isns($sxh))
+	      			and a.sxh = :sxh
+	    		#end
+	    		#if(!$ut.isns($dwdm))
+	      			and a.dwdm = :dwdm
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoHJYW_GMSFHMSXMFPXXB>
+	<!-- 迁移证查询 -->
+	<queryPoHJSP_QYZXXB>
+		<![CDATA[
+         	from PoHJSP_QYZXXB a
+         	where 1 = 1
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+         		#if(!$ut.isns($qyzbh))
+	      			and a.qyzbh = :qyzbh
+	    		#end
+         		#if(!$ut.isns($czrgmsfhm))
+	      			and a.czrgmsfhm = :czrgmsfhm
+	    		#end
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+         		#if(!$ut.isns($cym))
+	      			and a.cym = :cym
+	    		#end
+         		#if(!$ut.isns($xb))
+	      			and a.xb = :xb
+	    		#end
+         		#if(!$ut.isns($mz))
+	      			and a.mz = :mz
+	    		#end
+	    		#if(!$ut.isns($startYear))
+	      			and a.csrq >= :startYear
+	    		#end
+	    		#if(!$ut.isns($endYear))
+	      			and a.csrq <= :endYear
+	    		#end
+         		#if(!$ut.isns($csdssxq))
+	      			and a.csdssxq = :csdssxq
+	    		#end
+         		#if(!$ut.isns($jgssxq))
+	      			and a.jgssxq = :jgssxq
+	    		#end
+	    		#if(!$ut.isns($whcd))
+	      			and a.whcd = :whcd
+	    		#end
+         		#if(!$ut.isns($zy))
+	      			and a.zy = :zy
+	    		#end
+         		#if(!$ut.isns($hyzk))
+	      			and a.hyzk = :hyzk
+	    		#end
+         		#if(!$ut.isns($qyyy))
+	      			and a.qyyy = :qyyy
+	    		#end
+	    		#if(!$ut.isns($sqryczrgx1))
+	      			and a.sqryczrgx1 = :sqryczrgx1
+	    		#end
+	    		#if(!$ut.isns($gmsfhm1))
+	      			and a.gmsfhm1 = :gmsfhm1	
+	    		#end
+	    		#if(!$ut.isns($xm1))
+	      			and a.xm1 = :xm1
+	    		#end
+	    		#if(!$ut.isns($cym1))
+	      			and a.cym1 = :cym1
+	    		#end
+	    		#if(!$ut.isns($csdxz1))
+	      			and a.csdxz1 = :csdxz1
+	    		#end
+	    		#if(!$ut.isns($zy1))
+	      			and a.zy1 = :zy1
+	    		#end
+	    		#if(!$ut.isns($qyyy1))
+	      			and a.qyyy1 = :qyyy1
+	    		#end
+	    		#if(!$ut.isns($sqryczrgx2))
+	      			and a.sqryczrgx2 = :sqryczrgx2
+	    		#end
+	    		#if(!$ut.isns($gmsfhm2))
+	      			and a.gmsfhm2 = :gmsfhm2	
+	    		#end
+	    		#if(!$ut.isns($xm2))
+	      			and a.xm2 = :xm2
+	    		#end
+	    		#if(!$ut.isns($cym2))
+	      			and a.cym2 = :cym2
+	    		#end
+	    		#if(!$ut.isns($csdxz2))
+	      			and a.csdxz2 = :csdxz2
+	    		#end
+	    		#if(!$ut.isns($zy2))
+	      			and a.zy2 = :zy2
+	    		#end
+	    		#if(!$ut.isns($qyyy2))
+	      			and a.qyyy2 = :qyyy2
+	    		#end
+	    		#if(!$ut.isns($startYear2))
+	      			and a.csrq2 >= :startYear2
+	    		#end
+	    		#if(!$ut.isns($endYear2))
+	      			and a.csrq2 <= :endYear2
+	    		#end
+	    		#if(!$ut.isns($sqryczrgx3))
+	      			and a.sqryczrgx3 = :sqryczrgx3
+	    		#end
+	    		#if(!$ut.isns($gmsfhm3))
+	      			and a.gmsfhm3 = :gmsfhm3	
+	    		#end
+	    		#if(!$ut.isns($xm3))
+	      			and a.xm3 = :xm3
+	    		#end
+	    		#if(!$ut.isns($cym3))
+	      			and a.cym3 = :cym3
+	    		#end
+	    		#if(!$ut.isns($csdxz3))
+	      			and a.csdxz3 = :csdxz3
+	    		#end
+	    		#if(!$ut.isns($zy3))
+	      			and a.zy3 = :zy3
+	    		#end
+	    		#if(!$ut.isns($qyyy3))
+	      			and a.qyyy3 = :qyyy3
+	    		#end
+	    		#if(!$ut.isns($yzzxz))
+	      			and a.yzzxz = :yzzxz
+	    		#end
+	    		#if(!$ut.isns($qwdxz))
+	      			and a.qwdxz = :qwdxz
+	    		#end
+	    		#if(!$ut.isns($qfrqstartYear))
+	      			and a.qfrq >= :qfrqstartYear
+	    		#end
+	    		#if(!$ut.isns($qfrqendYear))
+	      			and a.qfrq <= :qfrqendYear
+	    		#end
+	    		#if(!$ut.isns($_start_yxqxjzrq))
+	      			and a.yxqxjzrq >= :_start_yxqxjzrq
+	    		#end
+	    		#if(!$ut.isns($_end_yxqxjzrq))
+	      			and a.yxqxjzrq <= :_end_yxqxjzrq
+	    		#end
+	    		#if(!$ut.isns($qfdwdm))
+	      			and a.qfdwdm = :qfdwdm
+	    		#end
+	    		#if(!$ut.isns($cbr))
+	      			and a.cbr = :cbr
+	    		#end
+	    		#if(!$ut.isns($qrbldw))
+	      			and a.qrbldw = :qrbldw
+	    		#end
+         		#if(!$ut.isns($qrbldwdm))
+	      			and a.qrbldwdm = :qrbldwdm
+	    		#end
+	    		#if(!$ut.isns($qrblr))
+	      			and a.qrblr = :qrblr
+	    		#end
+	    		#if(!$ut.isns($zqzbh))
+	      			and a.zqzbh = :zqzbh
+	    		#end
+	    		#if(!$ut.isns($bz))
+	      			and a.bz = :bz
+	    		#end
+	    		#if(!$ut.isns($yznf))
+	      			and a.yznf = :yznf	
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoHJSP_QYZXXB>
+	<!-- 准迁证查询 -->
+	<queryPoHJSP_ZQZXXB>
+		<![CDATA[
+         	from PoHJSP_ZQZXXB a
+         	where 1 = 1
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+         		#if(!$ut.isns($zqid))
+	      			and a.zqid = :zqid
+	    		#end
+	    		#if(!$ut.isns($zjbh))
+	      			and a.zjbh = :zjbh
+	    		#end
+	    		#if(!$ut.isns($qyrxm1))
+	      			and a.qyrxm1 = :qyrxm1
+	    		#end
+	    		#if(!$ut.isns($qyrgmsfhm1))
+	      			and a.qyrgmsfhm1 = :qyrgmsfhm1
+	    		#end
+	    		#if(!$ut.isns($qyrysqrgx2))
+	      			and a.qyrysqrgx2 = :qyrysqrgx2
+	    		#end
+         		#if(!$ut.isns($qyrxm2))
+	      			and a.qyrxm2 = :qyrxm2
+	    		#end
+	    		#if(!$ut.isns($_start_qyrcsrq2))
+	      			and a.qyrcsrq2 >= :_start_qyrcsrq2
+	    		#end
+	    		#if(!$ut.isns($_end_qyrcsrq2))
+	      			and a.qyrcsrq2 <= :_end_qyrcsrq2
+	    		#end
+         		#if(!$ut.isns($qyrgmsfhm2))
+	      			and a.qyrgmsfhm2 = :qyrgmsfhm2
+	    		#end
+         		#if(!$ut.isns($qyrxm3))
+	      			and a.qyrxm3 = :qyrxm3
+	    		#end
+	    		#if(!$ut.isns($_start_qyrcsrq3))
+	      			and a.qyrcsrq3 >= :_start_qyrcsrq3
+	    		#end
+	    		#if(!$ut.isns($_end_qyrcsrq3))
+	      			and a.qyrcsrq3 <= :_end_qyrcsrq3
+	    		#end
+	    		#if(!$ut.isns($qyrgmsfhm3))
+	      			and a.qyrgmsfhm3 = :qyrgmsfhm3
+	    		#end
+         		#if(!$ut.isns($qyrxm4))
+	      			and a.qyrxm4 = :qyrxm4
+	    		#end
+	    		#if(!$ut.isns($_start_qyrcsrq4))
+	      			and a.qyrcsrq4 >= :_start_qyrcsrq4
+	    		#end
+	    		#if(!$ut.isns($_end_qyrcsrq4))
+	      			and a.qyrcsrq4 <= :_end_qyrcsrq4
+	    		#end
+         		#if(!$ut.isns($qyrgmsfhm4))
+	      			and a.qyrgmsfhm4 = :qyrgmsfhm4
+	    		#end
+	    		#if(!$ut.isns($qyrhkdjjg))
+	      			and a.qyrhkdjjg = :qyrhkdjjg
+	    		#end
+	    		#if(!$ut.isns($qyrzzxz))
+	      			and a.qyrzzxz = :qyrzzxz
+	    		#end
+	    		#if(!$ut.isns($qrdxz))
+	      			and a.qrdxz = :qrdxz	
+	    		#end
+	    		#if(!$ut.isns($qrdhkdjjg))
+	      			and a.qrdhkdjjg = :qrdhkdjjg
+	    		#end
+	    		#if(!$ut.isns($zqyy))
+	      			and a.zqyy = :zqyy
+	    		#end
+	    		#if(!$ut.isns($pzjg))
+	      			and a.pzjg = :pzjg
+	    		#end
+	    		#if(!$ut.isns($cbr))
+	      			and a.cbr = :cbr
+	    		#end
+	    		#if(!$ut.isns($bz))
+	      			and a.bz = :bz
+	    		#end
+	    		#if(!$ut.isns($_start_qfrq))
+	      			and a.qfrq >= :_start_qfrq
+	    		#end
+	    		#if(!$ut.isns($_end_qfrq))
+	      			and a.qfrq <= :_end_qfrq
+	    		#end
+	    		#if(!$ut.isns($qyrs))
+	      			and a.qyrs = :qyrs
+	    		#end
+	    		#if(!$ut.isns($spywid))
+	      			and a.spywid = :spywid	
+	    		#end
+         ]]>	
+	</queryPoHJSP_ZQZXXB>
+	<!-- 一代证受理信息查询 -->
+	<queryPoV_ZJ_YDZSLXXB>
+		<![CDATA[
+         from PoV_ZJ_YDZSLXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('')
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+	    		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($mz))
+	      			and a.mz = :mz	
+	    		#end
+	    		#if(!$ut.isns($startYear))
+	      			and a.csrq >= :startYear
+	    		#end
+	    		#if(!$ut.isns($endYear))
+	      			and a.csrq <= :endYear
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs	
+	    		#end
+	    		#if(!$ut.isns($dkdy))
+	      			and a.dkdy = :dkdy
+	    		#end
+	    		#if(!$ut.isns($yxqx))
+	      			and a.yxqx = :yxqx	
+	    		#end
+	    		#if(!$ut.isns($qfrqstartYear))
+	      			and a.qfrq >= :qfrqstartYear
+	    		#end
+	    		#if(!$ut.isns($qfrqendYear))
+	      			and a.qfrq <= :qfrqendYear
+	    		#end
+	    		#if(!$ut.isns($bzyy))
+	      			and a.bzyy = :bzyy
+	    		#end
+	    		#if(!$ut.isns($czstartYear))
+					and a.czsj >= :czstartYear
+				#end
+				#if(!$ut.isns($czendYear))
+					and a.czsj <= :czendYear
+				#end
+	    		#if(!$ut.isns($bzlb))
+	      			and a.bzlb = :bzlb
+	    		#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'	
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoV_ZJ_YDZSLXXB>
+	<!-- 审核信息查询 -->
+	<queryPoV_ZJ_SHQFXXB>
+		<![CDATA[
+         from PoV_ZJ_SHQFXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('a.ssxq')
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($slzt))
+					and a.slzt = :slzt
+				#end
+	    		#if(!$ut.isns($shqflx))
+	      			and a.shqflx = :shqflx	
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs	
+	    		#end
+	    		#if(!$ut.isns($shrqstartYear))
+	      			and a.shrq >= :shrqstartYear
+	    		#end
+	    		#if(!$ut.isns($shrqsendYear))
+	      			and a.shrq <= :shrqsendYear
+	    		#end
+	    		#if(!$ut.isns($shrid))
+	      			and a.shrid = :shrid
+	    		#end
+	    		#if(!$ut.isns($shdw))
+	      			and a.shdw = :shdw	
+	    		#end
+	    		#if(!$ut.isns($shqk))
+	      			and a.shqk = :shqk
+	    		#end
+	    		#if(!$ut.isns($qfrqstartYear))
+	      			and a.qfrq >= :qfrqstartYear
+	    		#end
+	    		#if(!$ut.isns($qfrqendYear))
+	      			and a.qfrq <= :qfrqendYear
+	    		#end
+	    		#if(!$ut.isns($qfrid))
+	      			and a.qfrid = :qfrid
+	    		#end
+	    		#if(!$ut.isns($qfdw))
+	      			and a.qfdw = :qfdw	
+	    		#end
+	    		#if(!$ut.isns($slstartYear))
+	      			and a.slsj >= :slstartYear
+	    		#end
+	    		#if(!$ut.isns($slendYear))
+	      			and a.slsj <= :slendYear
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+	    		#if(!$ut.isns($slh))
+	      			and a.slh = :slh
+	    		#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'	
+	    		#end
+	    		and  a.jlbz='1'
+           	order by a.xm
+         ]]>	
+	</queryPoV_ZJ_SHQFXXB>
+	<!-- 销毁信息查询 -->
+	<queryPoV_ZJ_XHXXB>
+		<![CDATA[
+         from PoV_ZJ_XHXXB a
+         	where 1 = 1
+         		$ut.linkSjfw('a.ssxq')
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         		
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($zjlb))
+	      			and a.zjlb = :zjlb
+	    		#end
+	    		#if(!$ut.isns($_start_xhrq))
+	      			and a.xhrq >= :_start_xhrq
+	    		#end
+	    		#if(!$ut.isns($_end_xhrq))
+	      			and a.xhrq <= :_end_xhrq
+	    		#end
+	    		#if(!$ut.isns($pcs))
+					and a.pcs = :pcs
+				#end
+	    		#if(!$ut.isns($czstartYear))
+	      			and a.czsj >= :czstartYear
+	    		#end
+	    		#if(!$ut.isns($czendYear))
+	      			and a.czsj <= :czendYear
+	    		#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'	
+	    		#end
+           	order by a.xm
+         ]]>	
+	</queryPoV_ZJ_XHXXB>
+	<!-- 户关联信息查询 -->
+	<queryPoHJXX_HGLGXB>
+		<![CDATA[
+			select new PoV_HJXX_HGLGXB(a.glid,a.hhid,b.hh,a.glhhid,a.glgx,a.jljlsj,a.jljlrid,a.zt) 
+			from PoHJXX_HGLGXB a,PoHJXX_HXXB b
+         	where 1 = 1 
+         		and b.jlbz = '1'
+         		and b.cxbz = '0'
+         		and a.glhhid = b.hhid
+	    		#if(!$ut.isns($hhnbid))
+					and b.hhnbid = '${hhnbid}'
+				#end
+	    		#if(!$ut.isns($hhid))
+					and a.hhid = '${hhid}'
+				#end
+	    		#if(!$ut.isns($glhhid))
+					and a.glhhid = '${glhhid}'
+				#end
+           	order by a.jljlsj
+         ]]>
+	</queryPoHJXX_HGLGXB>
+	<!-- 户关联信息查询 -->
+	<queryPoHJXX_HGLGXB1>
+		<![CDATA[
+         	select new PoV_HJXX_HGLGXB(a.glid,a.hhid,b.hh,a.glhhid,a.glgx,a.jljlsj,a.jljlrid,a.zt) 
+         	from PoHJXX_HGLGXB a,PoHJXX_HXXB b
+         	where a.glhhid = b.hhid
+         		and b.jlbz = '1'
+         		and b.cxbz = '0'
+	    		#if(!$ut.isns($hhid) && !$ut.isns($glhhid))
+					and (
+							(a.hhid = '${hhid}' and a.glhhid = '${glhhid}') 
+							or 
+							(a.hhid = '${glhhid}' and a.glhhid = '${hhid}') 
+						)
+				#end
+         ]]>
+	</queryPoHJXX_HGLGXB1>
+	
+	<!-- 打印信息查询 -->
+	<queryPoHJXX_DYXXB>
+		<![CDATA[
+         	select a from PoHJXX_DYXXB a
+         	where 1=1
+	    		#if(!$ut.isns($ryid))
+					and a.ryid = '${ryid}'
+				#end
+				order by a.slsj desc
+         ]]>
+	</queryPoHJXX_DYXXB>
+	
+	<!-- 历史信息信息查询 -->
+	<queryPoHJXX_CZRKJBXXB2>
+		<![CDATA[
+         	from PoHJXX_CZRKJBXXB a
+         	where a.jlbz = '2' 
+         		and a.ryid = (
+         			select b.ryid from PoHJXX_CZRKJBXXB b 
+         				where 1 = 1 
+		           		#if(!$ut.isns($rynbid))
+			      			and b.rynbid = '${rynbid}'
+			    		#end
+         		)
+           	order by a.xm
+         ]]>
+	</queryPoHJXX_CZRKJBXXB2>
+	
+	<!-- 常住人口查询 -->
+	<!-- #if(!$ut.isns($ryfw)&&1 == $ryfw)
+	      			$ut.linkSjfw('a.pcs')
+	    		#end -->
+	<queryPoHJXX_CZRKJBXXB3>
+		<![CDATA[
+         	from 
+         		#if(!$ut.isns($ryzl2))
+    				PoV_HJXX_CZRKJBXXB a	
+    			#else
+    				PoHJXX_CZRKJBXXB a	
+			    #end
+	        		
+         	where 1 = 1 
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($jlx))
+	      			and a.jlx = :jlx
+	    		#end
+	    		#if(!$ut.isns($mlph))
+	    			and a.mlph = :mlph
+	    		#end
+	    		#if(!$ut.isns($mlxz))
+	      			and a.mlxz = :mlxz
+	    		#end
+	    		#if(!$ut.isns($jthzl))
+	      			and a.jthzl = :jthzl
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($xb))
+	      			and a.xb = :xb
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+	    		#if(!$ut.isns($rynbid))
+	      			and a.rynbid = '${rynbid}'
+	    		#end
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = '${ryid}'
+	    		#end
+	    		#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= '${_start_csrq}'
+	    		#end
+	    		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < '${_end_csrq}'
+	    		#end
+	    		#if(!$ut.isns($editendYear))
+	      			and a.csrq >= '${editendYear}'
+	    		#end
+	    		#if(!$ut.isns($editstartYear))
+	      			and a.csrq < '${editstartYear}'
+	    		#end
+	    		#if(!$ut.isns($_end_csrq1))
+	      			and a.csrq <= :_end_csrq1
+	    		#end
+	    		#if(!$ut.isns($_start_csrq1))
+	      			and a.csrq > :_start_csrq1
+	    		#end
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = '${hh}'
+	    		#end
+	    		#if(!$ut.isns($yhkxzmc))
+	      			and a.yhkxzmc = :yhkxzmc
+	    		#end
+	    		#if(!$ut.isns($hhnbid))
+	      			and a.hhnbid = '${hhnbid}'
+	    		#end
+	    		#if(!$ut.isns($csrq))
+	      			and a.csrq = :csrq
+	    		#end
+	    		#if(!$ut.isns($zjlb))
+	      			and a.zjlb = :zjlb
+	    		#end
+  				#if(!$ut.isns($mlpnbid))
+	      			and a.mlpnbid = '${mlpnbid}'
+	    		#end
+	    		#if(!$ut.isns($ryfw))
+	    			#if(1 == $rkzt1 && !$ut.isns($cksjfw))
+	         			and $cksjfw
+				    #end
+	    			#if(2 == $rkzt2 && !$ut.isns($cksjfw))
+	         			and $cksjfw
+				    #end
+	    		#end
+	    		
+	    		#if($ut.isns($rkzt3))
+	    			#if(1 == $rkzt1 && $ut.isns($rkzt2) && !$ut.isns($ryzl2))
+	         			and (a.ryzt = '0')
+				    #end
+				    #if(1 == $rkzt1&&$ut.isns($rkzt2)&&$ut.isns($ryzl2))
+	         			and (a.ryzt = '0' and a.jlbz = '1')
+				    #end
+		    		#if($ut.isns($rkzt1)&&1 == $rkzt2&&!$ut.isns($ryzl2))
+		         		and (a.ryzt = '1')
+				    #end
+				    #if($ut.isns($rkzt1)&&1 == $rkzt2&&$ut.isns($ryzl2))
+		         		and (a.ryzt = '1' and a.jlbz = '1')
+				    #end
+		    		#if(1 == $rkzt1&&1 == $rkzt2&&!$ut.isns($ryzl2))
+		         		and ((a.ryzt = '0')  or (a.ryzt = '1'))
+				    #end
+				    #if(1 == $rkzt1&&1 == $rkzt2&&$ut.isns($ryzl2))
+		         		and ((a.ryzt = '0' and a.jlbz = '1')  or (a.ryzt = '1' and a.jlbz = '1'))
+				    #end
+    			#else
+    				and (
+   					#if(1 == $rkzt1&&$ut.isns($rkzt2)&&!$ut.isns($ryzl2))
+	         			(a.ryzt = '0') or
+				    #end
+				    #if(1 == $rkzt1&&$ut.isns($rkzt2)&&$ut.isns($ryzl2))
+	         			(a.ryzt = '0' and a.jlbz = '1') or
+				    #end
+		    		#if($ut.isns($rkzt1)&&1 == $rkzt2&&!$ut.isns($ryzl2))
+		         		(a.ryzt = '1') or
+				    #end
+				    #if($ut.isns($rkzt1)&&1 == $rkzt2&&$ut.isns($ryzl2))
+		         		(a.ryzt = '1' and a.jlbz = '1') or
+				    #end
+		    		#if(1 == $rkzt1&&1 == $rkzt2&&!$ut.isns($ryzl2))
+		         		(a.ryzt = '0')  or (a.ryzt = '1') or
+				    #end
+				    #if(1 == $rkzt1&&1 == $rkzt2&&$ut.isns($ryzl2))
+		         		(a.ryzt = '0' and a.jlbz = '1')  or (a.ryzt = '1' and a.jlbz = '1') or
+				    #end
+				    #if(0 == $rkzt4)
+				    	(a.ryzt > '1' and a.bdfw >= '21')
+				    #end
+				    
+				    #if(1 == $rkzt4)
+				    	(a.ryzt > '1' and a.bdfw >= '30')
+				    #end
+				    #if(2 == $rkzt4)
+				    	(a.ryzt > '1' and a.bdfw >= '40')
+				    #end
+				    #if(3 == $rkzt4)
+				    	(a.ryzt > '1')
+				    #end
+				    #if(4 == $rkzt4)
+				    	(a.ryzt > '1' and a.jlbz = '1')
+				    #end
+				    )
+		    	#end
+         		#if(!$ut.isns($ryzl1))
+         			and a.cxbz = 0
+	         		and a.jlbz='1'
+			    #else
+	         		and a.cxbz = 0
+			    #end
+			    #if(!$ut.isns($mlpnbid))
+	      			order by a.xm
+	    		#end
+         ]]>
+	</queryPoHJXX_CZRKJBXXB3>
+	    		<!-- #if(1 == $rkzt1&&$ut.isns($rkzt2)&&$ut.isns($rkzt3))
+	         		and (ryzt = '0' and jlbz = '1')
+			    #end
+	    		#if($ut.isns($rkzt1)&&1 == $rkzt2&&$ut.isns($rkzt3))
+	         		and (ryzt = '1' and jlbz = '1')
+			    #end
+	    		#if(ut.isns($rkzt1)&&$ut.isns($rkzt2)&&1 == $rkzt3&&!$ut.isns($rkzt4))
+	         		and (ryzt = '0' and jlbz = '1')
+			    #end
+         		#if(1 == $ryfw && !$ut.isns($fw))
+	         		and a.pcs = $fw
+			    #end
+	         	#if(2 == $ryfw && !$ut.isns($fw))
+	         		and a.ssxq like :fw%
+	         	#end
+			    
+	    		and(
+	    			a.jlbz = 1
+	         		#if(!$ut.isns($rkzt1))
+	    				and	a.ryzt = 0
+				    #end
+	         		#if(!$ut.isns($rkzt2))
+		         		#if(!$ut.isns($rkzt1))
+		    				or
+					    #end
+	    				a.ryzt = 1
+				    #end
+	         		#if(!$ut.isns($rkzt3))
+	         			#if(!$ut.isns($rkzt1))
+		    				or
+		    			#else
+		    				#if(!$ut.isns($rkzt2))
+		    					or
+					    	#end
+					    #end
+		         		#if(!$ut.isns($rkzt4))
+		         			4 = 4 
+					    #end
+	    				or a.ryzt > 1
+				    #end
+	    		) -->	
+	<!-- 常住人口查询 -->
+	<queryPoHJXX_CZRKJBXXB4>
+		<![CDATA[
+         	from 
+         	#if(!$ut.isns($ryzl2))
+   				PoV_HJXX_CZRKJBXXB a	
+   			#else
+   				PoHJXX_CZRKJBXXB a	
+		    #end
+         	where 1 = 1 
+         		#if(!$ut.isns($rynbid)&&'null'!= $rynbid&&!$ut.isns($rynbid)&&!$ut.isns($ryid)&&'null'!= $ryid&&!$ut.isns($ryid))
+	      			and (a.rynbid = '${rynbid}' and a.ryid = '${ryid}')
+	      		#else
+	      			#if(!$ut.isns($rynbid)&&'null'!= $rynbid)
+		      			and a.rynbid = '${rynbid}'
+		         		and a.cxbz = '0'
+		         		and a.jlbz='1'
+		         	#else
+		         		#if(!$ut.isns($ryid)&&'null'!= $ryid)
+			      			and a.ryid = '${ryid}'
+			         		and a.cxbz = '0'
+			         		and a.jlbz='1'
+			         	#else
+			         		and a.cxbz = '0'
+			         		and a.jlbz='1'
+			         		and a.ryzt ='0'
+			         	#end
+		    		#end
+	    		#end
+	    		#if(!$ut.isns($hhnbid))
+	      			and a.hhnbid = '${hhnbid}'
+	    		#end
+	    		#if(!$ut.isns($mlpnbid))
+	      			and a.mlpnbid = '${mlpnbid}'
+	    		#end
+	    		
+         		#if(!$ut.isns($cphbbg))
+	         		and a.ryzt='0'
+	         		and a.cxbz = '0'
+	         		and a.jlbz='1'
+			    #end
+           	order by a.gxsj
+         ]]>
+	</queryPoHJXX_CZRKJBXXB4>
+	<queryPoHJXX_CZRKJBXXB5>
+		<![CDATA[
+         	from PoHJXX_CZRKJBXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($hhnbid))
+	      			and a.hhnbid = '${hhnbid}'
+	    		#end
+         		and a.ryzt='0'
+         		and a.cxbz = '0'
+         		and a.jlbz='1'
+         ]]>
+	</queryPoHJXX_CZRKJBXXB5>
+	<!-- 同户人员信息查询  -->
+	<queryPoHJXX_CZRKJBXXB6>
+		<![CDATA[
+         	from PoHJXX_CZRKJBXXB a
+         	where 1 = 1 
+	    		#if(!$ut.isns($hhnbid))
+	      			and a.hhnbid = '${hhnbid}'
+	    		#end
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = '${ryid}'
+	    		#end
+         		and a.cxbz = '0'
+         		and a.jlbz='1'
+         ]]>
+	</queryPoHJXX_CZRKJBXXB6>	
+	<queryPoHJXX_CZRKJBXXB7>
+		<![CDATA[
+        	from PoV_HJXX_CZRKJBXXB a
+        	where 1 = 1 
+    		#if(!$ut.isns($rynbid))
+				and a.rynbid = '${rynbid}'
+			#end
+        ]]>
+	</queryPoHJXX_CZRKJBXXB7>
+	<!-- 迁出注销信息查询 -->
+	<queryPoHJYW_QCZXXXB>
+		<![CDATA[
+         	from  
+         	#if(!$ut.isns($gdxx))
+   				PoOLD_HJYW_QCZXXXB a	
+   			#else
+   				PoV_HJ_QCZXXXB a	
+		    #end
+         	where 1 = 1
+         	$ut.linkSjfw('a.jcwh')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         	
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = ${slrid}
+	    		#end
+	    		#if(!$ut.isns($qclb))
+	      			and a.qclb = :qclb
+	    		#end
+	    		#if(!$ut.isns($_start_qcrq))
+	      			and a.qcrq >= :_start_qcrq
+	    		#end
+	    		#if(!$ut.isns($_end_qcrq))
+	      			and a.qcrq < :_end_qcrq
+	    		#end
+	    		#if(!$ut.isns($zqzbh))
+	      			and a.zqzbh = :zqzbh
+	    		#end
+	    		#if(!$ut.isns($qyzbh))
+	      			and a.qyzbh = :qyzbh
+	    		#end
+	    		#if(!$ut.isns($yhzgx))
+	      			and a.yhzgx = :yhzgx
+	    		#end
+	    		#if(!$ut.isns($_start_slsj))
+	      			and a.slsj >= :_start_slsj
+	    		#end
+	    		#if(!$ut.isns($_end_slsj))
+	      			and a.slsj <= :_end_slsj
+	    		#end
+	    		#if(!$ut.isns($hhid))
+	      			and a.hhid = '${hhid}'
+	    		#end
+	    		#if(!$ut.isns($rynbid))
+					and a.rynbid = '${rynbid}'
+				#end
+				#if(!$ut.isns($ryid))
+					and a.ryid = '${ryid}'
+				#end
+				#if(!$ut.isns($qczxid))
+					and a.qczxid in  (${qczxid})
+				#end
+				
+				#if($ut.isns($gdxx)&&!$ut.isns($yzsqc))
+	      			and a.kdqqy_qrdqbm is not null
+	    		#end
+         		and a.ywlx < '3'
+         		order by a.slsj
+         ]]>
+	</queryPoHJYW_QCZXXXB>
+	<!-- 迁入登记信息查询 -->
+	<queryPoHJYW_QRDJXXB>
+		<![CDATA[
+         	from 
+         	#if(!$ut.isns($gdxx))
+   				PoOLD_HJYW_QRDJXXB a	
+   			#else
+   				PoV_HJ_QRDJXXB a	
+		    #end
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         	
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= :_start_csrq
+	    		#end
+	    		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < :_end_csrq
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($qrlb))
+	      			and a.qrlb = :qrlb
+	    		#end
+	    		#if(!$ut.isns($_start_qrrq))
+	      			and a.qrrq >= :_start_qrrq
+	    		#end
+	    		#if(!$ut.isns($_end_qrrq))
+	      			and a.qrrq < :_end_qrrq
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = ${slrid}
+	    		#end
+	    		#if(!$ut.isns($hhid))
+	      			and a.hhid = '${hhid}'
+	    		#end
+	    		#if(!$ut.isns($zqzbh))
+	      			and a.zqzbh = :zqzbh
+	    		#end
+	    		#if(!$ut.isns($qyzbh))
+	      			and a.qyzbh = :qyzbh
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = $ryid
+	    		#end
+         		and a.ywlx < '3'
+           	order by a.slsj
+         ]]>
+	</queryPoHJYW_QRDJXXB>
+	<!-- 出生登记信息查询 -->
+	<queryPoHJYW_CSDJXXB>
+		<![CDATA[
+         	from  
+			#if(!$ut.isns($gdxx))
+				PoOLD_HJYW_CSDJXXB a	
+			#else
+				PoV_HJ_CSDJXXB a	
+			#end         	
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end          	
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($yhzgx))
+	      			and a.yhzgx = :yhzgx
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= :_start_csrq
+	    		#end
+	    		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < :_end_csrq
+	    		#end
+	    		#if(!$ut.isns($_start_slsj))
+	      			and a.slsj >= :_start_slsj
+	    		#end
+	    		#if(!$ut.isns($_end_slsj))
+	      			and a.slsj < :_end_slsj
+	    		#end
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = :hh
+	    		#end 
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = $ryid
+	    		#end 
+	    		#if(!$ut.isns($cszmbh))
+	      			and a.cszmbh = :cszmbh
+	    		#end
+           	order by a.slsj
+         ]]>	
+	</queryPoHJYW_CSDJXXB>
+	<!-- 死亡注销信息查询 -->
+	<queryPoHJYW_SWZXXXB>
+		<![CDATA[
+         	from 
+         	#if(!$ut.isns($gdxx))
+				PoOLD_HJYW_SWZXXXB a	
+			#else
+				PoV_HJ_SWZXXXB a	
+			#end
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end          	
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+         		#if(!$ut.isns($hjywid))
+	      			and a.hjywid = '${hjywid}'
+	    		#end
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = '${ryid}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($yhzgx))
+	      			and a.yhzgx = :yhzgx
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($_start_slsj))
+	      			and a.slsj >= :_start_slsj
+	    		#end
+	    		#if(!$ut.isns($_end_slsj))
+	      			and a.slsj < :_end_slsj
+	    		#end
+           	order by a.slsj
+         ]]>	
+	</queryPoHJYW_SWZXXXB>
+	<!-- 住址变动信息查询 -->
+	<queryPoHJYW_ZZBDXXB>
+		<![CDATA[
+         	from 
+         	#if(!$ut.isns($gdxx))
+				PoOLD_HJYW_ZZBDXXB a	
+			#else
+				PoV_HJ_ZZBDXXB a	
+			#end
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end          	
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($yhzgx))
+	      			and a.yhzgx = :yhzgx
+	    		#end
+	    		#if(!$ut.isns($qyzbh))
+	      			and a.qyzbh = :qyzbh
+	    		#end
+	    		#if(!$ut.isns($_start_zzbdrq))
+	      			and a.zzbdrq >= :_start_zzbdrq
+	    		#end
+	    		#if(!$ut.isns($_end_zzbdrq))
+	      			and a.zzbdrq < :_end_zzbdrq
+	    		#end
+	    		#if(!$ut.isns($zzbdlb))
+	      			and a.zzbdlb = :zzbdlb
+	    		#end
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = :hh
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = $ryid
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		and ywlx < '3'
+	    		order by a.slsj
+           	]]>		
+	</queryPoHJYW_ZZBDXXB>
+	<!-- 变更更正信息查询 -->
+	<queryPoHJYW_BGGZXXB1>
+		<![CDATA[
+         	from 
+	         	#if(!$ut.isns($gdxx))
+	   				PoOLD_HJYW_BGGZXXB a	
+	   			#else
+	   				PoHJYW_BGGZXXB a	
+			    #end
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         	
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($bggzxm))
+	      			and a.bggzxm = :bggzxm
+	    		#end
+	    		#if(!$ut.isns($_start_bggzrq))
+	      			and a.bggzrq >= :_start_bggzrq
+	    		#end
+	    		#if(!$ut.isns($_end_bggzrq))
+	      			and a.bggzrq < :_end_bggzrq
+	    		#end
+	    		#if(!$ut.isns($bggzlb))
+	      			and a.bggzlb = :bggzlb
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		order by a.slsj
+           	]]>		
+	</queryPoHJYW_BGGZXXB1>
+	<!-- 户别变更 信息查询-->
+	<queryPoHJYW_HBBGXXB>
+		<![CDATA[
+         	from PoV_HJ_HBBGXXB a
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end 
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = '${ryid}'
+	    		#end        	
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($xb))
+	      			and a.xb = :xb
+	    		#end
+				#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= :_start_csrq
+	    		#end
+	    		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < :_end_csrq
+	    		#end	    		
+	    		#if(!$ut.isns($yhzgx))
+	      			and a.yhzgx = :yhzgx
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($jlx))
+	      			and a.jlx = :jlx
+	    		#end
+	    		#if(!$ut.isns($zrq))
+	      			and a.zrq = :zrq
+	    		#end
+	    		#if(!$ut.isns($xzjd))
+	      			and a.xzjd = :xzjd
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+         		#if(!$ut.isns($hbbglb))
+	      			and a.hbbglb = :hbbglb
+	    		#end
+	    		#if(!$ut.isns($bgqhb))
+	      			and a.bgqhb = :bgqhb
+	    		#end
+	    		#if(!$ut.isns($bghhb))
+	      			and a.bghhb = :bghhb
+	    		#end
+	    		#if(!$ut.isns($bdfw))
+	      			and a.bdfw = :bdfw
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($sbrgmsfhm))
+	      			and a.sbrgmsfhm = :sbrgmsfhm
+	    		#end
+	    		#if(!$ut.isns($_start_slsj))
+					and a.slsj >= :_start_slsj
+				#end
+				#if(!$ut.isns($_end_slsj))
+					and a.slsj < :_end_slsj
+				#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = :sldw
+	    		#end
+           	order by a.slsj
+           	]]>
+	</queryPoHJYW_HBBGXXB>
+	<!-- 户籍补录信息查询 -->
+	<queryPoHJYW_HJBLXXB>
+		<![CDATA[
+         	from PoV_HJ_HJBLXXB a
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end          	
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = '${ryid}'
+	    		#end
+	    		#if(!$ut.isns($xb))
+	      			and a.xb = :xb
+	    		#end
+				#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= :_start_csrq
+	    		#end
+	    		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < :_end_csrq
+	    		#end	    		
+	    		#if(!$ut.isns($yhzgx))
+	      			and a.yhzgx = :yhzgx
+	    		#end
+	    		#if(!$ut.isns($hb))
+	      			and a.hb = :hb
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($jlx))
+	      			and a.jlx = :jlx
+	    		#end
+	    		#if(!$ut.isns($zrq))
+	      			and a.zrq = :zrq
+	    		#end
+	    		#if(!$ut.isns($xzjd))
+	      			and a.xzjd = :xzjd
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+         		#if(!$ut.isns($hjbllb))
+	      			and a.hjbllb = :hjbllb
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($sbrgmsfhm))
+	      			and a.sbrgmsfhm = :sbrgmsfhm
+	    		#end
+	    		#if(!$ut.isns($_start_slsj))
+					and a.slsj >= :_start_slsj
+				#end
+				#if(!$ut.isns($_end_slsj))
+					and a.slsj < :_end_slsj
+				#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = :sldw
+	    		#end
+           	order by a.slsj
+           	]]>	
+	</queryPoHJYW_HJBLXXB>
+	<!-- 户籍删除信息查询 -->
+	<queryPoHJYW_HJSCXXB>
+		<![CDATA[
+         	from PoV_HJ_HJSCXXB a
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end    
+	    		#if(!$ut.isns($ryid))
+	      			and a.ryid = '${ryid}'
+	    		#end      	
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($xb))
+	      			and a.xb = :xb
+	    		#end
+	    		#if(!$ut.isns($mz))
+	      			and a.mz = :mz
+	    		#end
+				#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= :_start_csrq
+	    		#end
+	    		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < :_end_csrq
+	    		#end	    		
+	    		#if(!$ut.isns($yhzgx))
+	      			and a.yhzgx = :yhzgx
+	    		#end
+	    		#if(!$ut.isns($_start_cssj))
+	      			and a.cssj >= :_start_cssj
+	    		#end
+	    		#if(!$ut.isns($_end_cssj))
+	      			and a.cssj < :_end_cssj
+	    		#end
+	    		#if(!$ut.isns($csdssxq))
+	      			and a.csdssxq = :csdssxq
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+	    		#if(!$ut.isns($hjsclb))
+	      			and a.hjsclb = :hjsclb
+	    		#end
+	    		#if(!$ut.isns($bz))
+	      			and a.bz = :bz
+	    		#end
+	    		#if(!$ut.isns($jlx))
+	      			and a.jlx = :jlx
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($xzjd))
+	      			and a.xzjd = :xzjd
+	    		#end
+	    		#if(!$ut.isns($zrq))
+	      			and a.zrq = :zrq
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($sbrgmsfhm))
+	      			and a.sbrgmsfhm = :sbrgmsfhm
+	    		#end
+	    		#if(!$ut.isns($_start_slsj))
+					and a.slsj >= :_start_slsj
+				#end
+				#if(!$ut.isns($_end_slsj))
+					and a.slsj < :_end_slsj
+				#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = :sldw
+	    		#end
+           	order by a.slsj
+           	]]>		
+	</queryPoHJYW_HJSCXXB>
+	<!-- 户成员变更信息查询 -->
+	<queryPoHJYW_HCYBDXXB1>
+		<![CDATA[
+         	from 
+			#if(!$ut.isns($gdxx))
+   				PoOLD_HJYW_HCYBDXXB a	
+   			#else
+   				PoV_HJ_HCYBDXXB a	
+		    #end         	
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end          	
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = :hh
+	    		#end
+	    		#if(!$ut.isns($sbryxm))
+	      			and a.sbryxm = :sbryxm
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($_start_hcybdrq))
+					and a.hcybdrq >= :_start_hcybdrq
+				#end
+				#if(!$ut.isns($_end_hcybdrq))
+					and a.hcybdrq < :_end_hcybdrq
+				#end
+				#if(!$ut.isns($hhnbid))
+					and a.hhnbid = '${hhnbid}'
+				#end
+				and cxbz = '0'
+				order by a.slsj
+           	]]>		
+	</queryPoHJYW_HCYBDXXB1>
+	<!-- 人员变动情况查询（四变） -->
+	<queryPoHJYW_RYBDXXB>
+		<![CDATA[
+         	from 
+         		#if(!$ut.isns($gdxx))
+    				PoOLD_HJTJ_RYBDXXB a	
+    			#else
+    				PoHJTJ_RYBDXXB a	
+			    #end
+         	where 1 = 1
+         	$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end          	
+         		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= :_start_csrq
+	    		#end
+	    		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < :_end_csrq
+	    		#end
+	    		#if(!$ut.isns($hzxm))
+	      			and a.hzxm = :hzxm
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+					and a.jcwh = :jcwh
+				#end
+	    		#if(!$ut.isns($_start_slsj))
+					and a.slsj >= '${_start_slsj}000000'
+				#end
+				#if(!$ut.isns($_end_slsj))
+					and a.slsj < '${_end_slsj}235959'
+				#end
+	    		#if(!$ut.isns($bdyy))
+	      			and a.bdyy = :bdyy
+	    		#end
+	    		#if(!$ut.isns($ywnr))
+	      			and a.ywnr = :ywnr
+	    		#end
+	    		#if(!$ut.isns($bdfw))
+	      			and a.bdfw = :bdfw
+	    		#end
+	    		#if(!$ut.isns($czsm))
+	      			and a.czsm = :czsm
+	    		#end
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($ywbz))
+	      			and a.ywbz = :ywbz
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = :sldw
+	    		#end
+	    		#if(!$ut.isns($ywlx))
+	      			and a.ywlx = :ywlx
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if($ut.isns($ywfw))
+	    			#if($ut.isns($ywfw8))
+		    			and a.ywnr in(
+		      			#if(!$ut.isns($ywfwRange))
+		      				 ${ywfwRange}
+		      			#end
+		      			)
+	    			#else
+		    			and a.ywnr not in(
+		      			#if(!$ut.isns($ywfwRange))
+		      				 ${ywfwRange}
+		      			#end
+		      			)
+	    			#end
+	    		#end
+	    		#if(!$ut.isns($shijianfw))
+	      			#if(2 == $shijianfw)
+	      				and a.slsj like :dshijianfw%
+	      			#end
+	      			#if(3 == $shijianfw)
+	      				and a.slsj>='${mshijianfws}' and a.slsj<'${mshijianfwe}'
+	      			#end
+	      			#if(4 == $shijianfw)
+	      				#if(!$ut.isns($zdyshijianfws))
+	      					and a.slsj>=${zdyshijianfws}
+	      				#end
+	      				#if(!$ut.isns($zdyshijianfwe))
+	      					and a.slsj<=${zdyshijianfwe}
+	      				#end
+	      			#end	
+		      	#end
+		      	#if(1 == $shujufw1&&$ut.isns($shujufw2))
+	      			and a.cxbz = '0'
+	      		#end
+	    		#if($ut.isns($shujufw1)&&2 == $shujufw2)
+	      			and a.cxbz<>'0'
+	      		#end
+	      		#if($ut.isns($bdrange))
+	    			and ((1 = 0)
+	      			#if(1 == $bdfw1)
+	      				or (a.bdfw >='11' and a.bdfw<='15')
+	      			#end
+	      			#if(1 == $bdfw2)
+	      				or (a.bdfw >='21' and a.bdfw<='32')
+	      			#end
+	      			#if(1 == $bdfw3)
+	      				or (a.bdfw >='33' and a.bdfw<='43')
+	      			#end
+	      			#if(1 == $bdfw4)
+	      				or (a.bdfw >='50' and a.bdfw<='53')
+	      			#end
+	      			#if(1 == $bdfw5)
+	      				or (a.bdfw >='61' and a.bdfw<='62')
+	      			#end
+	      			#if(1 == $bdfw6)
+	      				or (a.bdfw >='71' and a.bdfw<='99')
+	      			#end
+	      			)
+	    		#end
+	    		order by a.slsj
+           	]]>		
+	</queryPoHJYW_RYBDXXB>
+		<!-- 打印信息查询 -->
+	<queryPoHJXX_DYXXB1>
+		<![CDATA[
+         	from PoHJXX_DYXXB a
+         	where 1=1
+         		$ut.linkSjfw('a.ssxq')
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end          		
+	    		#if(!$ut.isns($rynbid))
+					and b.rynbid = '${rynbid}'
+				#end
+				#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    		#end
+	    		#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    		#end
+	    		#if(!$ut.isns($dylb))
+	      			and a.dylb = :dylb
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = :sldw
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = $slrid
+	    		#end
+	    		#if(!$ut.isns($czip))
+	      			and a.czip = :czip
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = :pcs
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = :ssxq
+	    		#end
+	    		#if(!$ut.isns($jlx))
+	      			and a.jlx = :jlx
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = :jcwh
+	    		#end
+	    		#if(!$ut.isns($mlxz))
+	      			and a.mlxz = :mlxz
+	    		#end
+	    		#if(!$ut.isns($mlph))
+	      			and a.mlph = :mlph
+	    		#end
+	    		#if(!$ut.isns($slstartYear))
+					and a.slsj >= :slstartYear
+				#end
+				#if(!$ut.isns($slendYear))
+					and a.slsj < :slendYear
+				#end
+	    		#if(!$ut.isns($zrq))
+	      			and a.zrq = :zrq
+	    		#end
+	    		#if(!$ut.isns($xzjd))
+	      			and a.xzjd = :xzjd
+	    		#end
+	    		order by a.slsj
+         ]]>
+	</queryPoHJXX_DYXXB1>
+	<!-- 迁入审批查询 -->
+	<queryQrsp>
+		<![CDATA[
+		from PoV_QRSPXXB	a 
+         	where 1 = 1  
+         	#if(!$ut.isns($where))
+	      			and ${where}
+	    	#end
+	    	#if(!$ut.isns($sjfw))
+      			and ${sjfw}
+    		#end
+        	#if(!$ut.isns($xm))
+      			and a.xm = :xm
+    		#end
+    		#if(!$ut.isns($gmsfhm))
+      			and a.gmsfhm = :gmsfhm
+    		#end
+    		#if(!$ut.isns($mz))
+      			and a.mz = :mz
+    		#end
+    		#if(!$ut.isns($spjg))
+      			and a.spjg = :spjg
+    		#end
+    		#if(!$ut.isns($lsbz))
+      			and a.lsbz = :lsbz
+    		#end
+    		#if(!$ut.isns($czjg))
+      			and a.czjg = :czjg
+    		#end
+    		#if(!$ut.isns($czrid))
+      			and a.czrid = '${czrid}'
+    		#end
+    		#if(!$ut.isns($czstartYear))
+      			and a.czsj >= :czstartYear
+    		#end
+    		#if(!$ut.isns($czendYear))
+      			and a.czsj <= :czendYear
+    		#end
+    		#if(!$ut.isns($kdqqy_fkzt))
+      			and a.kdqqy_fkzt = :kdqqy_fkzt
+    		#end
+			#if(!$ut.isns($yh))
+				and a.czrid = '${yh}'
+			#end
+			#if(!$ut.isns($wsp))
+				and a.lsbz = :wsp
+			#end
+          	order by a.xm,a.spywid
+         ]]>
+	</queryQrsp>
+	<!-- 迁入审批子表查询 -->
+	<queryQrspzb>
+		<![CDATA[
+         	from PoHJSP_HJSPZB a
+         	where 1 = 1
+         		#if(!$ut.isns($spywid))
+	      			and a.spywid = '${spywid}'
+	    		#end
+           	order by a.xm
+         ]]>
+	</queryQrspzb>
+	<!-- 迁入审批流程查询 -->
+	<queryQrsplc>
+		<![CDATA[
+         	from PoHJSP_HJSPLSB a
+         	where 1 = 1
+         		#if(!$ut.isns($spywid))
+	      			and a.spywid = '${spywid}'
+	    		#end
+         		#if(!$ut.isns($splx))
+	      			and a.splx = :splx
+	    		#end
+           	order by a.czsj
+         ]]>
+	</queryQrsplc>	
+	<!-- 变更审批 -->
+	<queryBgsp>
+		<![CDATA[
+ 			from PoV_BGSPXXB a
+ 			where 1=1 
+ 			$ut.linkSjfw('a.ssxq')
+ 			#if(!$ut.isns($where))
+	      			and ${where}
+	    	#end
+ 			#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($spjg))
+	      			and a.spjg = :spjg
+	    	#end
+	    	#if(!$ut.isns($lsbz))
+	      			and a.lsbz = :lsbz
+	    	#end
+	    	#if(!$ut.isns($czjg))
+	      			and a.czjg = :czjg
+	    	#end
+	    	#if(!$ut.isns($czrid))
+	      			and a.czrid = '${czrid}'
+	    	#end
+	    	#if(!$ut.isns($czstartYear))
+				and a.czsj >= :czstartYear
+			#end
+			#if(!$ut.isns($czendYear))
+				and a.czsj <= :czendYear
+			#end
+			#if(!$ut.isns($sjfw))
+				and :sjfw
+			#end
+			#if(!$ut.isns($yh))
+				and a.czrid = '${yh}'
+			#end
+			#if(!$ut.isns($wsp))
+				and a.lsbz = :wsp
+			#end
+    		order by a.xm
+         ]]>
+	</queryBgsp>
+	<!-- 变更审批子表查询 -->
+	<queryBgspzb>
+		<![CDATA[
+         	select new PoHJSP_BGSPZB(a.bgzid,a.spywid,b.zdhy,a.bgqnr,a.bghnr,a.bglb,a.bgrq) 
+         	from PoHJSP_BGSPZB a , PoXT_SJZDB as b
+         	where upper(a.bggzxm) = upper(b.zdmc)
+         		#if(!$ut.isns($spywid))
+	      			and a.spywid = '${spywid}'
+	    		#end
+         ]]>
+	</queryBgspzb>
+	<!-- 变更审批流程查询 -->
+	<queryBgsplc>
+		<![CDATA[
+         	from PoHJSP_HJSPLSB a
+         	where 1 = 1
+         		#if(!$ut.isns($spywid))
+	      			and a.spywid = '${spywid}'
+	    		#end
+	    		and splx = '3'
+           	order by a.czsj
+         ]]>
+	</queryBgsplc>
+	<!-- 户籍审批  变更审批-->
+	<getHjspBggz>
+		<![CDATA[
+ 			from PoV_HJSPBGGZ a
+ 			where 1=1 
+ 			$ut.linkSjfw('a.ssxq')
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end 			
+ 			#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($hh))
+	      			and a.hh = :hh
+	    	#end
+	    	#if(!$ut.isns($csrq))
+	      			and a.csrq = :csrq
+	    	#end
+	    	#if(!$ut.isns($djrid))
+	      			and a.djrid = :djrid
+	    	#end
+	    	#if(0 == $wsp)
+	      			and a.spjg is null
+	    	#end
+         ]]>
+	</getHjspBggz>	
+	<!-- 户籍审批  户籍删除审批-->
+	<getHjspHjsc>
+		<![CDATA[
+ 			from PoV_HJSPHJSC a
+ 			where 1=1 
+ 			$ut.linkSjfw('a.ssxq')
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end 			
+ 			#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($hh))
+	      			and a.hh = :hh
+	    	#end
+	    	#if(!$ut.isns($csrq))
+	      			and a.csrq = :csrq
+	    	#end
+	    	#if(!$ut.isns($djrid))
+	      			and a.sqyhid = :djrid
+	    	#end
+	    	#if(0 == $wsp)
+	      			and a.spjg is null
+	    	#end
+         ]]>
+	</getHjspHjsc>
+	<!-- 户籍审批  户籍补录审批 -->
+	<getHjspHjbl>
+		<![CDATA[	
+ 			from PoV_HJSPHJBL a  
+ 			where 1=1 
+	    	#if(!$ut.isns($sjfw))
+      			and ${sjfw}
+    		#end
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end  			
+ 			#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($_start_djsj))
+	      			and a.djsj >= :_start_djsj
+	    	#end
+	    	#if(!$ut.isns($_end_djsj))
+	      			and a.djsj < :_end_djsj
+	    	#end
+	    	#if(!$ut.isns($djrid))
+	      			and a.djrid = :djrid
+	    	#end
+	    	#if(0 == $wsp)
+	      			and a.spjg is null
+	    	#end
+         ]]>
+	</getHjspHjbl>
+	<!-- 户籍审批  户别变更 审批 -->	
+	<getHjspHbbg>
+		<![CDATA[
+ 			from PoV_HJSPHBBG a
+ 			where 1=1 
+ 			$ut.linkSjfw('a.ssxq')
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end  			
+ 			#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($hh))
+	      			and a.hh = :hh
+	    	#end
+	    	#if(!$ut.isns($csrq))
+	      			and a.csrq = :csrq
+	    	#end
+	    	#if(!$ut.isns($djrid))
+	      			and a.djrid = :djrid
+	    	#end
+	    	#if(0 == $wsp)
+	      			and a.spjg is null
+	    	#end
+         ]]>
+	</getHjspHbbg>
+	<!-- 户籍审批  迁入审批 审批 -->	
+	<getHjspQrsp>
+		<![CDATA[
+ 			from PoV_HJSPQRSP a
+ 			where 1=1 
+	    	#if(!$ut.isns($sjfw))
+      			and ${sjfw}
+    		#end
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end 			
+ 			#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($_start_slrq))
+	      			and a.slrq >= :_start_slrq
+	    	#end
+	    	#if(!$ut.isns($_end_slrq))
+	      			and a.slrq < :_end_slrq
+	    	#end
+	    	#if(!$ut.isns($djrid))
+	      			and a.djrid = :djrid
+	    	#end
+	    	#if(!$ut.isns($lsbz))
+	      			and a.lsbz = :lsbz
+	    	#end
+	    	#if(!$ut.isns($spjg))
+	      			and a.spjg = :spjg
+	    	#end
+	    	#if(0 == $wsp)
+	      			and a.spjg is null
+	    	#end
+         ]]>
+	</getHjspQrsp>
+	<!-- 户别变更审批 -->
+	<queryHbbgsp>
+		<![CDATA[
+ 			from PoV_HBBGSPXXB a
+ 			where 1=1 
+ 			$ut.linkSjfw('a.ssxq')
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end 			
+ 			#if(!$ut.isns($xm))
+	      			and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($bgyy))
+	      			and a.bgyy = :bgyy
+	    	#end
+	    	#if(!$ut.isns($bgqhb))
+	      			and a.bgqhb = :bgqhb
+	    	#end
+	    	#if(!$ut.isns($bghhb))
+	      			and a.bghhb = :bghhb
+	    	#end
+	    	#if(!$ut.isns($spjg))
+	      			and a.spjg = :spjg
+	    	#end
+	    	#if(!$ut.isns($lsbz))
+	      			and a.lsbz = :lsbz
+	    	#end
+	    	#if(!$ut.isns($czrid))
+	      			and a.czrid = '${czrid}'
+	    	#end
+	    	#if(!$ut.isns($czstartYear))
+				and a.czsj >= :czstartYear
+			#end
+			#if(!$ut.isns($czendYear))
+				and a.czsj <= :czendYear
+			#end
+    		order by a.xm
+         ]]>
+	</queryHbbgsp>
+	<!-- 户别变更审批流程查询 -->
+	<queryHbbgsplc>
+		<![CDATA[
+         	from PoHJSP_HJSPLSB a
+         	where 1 = 1
+         		#if(!$ut.isns($spywid))
+	      			and a.spywid = '${spywid}'
+	    		#end
+	    		and splx = '4'
+           	order by a.czsj
+         ]]>
+	</queryHbbgsplc>
+	<!-- 户籍补录审批 -->
+	<queryHjblsp>
+		<![CDATA[
+ 			from PoV_HJBLSPXXB a
+ 			where 1=1 
+	    	#if(!$ut.isns($sjfw))
+      			and ${sjfw}
+    		#end
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end  			
+ 			#if(!$ut.isns($xm))
+	      		and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($csrq))
+	      		and a.csrq = :csrq
+    		#end
+	    	#if(!$ut.isns($gmsfhm))
+	      		and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($spjg))
+	      		and a.spjg = :spjg
+	    	#end
+	    	#if(!$ut.isns($lsbz))
+	      		and a.lsbz = :lsbz
+	    	#end
+	    	#if(!$ut.isns($czrid))
+	      		and a.czrid = '${czrid}'
+	    	#end
+	    	#if(!$ut.isns($czstartYear))
+				and a.czsj >= :czstartYear
+			#end
+			#if(!$ut.isns($czendYear))
+				and a.czsj <= :czendYear
+			#end
+    		order by a.xm,a.spywid
+         ]]>
+	</queryHjblsp>
+	<!-- 户别变更审批流程查询 -->
+	<queryHjblsplc>
+		<![CDATA[
+         	from PoHJSP_HJSPLSB a
+         	where 1 = 1
+         		#if(!$ut.isns($spywid))
+	      			and a.spywid = '${spywid}'
+	    		#end
+	    		and splx = '5'
+           	order by a.czsj
+         ]]>
+	</queryHjblsplc>
+	<!-- 户别删除审批 -->
+	<queryHjscsp>
+		<![CDATA[
+ 			from PoV_HJSCSPXXB a
+ 			where 1=1 
+ 			$ut.linkSjfw('a.ssxq')
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end  			
+ 			#if(!$ut.isns($xm))
+	      		and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      		and a.gmsfhm = :gmsfhm
+	    	#end   
+	    	#if(!$ut.isns($csyy))
+	      		and a.csyy = :csyy
+	    	#end
+	    	#if(!$ut.isns($xb))
+	      		and a.xb = :xb
+	    	#end
+	    	#if(!$ut.isns($_start_csrq))
+	      		and a.csrq >= :_start_csrq
+    		#end
+    		#if(!$ut.isns($_end_csrq))
+      			and a.csrq <= :_end_csrq
+    		#end
+    		#if(!$ut.isns($editendYear))
+	      		and a.csrq > :editendYear
+    		#end
+    		#if(!$ut.isns($editstartYear))
+      			and a.csrq <= :editstartYear
+    		#end
+	    	#if(!$ut.isns($czjg))
+	      		and a.czjg = :czjg
+	    	#end
+	    	#if(!$ut.isns($czstartYear))
+				and a.czsj >= :czstartYear
+			#end
+			#if(!$ut.isns($czendYear))
+				and a.czsj <= :czendYear
+			#end
+			and a.splsid =(select max(b.splsid) from PoV_HJSCSPXXB b where a.spywid = b.spywid)
+         ]]>	
+	</queryHjscsp>
+	<!-- 户别删除审批流程查询 -->
+	<queryHjscsplc>
+		<![CDATA[
+         	from PoHJSP_HJSPLSB a
+         	where 1 = 1
+         		#if(!$ut.isns($spywid))
+	      			and a.spywid = '${spywid}'
+	    		#end
+	    		and splx = '6'
+           	order by a.czsj
+         ]]>
+	</queryHjscsplc>		
+	<!-- 迁入审批流程查询 -->
+	<queryHJYW_GMSFHMSXMFPXXB>
+		<![CDATA[
+         	from PoHJYW_GMSFHMSXMFPXXB a
+         	where 1 = 1
+         		#if(!$ut.isns($xb))
+	      			and a.xb = :xb
+	    		#end
+         		#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= :_start_csrq
+	    		#end
+         		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < :_end_csrq
+	    		#end
+         		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm like :%gmsfhm%
+	    		#end
+         		#if(!$ut.isns($sxh))
+	      			and a.sxh = :sxh
+	    		#end
+         		#if(!$ut.isns($xm))
+	      			and a.xm like :%xm%
+	    		#end
+	    		#if(!$ut.isns($dwdm))
+	      			and a.dwdm =:dwdm
+	    		#end
+           	order by a.fpid
+         ]]>
+	</queryHJYW_GMSFHMSXMFPXXB>
+	
+	<!-- 行政区划检索 -->
+	<queryPoXT_XZQHB>
+	<![CDATA[
+		from PoXT_XZQHB 
+		where (dm like :search_code% or mc like :%search_code% or zwpy like :search_code% or wbpy like :search_code%)
+		#if(!$ut.isns($qybz))
+	      		and qybz = :qybz
+	    #end
+	    order by dm
+         ]]>
+	</queryPoXT_XZQHB>
+	
+	<!-- 跨地市迁出业务查询 -->
+	<queryKDQHjspyw>
+	<![CDATA[
+		from PoHJSP_HJSPSQB a 
+			 where a.kdqqy_fkzt='0' 
+			 and a.spjg='1' 
+			 and a.kdqqy_qcdqbm is not null 
+			 #if(!$ut.isns($spywid))
+				and a.spywid = '${spywid}'
+			 #end
+			 and a.djrid=$authToken.user.yhid order by a.slrq asc
+         ]]>
+	</queryKDQHjspyw>
+	
+	<!--迁出处理业务查询 -->
+	<queryPoV_HJ_QCCLXXB>
+	<![CDATA[
+		from PoV_HJ_QCCLXXB a 
+			where 1 = 1 
+			#if(!$ut.isns($sjfw))
+				${sjfw}
+			#end
+			#if(!$ut.isns($czlx))
+				and a.czlx = '${czlx}'
+			#end
+			#if(!$ut.isns($clbz))
+				#if(!$ut.isns($ycl)&&$ut.isns($wcl))
+					and	a.clbz <> '0'
+				#else
+					#if($ut.isns($ycl)&&!$ut.isns($wcl))
+						and	a.clbz = '0'
+					#end
+				#end
+			#end
+			#if(!$ut.isns($xm))
+				and a.xm = :xm
+			#end
+			#if(!$ut.isns($gmsfhm))
+				and a.gmsfhm = :gmsfhm
+			#end
+			#if(!$ut.isns($_start_slsj))
+				and a.slsj >= :_start_slsj
+			#end
+			#if(!$ut.isns($ssxq_q))
+				and a.ssxq_q = :ssxq_q
+			#end
+			#if(!$ut.isns($_end_slsj))
+				and a.slsj <= :_end_slsj
+			#end
+			#if(!$ut.isns($pcs_q))
+				and a.pcs_q = :pcs_q
+			#end
+			#if(!$ut.isns($sldw))
+				and a.sldw = :sldw
+			#end
+			#if(!$ut.isns($jcwh_q))
+				and a.jcwh_q = :jcwh_q
+			#end
+			#if(!$ut.isns($slrid))
+				and a.slrid = '${slrid}'
+			#end
+			#if(!$ut.isns($ssxq_h))
+				and a.ssxq_h = :ssxq_h
+			#end
+			#if(!$ut.isns($pcs_h))
+				and a.pcs_h = :pcs_h
+			#end
+			#if(!$ut.isns($czlx)&&1 == $czlx)
+				order by  a.hjywid , a.qcclid
+			#end
+			
+         ]]>
+	</queryPoV_HJ_QCCLXXB>
+
+	<!-- 查询户信息 -->
+	<queryCommonHxx>
+	<![CDATA[
+		from PoHJXX_HXXB a, PoHJXX_MLPXXXXB b
+			where a.hhnbid=$hhnbid and a.mlpnbid=b.mlpnbid
+	]]>
+	</queryCommonHxx>
+	
+	<!-- 成批户别变更查询 -->
+	<queryCphbbg>
+	<![CDATA[
+			         from PoHJXX_CZRKJBXXB a
+			         	where a.ryzt = '0' 
+			         	and a.cxbz = '0'
+			           	and a.jlbz = '1'
+		           		#if(!$ut.isns($where))
+			      			and ${where}
+			    		#end			         	
+			           		
+			           		#if(!$ut.isns($xm))
+				      			and a.xm = :xm
+				    		#end
+				    		#if(!$ut.isns($gmsfhm))
+				      			and a.gmsfhm = :gmsfhm
+				    		#end
+				    		#if(!$ut.isns($jlx))
+				      			and a.jlx = :jlx
+				    		#end
+				    		#if(!$ut.isns($mlph))
+				      			and a.mlph = :mlph
+				    		#end
+				    		#if(!$ut.isns($mlxz))
+				      			and a.mlxz = :mlxz
+				    		#end
+				    		#if(!$ut.isns($jthzl))
+				      			and a.jthzl = :jthzl
+				    		#end
+				    		#if(!$ut.isns($pcs))
+				      			and a.pcs = :pcs
+				    		#end
+				    		#if(!$ut.isns($xb))
+				      			and a.xb = :xb
+				    		#end
+				    		#if(!$ut.isns($jcwh))
+				      			and a.jcwh = :jcwh
+				    		#end
+				    		#if(!$ut.isns($startYear))
+				      			and a.csrq <= :startYear
+				    		#end
+				    		#if(!$ut.isns($endYear))
+				      			and a.csrq > :endYear
+				    		#end
+				    		#if(!$ut.isns($hh))
+				      			and a.hh = '${hh}'
+				    		#end
+				    		#if(!$ut.isns($yhkxzmc))
+				      			and a.yhkxzmc = :yhkxzmc
+				    		#end
+				    		#if(!$ut.isns($hhnbid))
+				      			and a.hhnbid = '${hhnbid}'
+				    		#end
+				    		#if(!$ut.isns($csrq))
+				      			and a.csrq = :csrq
+				    		#end
+				    		#if(!$ut.isns($zjlb))
+				      			and a.zjlb = :zjlb
+				    		#end
+				    		#if(!$ut.isns($hhnbid))
+				      			and a.hhnbid = '${hhnbid}'
+				    		#end
+				    		#if(!$ut.isns($rynbid))
+				      			and a.rynbid = '${rynbid}'
+				    		#end
+				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
+			           	order by a.xm
+         ]]>
+	</queryCphbbg>
+	<queryJwh>
+		<![CDATA[
+			from PoXT_JWHXXB   c
+	         	where 
+	           		1=1
+	           		and (c.qybz = '1')
+	           		#if(!$ut.isns($search_code))
+	           			and (
+	           				c.dm like :%search_code% 
+	           			    or c.wbpy like :%search_code% 
+	           				or c.zwpy like :%search_code% 
+	           				or c.mc like :%search_code% 
+	           			)
+	           		#end
+	           		#if(!$ut.isns($ssxq))
+	           			and c.dm like :ssxq% 
+	           		#end
+	           		$ut.linklhSjfw("")
+	           		
+	           	order by c.dm
+         ]]>
+	</queryJwh>
+	<!-- 迁入登记查询主迁人户口所在地登记机关 -->
+	<queryQrspPcs>
+		<![CDATA[
+			select b 
+			from PoHJXX_CZRKJBXXB a ,PoXT_DWXXB b
+				where a.pcs = b.dm
+					#if(!$ut.isns($rynbid))
+						and a.rynbid = '${rynbid}'
+					#end
+         ]]>
+	</queryQrspPcs>
+	<!-- add by zjm 20181017 一户一本列表查询 -->
+	<queryYhybList>
+		<![CDATA[
+		select a,b from PoHJXX_HXXB a,PoHJXX_MLPXXXXB b
+         	where 1 = 1  
+         		and a.mlpnbid = b.mlpnbid
+	    		#if(!$ut.isns($pcs))
+	      			and b.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and b.jcwh = '${jcwh}'
+	    		#end
+	    		#if(1 == $hhrange&&!$ut.isns($hhfrom))
+	      			and a.hh = '${hhfrom}'
+	    		#end
+	    		#if(2 == $hhrange)
+	      			and a.hh >= '${hhfrom}'
+	      			and a.hh <= '${hhto}'
+	    		#end
+	    		and a.jlbz = '1' 
+				and a.cxbz = '0'
+			order by a.hh, a.hhnbid		
+         ]]>	
+	</queryYhybList>
+	<!-- 四变打印-迁入 -->
+	<querySbqrxx>
+		<![CDATA[
+			from PoV_HJ_QRDJXXB a
+				where 1=1
+				#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jwh))
+	      			and a.jcwh = '${jwh}'
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = '${sldw}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = '${slrid}'
+	    		#end
+	    		#if(!$ut.isns($slsj))
+	      			and a.slsj like :slsj%
+	    		#end
+	    		#if(1 == $qhtz)
+				    and a.ywlx < '3'
+				#end
+	    		#if(2 == $qhtz)
+				    and 1=1
+				#end
+	    	order by a.slsj, a.qrdjid
+	    	#if(!$ut.isns($pxzdValue))
+	    	 	${pxzdValue}
+    		#end
+		]]>
+	</querySbqrxx>
+	<!-- 四变打印-出生 -->
+	<querySbcsxx>
+		<![CDATA[
+			from PoV_HJ_CSDJXXB a
+				where 1=1
+				#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jwh))
+	      			and a.jcwh = '${jwh}'
+	    		#end
+	    		#if(!$ut.isns($slsj))
+	      			and a.slsj like :slsj%
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = '${sldw}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = '${slrid}'
+	    		#end
+	    	order by a.slsj, a.csdjid
+	    	#if(!$ut.isns($pxzdValue))
+	    	 	${pxzdValue}
+    		#end	    	
+		]]>
+	</querySbcsxx>
+	<!-- 四变打印-迁出 -->
+	<querySbqcxx>
+		<![CDATA[
+			from PoV_HJ_QCZXXXB a
+				where 1=1
+				#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jwh))
+	      			and a.jcwh = '${jwh}'
+	    		#end
+	    		#if(!$ut.isns($slsj))
+	      			and a.slsj like :slsj%
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = '${sldw}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = '${slrid}'
+	    		#end
+	    		#if(1 == $qhtz)
+				    and a.ywlx < '3'
+				#end
+	    		#if(2 == $qhtz)
+				    and 1=1
+				#end
+	    	order by a.slsj, a.qczxid
+	    	#if(!$ut.isns($pxzdValue))
+	    	 	${pxzdValue}
+    		#end	    	
+		]]>
+	</querySbqcxx>
+	<!-- 四变打印-死亡 -->
+	<querySbswxx>
+		<![CDATA[
+			from PoV_HJ_SWZXXXB a
+				where 1=1
+				#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jwh))
+	      			and a.jcwh = '${jwh}'
+	    		#end
+	    		#if(!$ut.isns($slsj))
+	      			and a.slsj like :slsj%
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = '${sldw}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = '${slrid}'
+	    		#end
+	    	order by a.slsj, a.swzxid
+	    	#if(!$ut.isns($pxzdValue))
+	    	 	${pxzdValue}
+    		#end	    	
+		]]>
+	</querySbswxx>	
+	<!-- 四变打印-住址变动 -->
+	<!-- and (a.pcs_q = '${pcs}' or a.pcs = '${pcs}') -->
+	<querySbzzbd>
+		<![CDATA[
+			from PoV_HJ_ZZBDXXB a
+				where 1=1
+				#if(!$ut.isns($pcs))
+	      			and ( a.pcs = '${pcs}')
+	    		#end
+	    		#if(!$ut.isns($jwh))
+	      			and a.jcwh = '${jwh}'
+	    		#end
+	    		#if(!$ut.isns($slsj))
+	      			and a.slsj like :slsj%
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = '${sldw}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = '${slrid}'
+	    		#end
+	    		#if(1 == $qhtz)
+				    and a.ywlx < '3'
+				#end
+	    		#if(2 == $qhtz)
+				    and 1=1
+				#end
+	    	order by a.slsj, a.zzbdid
+	    	#if(!$ut.isns($pxzdValue))
+	    	 	${pxzdValue}
+    		#end	    	
+		]]>
+	</querySbzzbd>	
+	<!-- 四变打印-户别变更 -->
+	<querySbhbbg>
+		<![CDATA[
+			from PoV_HJ_HBBGXXB a
+				where 1=1
+				#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jwh))
+	      			and a.jcwh = '${jwh}'
+	    		#end
+	    		#if(!$ut.isns($slsj))
+	      			and a.slsj like :slsj%
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = '${sldw}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = '${slrid}'
+	    		#end
+	    		#if(1 == $qhtz)
+				    and a.ywlx < '3'
+				#end
+	    		#if(2 == $qhtz)
+				    and 1=1
+				#end
+	    	order by a.slsj, a.hbbgid
+	    	#if(!$ut.isns($pxzdValue))
+	    	 	${pxzdValue}
+    		#end	    	
+		]]>
+	</querySbhbbg>	
+	<!-- 四变打印-数据补录 -->
+	<querySbsjbl>
+		<![CDATA[
+			from PoV_HJ_HJBLXXB a
+				where 1=1
+				#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jwh))
+	      			and a.jcwh = '${jwh}'
+	    		#end
+	    		#if(!$ut.isns($slsj))
+	      			and a.slsj like :slsj%
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = '${sldw}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = '${slrid}'
+	    		#end
+	    		#if(1 == $qhtz)
+				    and a.ywlx < '3'
+				#end
+	    		#if(2 == $qhtz)
+				    and 1=1
+				#end
+	    	order by a.slsj, a.hjblid
+	    	#if(!$ut.isns($pxzdValue))
+	    	 	${pxzdValue}
+    		#end	    	
+		]]>
+	</querySbsjbl>
+	<!-- 四变打印-数据删除 -->
+	<querySbsjsc>
+		<![CDATA[
+			from PoV_HJ_HJSCXXB a
+				where 1=1
+				#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jwh))
+	      			and a.jcwh = '${jwh}'
+	    		#end
+	    		#if(!$ut.isns($slsj))
+	      			and a.slsj like :slsj%
+	    		#end
+	    		#if(!$ut.isns($sldw))
+	      			and a.sldw = '${sldw}'
+	    		#end
+	    		#if(!$ut.isns($slrid))
+	      			and a.slrid = '${slrid}'
+	    		#end
+	    		#if(1 == $qhtz)
+				    and a.ywlx < '3'
+				#end
+	    		#if(2 == $qhtz)
+				    and 1=1
+				#end
+	    	order by a.slsj, a.hjscid
+	    	#if(!$ut.isns($pxzdValue))
+	    	 	${pxzdValue}
+    		#end	    	
+		]]>
+	</querySbsjsc>
+	<!-- add by zjm 20181029  常表成批数据列表查询 -->
+	<queryCbcpList>
+		<![CDATA[
+		from PoHJXX_CZRKJBXXB a
+         	where 1 = 1  
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = '${jcwh}'
+	    		#end
+	    		#if(1 == $hhrange&&!$ut.isns($hhfrom))
+	      			and a.hh = '${hhfrom}'
+	    		#end
+	    		#if(2 == $hhrange)
+	      			and a.hh >= '${hhfrom}'
+	      			and a.hh <= '${hhto}'
+	    		#end
+	    		and a.jlbz = '1' 
+	    		and a.ryzt = '0'
+				and a.cxbz = '0'
+			order by a.hh, a.rynbid		
+         ]]>	
+	</queryCbcpList>
+	<querySlxxInfo>
+		<![CDATA[
+		 select a.slzt,count(a.slzt) from PoZJYW_SLXXB a
+         	where 1 = 1 
+           		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         	 
+         		#if(!$ut.isns($xm))
+	      			and a.xm = '${xm}'
+	    		#end
+	    		#if(!$ut.isns($slzt))
+	      			and a.slzt = '${slzt}'
+	    		#end
+	    		#if(!$ut.isns($_start_czsj))
+	      			and a.czsj >= :_start_czsj
+	    		#end
+	    		#if(!$ut.isns($_end_czsj))
+	      			and a.czsj < :_end_czsj
+	    		#end
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($gmsfhm))
+	      			and a.gmsfhm = '${gmsfhm}'
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = '${ssxq}'
+	    		#end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = '${jcwh}'
+	    		#end
+	    		#if(!$ut.isns($slh))
+	      			and a.slh = '${slh}'
+	    		#end
+	    		#if(!$ut.isns($_start_csrq))
+	      			and a.csrq >= :_start_csrq
+	    		#end
+	    		#if(!$ut.isns($_end_csrq))
+	      			and a.csrq < : _end_csrq
+	    		#end
+	    		#if(!$ut.isns($_start_yxqxqsrq))
+	      			and a.yxqxqsrq >=:_start_yxqxqsrq
+	    		#end
+	    		#if(!$ut.isns($_end_yxqxqsrq))
+	      			and a.yxqxqsrq < :_end_yxqxqsrq
+	    		#end
+	    		#if(!$ut.isns($zzlx))
+	      			and a.zzlx = '${zzlx}'
+	    		#end
+	    		#if(!$ut.isns($lqfs))
+	      			and a.lqfs = '${lqfs}'
+	    		#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.czyid = '${czyid}'
+	    		#end
+	    		#if(!$ut.isns($sjrlxdh))
+	      			and a.sjrlxdh = '${sjrlxdh}'
+	    		#end
+	    		#if(!$ut.isns($zzxxcwlb))
+	      			and a.zzxxcwlb = '${zzxxcwlb}'
+	    		#end
+	    		#if(!$ut.isns($cwms))
+	      			and a.cwms = '${cwms}'
+	    		#end
+	    		#if(!$ut.isns($czyid))
+	      			and a.jydw = '${jydw}'
+	    		#end
+	    		#if(!$ut.isns($zlhkzt))
+	      			and a.zlhkzt = '${zlhkzt}'
+	    		#end
+	    		#if(!$ut.isns($_start_hksj))
+	      			and a.hksj >= :_start_hksj
+	    		#end
+	    		#if(!$ut.isns($_end_hksj))
+	      			and a.hksj < : _end_hksj
+	    		#end
+	    		#if(!$ut.isns($fjpch))
+	      			and a.fjpch = '${fjpch}'
+	    		#end
+			group by a.slzt	
+         ]]>
+	</querySlxxInfo>
+	<querySjzdInfo>
+		<![CDATA[
+			from PoXT_SJZDB a
+			where 1=1 
+			order by a.zdmc
+		]]>
+	</querySjzdInfo>
+	<queryXtcsxxByCslb>
+		<![CDATA[
+			from PoXT_XTCSB a 
+			where 1=1
+			#if(!$ut.isns($cslb))
+	      		and a.cslb = '${cslb}'
+	    	#end
+			order by a.cslb, length(a.dm), a.dm 
+		]]>	
+	</queryXtcsxxByCslb>
+	<queryXzqhInfo>
+		<![CDATA[
+			select a from PoXT_XZQHB a,PoXT_XTCSB b
+			where 1=1
+				and a.qybz=b.dm
+				and b.cslb='9002'
+				#if(0 == $qybz)
+					and a.qybz='0'
+				#else
+					and a.qybz='1'
+				#end
+				order by a.dm 
+		]]>		
+	</queryXzqhInfo>
+	<queryDwxx>
+		<![CDATA[
+			from PoV_DWXXWH a
+			where 1=1
+			#if(!$ut.isns($xzqhbdm))
+	      		and a.xzqhbdm = '${xzqhbdm}'
+	    	#end
+	    	#if(!$ut.isns($dm))
+	      		and a.dm = '${dm}'
+	    	#end
+	    	#if(0 == $qybz)
+					and a.qybz='0'
+			#else
+				and a.qybz='1'
+			#end	
+		]]>		
+	</queryDwxx>
+	<!-- 系统日志表信息查询 -->
+	<queryXtrzbxx>
+		<![CDATA[
+			from PoXT_XTRZB a
+			where 1=1
+			#if(!$ut.isns($czkssj))
+
+	      		and a.czkssj >= '${czkssj}000000'
+	    	#end
+	    	#if(!$ut.isns($czjssj))
+	      		and a.czjssj <= '${czjssj}235959'
+	    	#end
+	    	#if(!$ut.isns($organization_id))
+	      		and a.organization_id = '${organization_id}'
+	    	#end
+	    	#if(!$ut.isns($czyid))
+	      		and a.czyid = '${czyid}'
+	    	#end
+	    	#if(!$ut.isns($resource_name))
+	      		and a.resource_name like :%resource_name%
+	    	#end
+		]]>
+	</queryXtrzbxx>
+	<!-- 警务责任区信息查询 -->
+	<queryPoV_JWZRQXX>
+		<![CDATA[
+			select new PoV_JWZRQXX(a.dm,a.mc,a.zwpy,a.wbpy,a.dwdm,b.mc,a.bz,a.qybz,c.mc,a.bdlx,a.bdsj) 
+			from PoXT_JWZRQXXB a,PoXT_DWXXB b,PoXT_XTCSB c
+         	where 1 = 1 
+         		and a.qybz = c.dm
+         		and c.cslb = '9002'
+         		and a.dwdm = b.dm
+	    		#if(!$ut.isns($qybz))
+					and a.qybz = '${qybz}'
+				#end
+				#if(!$ut.isns($dwdm))
+					and a.dwdm = '${dwdm}'
+				#end
+				#if(!$ut.isns($dm))
+					and a.dm = '${dm}'
+				#end
+           	order by a.dwdm,a.dm
+         ]]>
+	</queryPoV_JWZRQXX>	
+	<getbbxx>
+		<![CDATA[
+			from PoXT_YWBBMBXXB 
+			where 1=1
+			 #if(!$ut.isns($ywbbid))
+	      		and ywbbid = '${ywbbid}'
+	    	#end
+		]]>		
+	</getbbxx>
+	<queryMbsplInfo>
+		<![CDATA[
+			from PoV_MBSPLC
+			where 1=1
+			#if(!$ut.isns($spmbid))
+	      		and spmbid = '${spmbid}'
+	    	#end
+		]]>			
+	</queryMbsplInfo>
+	<querySpdzb>
+		<![CDATA[
+			from PoXT_SPDZB
+			where 1=1
+			and qybz='1'
+		]]>	
+	</querySpdzb>
+	<queryZxyh>
+		<![CDATA[
+			select a,b from PoXT_YHHHXXB a,PoXT_YHXXB b
+			where 1=1
+				and a.yhid =  b.yhid
+		]]>	
+	</queryZxyh>	
+	<queryHjls_hjtwlsb>
+		<![CDATA[
+			from PoHJLS_HJYWLSB a
+			where 1=1
+			#if(!$ut.isns($hjywid))
+	      			and a.hjywid = '${hjywid}'
+	    	#end
+		]]>	
+	</queryHjls_hjtwlsb>
+	<!-- 催领单打印-受理信息查询 -->	
+	<queryClddy>
+	<![CDATA[
+		from PoZJYW_SLXXB 
+			where 1=1
+        #if(!$ut.isns($where))
+    		and ${where}
+   		#end				
+		#if(!$ut.isns($slh))
+		   and slh = '${slh}'
+		#end
+		#if(!$ut.isns($gmsfhm))
+		   and gmsfhm = '${gmsfhm}'
+		#end
+		#if(!$ut.isns($xm))
+		   and xm = '${xm}'
+		#end
+		#if(!$ut.isns($pcs))
+		   and pcs = '${pcs}'
+		#end
+		#if(!$ut.isns($slzt))
+		   and slzt = '${slzt}'
+		#end
+		#if(!$ut.isns($ryid))
+		   and ryid = '${ryid}'
+		#end
+		and slzt = '90'
+		]]>	
+	</queryClddy>
+	
+	<!-- 催办单打印 -->	
+	<queryCbddy>
+	<![CDATA[
+		from PoHJXX_CZRKJBXXB 
+			where 1=1 and jlbz=1 and ryzt=0 and cxbz=0
+        #if(!$ut.isns($where))
+    		and ${where}
+   		#end			
+		#if(!$ut.isns($xm))
+     			and xm = :xm
+   		#end
+   		#if(!$ut.isns($gmsfhm))
+     			and gmsfhm = :gmsfhm
+   		#end
+   		#if(!$ut.isns($jlx))
+     			and jlx = :jlx
+   		#end
+   		#if(!$ut.isns($mlph))
+     			and mlph = :mlph
+   		#end
+   		#if(!$ut.isns($mlxz))
+     			and mlxz = :mlxz
+   		#end
+   		#if(!$ut.isns($jthzl))
+     			and jthzl = :jthzl
+   		#end
+   		#if(!$ut.isns($pcs))
+     			and pcs = :pcs
+   		#end
+   		#if(!$ut.isns($xb))
+     			and xb = :xb
+   		#end
+   		#if(!$ut.isns($jcwh))
+     			and jcwh = :jcwh
+   		#end
+   		#if(!$ut.isns($startYear))
+     			and csrq <= :startYear
+   		#end
+   		#if(!$ut.isns($endYear))
+     			and csrq > :endYear
+   		#end
+   		#if(!$ut.isns($_end_csrq1))
+     			and csrq <= :_end_csrq1
+   		#end
+   		#if(!$ut.isns($_start_csrq1))
+     			and csrq > :_start_csrq1
+   		#end
+   		#if(!$ut.isns($hh))
+     			and hh = '${hh}'
+   		#end
+   		#if(!$ut.isns($yhkxzmc))
+     			and yhkxzmc = :yhkxzmc
+   		#end
+   		#if(!$ut.isns($hhnbid))
+     			and hhnbid = '${hhnbid}'
+   		#end
+   		#if(!$ut.isns($csrq))
+     			and csrq = :csrq
+   		#end
+   		#if(!$ut.isns($zjlb))
+     			and zjlb = :zjlb
+   		#end
+	    #if(2 == $fw)
+	    	and (zjlb =null and csrq < '${wcnlimit}')
+	    #end
+	    #if(3 == $fw)
+	    	and (zjlb = '1')
+	    #end
+	    #if(4 == $fw)
+	    	and (zjlb !=null and yxqxjzrq < '${sj}')
+	    #end
+	    order by jlx, pxh, rynbid
+	    		]]>	
+	</queryCbddy>
+	
+	<querytjbbsj>
+	<![CDATA[
+		from PoRPT_TJBBSJB 
+			where 1=1
+    	#if(!$ut.isns($where))
+			and ${where}
+		#end			
+		#if(!$ut.isns($pcs))
+		   and substring(jcwh,1,9) = '${pcs}'
+		#end
+		#if(!$ut.isns($jcwh))
+		   and jcwh = '${jcwh}'
+		#end
+		#if(!$ut.isns($tjny))
+		   and tjny =substring(${tjny},1,6)
+		#end
+		#if(!$ut.isns($czyid))
+		   and czyid = '${czyid}'
+		#end
+		#if(!$ut.isns($czyip))
+		   and czyip = '${czyip}'
+		#end
+   		#if(!$ut.isns($_end_czsj))
+	      	and czsj <='${_end_czsj}'
+	    #end
+	    #if(!$ut.isns($_start_czsj))
+	      	and czsj >='${_start_czsj}'
+	    #end
+   		]]>	
+	</querytjbbsj>
+	
+	<!-- 获取照片信息 -->
+	<queryzpxx>
+		from PoHJXX_ZPLSB 
+			where 1=1
+		#if(!$ut.isns($gmsfhm))
+		   and gmsfhm = '${gmsfhm}'
+		#end
+	</queryzpxx>
+	
+	
+	<queryQshz>
+	<![CDATA[
+		select a,b from PoHJXX_HXXB a,PoHJXX_MLPXXXXB b
+			where 1=1 and  (a.mlpnbid = b.mlpnbid)
+		and a.hhnbid in (select pohjxx_czr2_.hhnbid
+            from PoHJXX_CZRKJBXXB pohjxx_czr2_
+           where ((pohjxx_czr2_.jlbz = '1'))
+             and ((pohjxx_czr2_.ryzt = '0'))
+             and ((pohjxx_czr2_.cxbz = '0'))
+             #if(!$ut.isns($pcs))
+	      		and pohjxx_czr2_.pcs = :pcs
+	     	 #end
+           group by pohjxx_czr2_.hhnbid
+          having(min(pohjxx_czr2_.yhzgx) >= '10') )
+          and (a.jlbz = '1')) and ((a.cxbz = '0')
+          ]]>	
+	</queryQshz>
+	
+	<queryYhdghz>
+	<![CDATA[
+		select pohjxx_czr0_ from PoHJXX_CZRKJBXXB pohjxx_czr0_ where (1 = 1)
+		and ((pohjxx_czr0_.hhnbid in 
+        (select pohjxx_czr1_.hhnbid 
+             from PoHJXX_CZRKJBXXB pohjxx_czr1_ 
+            where ((pohjxx_czr1_.jlbz = '1')) 
+               and ((pohjxx_czr1_.ryzt = '0')) 
+              and ((pohjxx_czr1_.cxbz = '0')) 
+              and ((pohjxx_czr1_.yhzgx < '10'))
+			  #if(!$ut.isns($pcs))
+	      		and pohjxx_czr1_.pcs = :pcs
+	     	  #end              
+            group by pohjxx_czr1_.hhnbid 
+          having(count(*) > 1))) and ((pohjxx_czr0_.jlbz = '1')) and 
+        ((pohjxx_czr0_.ryzt = '0')) and ((pohjxx_czr0_.cxbz = '0')) and 
+        ((pohjxx_czr0_.yhzgx < '10')) and (1 = 1))
+        ]]>	
+	</queryYhdghz>
+	
+	
+	<queryYrwh>
+	<![CDATA[
+		select pohjxx_czr0_ from PoHJXX_CZRKJBXXB pohjxx_czr0_ 
+		where ((not exists 
+	         (select pohjxx_hxx1_.hhnbid 
+	             from PoHJXX_HXXB pohjxx_hxx1_ 
+	            where (pohjxx_hxx1_.jlbz = '1') 
+	              and (pohjxx_hxx1_.hhnbid = pohjxx_czr0_.hhnbid))) and 
+	        ((pohjxx_czr0_.jlbz = '1')) and ((pohjxx_czr0_.ryzt = '0')) 
+	        and ((pohjxx_czr0_.cxbz = '0')) 
+	        #if(!$ut.isns($pcs))
+	      		and pohjxx_czr0_.pcs = :pcs
+	     	#end 
+	        and (1 = 1))
+	        
+        ]]>	
+	</queryYrwh>
+	
+	<queryYhwd>
+	<![CDATA[
+		  from PoHJXX_HXXB pohjxx_hxx0_
+         where ((not exists
+                (select pohjxx_mlp1_.mlpnbid
+                    from PoHJXX_MLPXXXXB pohjxx_mlp1_
+                   where (pohjxx_mlp1_.mlpnbid = pohjxx_hxx0_.mlpnbid)
+                   #if(!$ut.isns($pcs))
+		      		and pohjxx_mlp1_.pcs = :pcs
+		     	   #end
+                   )) and
+               ((pohjxx_hxx0_.jlbz = '1')) 
+               and ((pohjxx_hxx0_.cxbz = '0')) 
+               
+               )
+        ]]>	
+	</queryYhwd>
+	
+	<queryQszp>
+	<![CDATA[
+		   from PoHJXX_CZRKJBXXB pohjxx_czr0_
+         where (1 = 1)
+           and ((((pohjxx_czr0_.zpid is null)) or
+               ((pohjxx_czr0_.zpid <= '0'))) and
+               ((pohjxx_czr0_.csrq < '20030121')) and
+               ((pohjxx_czr0_.jlbz = '1')) and ((pohjxx_czr0_.ryzt = '0')) 
+               #if(!$ut.isns($pcs))
+	      		and pohjxx_czr0_.pcs = :pcs
+	     	   #end
+               and ((pohjxx_czr0_.cxbz = '0')) and (1 = 1))
+        ]]>	
+	</queryQszp>
+	
+	<queryCzryxx>
+	<![CDATA[
+		   from PoHJXX_CZRKJBXXB pohjxx_czr0_
+         where (1 = 1)
+           and ((pohjxx_czr0_.ryid in
+               (select pohjxx_czr1_.ryid
+                    from PoHJXX_CZRKJBXXB pohjxx_czr1_
+                   where ((pohjxx_czr1_.jlbz = '1'))
+                     and ((pohjxx_czr1_.cxbz = '0'))
+                     #if(!$ut.isns($pcs))
+			      		and pohjxx_czr1_.pcs = :pcs
+			     	 #end
+                   group by pohjxx_czr1_.ryid
+                  having(count(*) > 1))) and ((pohjxx_czr0_.jlbz = '1')) 
+	     	   and
+               (1 = 1))
+        ]]>	
+	</queryCzryxx>
+	
+	<queryCzhxx>
+	<![CDATA[
+		   select a,b from PoHJXX_HXXB a,PoHJXX_MLPXXXXB b
+			where  a.mlpnbid = b.mlpnbid
+           and ((a.hhid in
+               (select pohjxx_hxx2_.hhid
+                    from PoHJXX_HXXB pohjxx_hxx2_
+                   where ((pohjxx_hxx2_.jlbz = '1'))
+                     and ((pohjxx_hxx2_.cxbz = '0'))
+                   group by pohjxx_hxx2_.hhid
+                  having(count(*) > 1))) and ((a.jlbz = '1')) and
+               (1 = 1))
+               #if(!$ut.isns($pcs))
+	      		  and b.pcs = :pcs
+	     	   #end
+        ]]>	
+	</queryCzhxx>
+	
+	<queryCzdxx>
+	<![CDATA[
+		  from PoHJXX_MLPXXXXB pohjxx_mlp0_
+         where (1 = 1)
+           and ((pohjxx_mlp0_.mlpid in
+               (select pohjxx_mlp1_.mlpid
+                    from PoHJXX_MLPXXXXB pohjxx_mlp1_
+                   where ((pohjxx_mlp1_.jlbz = '1'))
+                   #if(!$ut.isns($pcs))
+			      		and pohjxx_mlp1_.pcs = :pcs
+			     	#end
+                   group by pohjxx_mlp1_.mlpid
+                  having(count(*) > 1))) and ((pohjxx_mlp0_.jlbz = '1')) and
+               (1 = 1))
+        ]]>	
+	</queryCzdxx>
+	
+	<queryBczryxx>
+	<![CDATA[
+		 from PoHJXX_CZRKJBXXB pohjxx_czr0_
+         where (1 = 1)
+           and ((not exists (select pohjxx_czr1_.ryid
+               from PoHJXX_CZRKJBXXB pohjxx_czr1_
+              where ((pohjxx_czr1_.ryid = pohjxx_czr0_.ryid))
+                and ((pohjxx_czr1_.jlbz = '1'))
+                #if(!$ut.isns($pcs))
+		      		and pohjxx_czr1_.pcs = :pcs
+		     	 #end
+                and ((pohjxx_czr1_.cxbz = '0')))) and
+               ((pohjxx_czr0_.cxbz = '0')) and (1 = 1))
+        ]]>	
+	</queryBczryxx>
+	
+	
+	<queryBczdxx>
+	<![CDATA[
+		  from PoHJXX_MLPXXXXB pohjxx_mlp0_
+         where (1 = 1)
+           and ((not exists (select pohjxx_mlp1_.mlpid
+                               from PoHJXX_MLPXXXXB pohjxx_mlp1_
+                              where ((pohjxx_mlp1_.mlpid = pohjxx_mlp0_.mlpid))
+                                and ((pohjxx_mlp1_.jlbz = '1')))) 
+                                #if(!$ut.isns($pcs))
+						      		and pohjxx_mlp0_.pcs = :pcs
+						     	 #end
+		     	 				and (1 = 1))
+        ]]>	
+	</queryBczdxx>
+	
+	<queryChcx>
+	<![CDATA[
+		   from PoHJXX_CZRKJBXXB pohjxx_czr0_
+         where (1 = 1)
+           and ((pohjxx_czr0_.gmsfhm in
+               (select pohjxx_czr1_.gmsfhm
+                    from PoHJXX_CZRKJBXXB pohjxx_czr1_
+                   where ((pohjxx_czr1_.jlbz = '1'))
+                     and ((pohjxx_czr1_.ryzt = '0'))
+                     and ((pohjxx_czr1_.cxbz = '0'))
+                     #if(!$ut.isns($pcs))
+			      		and pohjxx_czr1_.pcs = :pcs
+			     	 #end
+                   group by pohjxx_czr1_.gmsfhm
+                  having(count(*) > 1))) and ((pohjxx_czr0_.jlbz = '1')) and
+               ((pohjxx_czr0_.ryzt = '0')) and ((pohjxx_czr0_.cxbz = '0')) and
+               (1 = 1))
+         order by pohjxx_czr0_.gmsfhm, pohjxx_czr0_.rynbid
+        ]]>	
+	</queryChcx>
+	
+	
+	<queryBczhxx>
+	<![CDATA[
+		select pohjxx_hxx0_,pohjxx_mlp1_ from PoHJXX_HXXB pohjxx_hxx0_, PoHJXX_MLPXXXXB pohjxx_mlp1_
+         where (pohjxx_hxx0_.mlpnbid = pohjxx_mlp1_.mlpnbid)
+           and ((not exists (select pohjxx_hxx2_.hhid
+                               from PoHJXX_HXXB pohjxx_hxx2_
+                              where ((pohjxx_hxx2_.hhid = pohjxx_hxx0_.hhid))
+                                and ((pohjxx_hxx2_.jlbz = '1'))
+                                and ((pohjxx_hxx2_.cxbz = '0'))
+                                )) and
+               ((pohjxx_hxx0_.cxbz = '0')) and (1 = 1))
+             #if(!$ut.isns($pcs))
+	      		and pohjxx_mlp1_.pcs = :pcs
+	     	 #end
+        ]]>	
+	</queryBczhxx>
+
+	
+	<querylzbl>
+	<![CDATA[
+		from PoHJXX_CZRKJBXXB pohjxx_czr0_
+         where (1 = 1)
+         #if(!$ut.isns($gmsfhm))
+		   and pohjxx_czr0_.gmsfhm = :gmsfhm
+		 #end
+		  #if(!$ut.isns($csrq))
+		   and pohjxx_czr0_.csrq = :csrq
+		 #end
+		  #if(!$ut.isns($xm))
+		   and pohjxx_czr0_.xm = :xm
+		 #end
+		 #if(!$ut.isns($hh))
+		   and pohjxx_czr0_.hh = :hh
+		 #end
+		 #if(!$ut.isns($ryid))
+		   and pohjxx_czr0_.ryid = '${ryid}'	
+		 #end
+          and (pohjxx_czr0_.jlbz = '1') 
+          and (pohjxx_czr0_.ryzt = '0')
+          and (pohjxx_czr0_.cxbz = '0') and
+               (pohjxx_czr0_.rysdzt = '0') and (1 = 1)
+		]]>	
+	</querylzbl>
+	
+	<querylzdy>
+	<![CDATA[
+		 from PoLSSFZ_SLXXB
+         where 1 = 1
+         #if(!$ut.isns($where))
+     		and ${where}
+   		 #end         
+         #if(!$ut.isns($xm))
+	      	and xm = :xm
+	     #end
+	      #if(!$ut.isns($gmsfhm))
+	      	and gmsfhm = :gmsfhm
+	     #end
+	     #if(!$ut.isns($lsjmsfzkh))
+	      	and lsjmsfzkh = :lsjmsfzkh
+	     #end
+	     #if(!$ut.isns($dybz))
+	      	and dybz = :dybz
+	     #end
+	     #if(!$ut.isns($pcs))
+	      	and pcs = :pcs
+	     #end
+	     #if(!$ut.isns($dysj))
+	      	and dysj = :dysj
+	     #end
+	     #if(!$ut.isns($_end_csrq))
+	      	and csrq < '${_end_csrq}'
+	     #end
+	     #if(!$ut.isns($_start_csrq))
+	      	and csrq < '${_start_csrq}'
+	     #end
+	     #if(!$ut.isns($_end_yxqxqsrq))
+     	  and yxqxqsrq< '${_end_yxqxqsrq}'
+   		#end
+   		#if(!$ut.isns($_start_yxqxqsrq))
+     		and yxqxqsrq>='${_start_yxqxqsrq}' 
+   		#end
+   		 #if(!$ut.isns($_end_yxqxjzrq))
+     	  and yxqxjzrq< '${_end_yxqxjzrq}'
+   		#end
+   		#if(!$ut.isns($_start_yxqxjzrq))
+     		and yxqxjzrq>='${_start_yxqxjzrq}' 
+   		#end
+   		#if(!$ut.isns($_end_czsj))
+	      	and czsj <'${_end_czsj}'
+	    #end
+	    #if(!$ut.isns($_start_czsj))
+	      	and czsj >='${_start_czsj}'
+	    #end
+	     #if(!$ut.isns($qfjg))
+	      	and qfjg = :qfjg
+	     #end
+	     #if(!$ut.isns($czyip))
+	      	and czyip = :czyip
+	     #end
+	     #if(!$ut.isns($dyrid))
+	      	and dyrid = :dyrid
+	     #end
+	      #if(!$ut.isns($dyrip))
+	      	and dyrip = :dyrip
+	     #end
+	      #if(!$ut.isns($mz))
+	      	and mz = :mz
+	     #end
+	     #if(!$ut.isns($csdssxq))
+	      	and csdssxq = :csdssxq
+	     #end
+	     #if(!$ut.isns($ssxq))
+	      	and ssxq = :ssxq
+	     #end
+	     #if(!$ut.isns($jlx))
+	      	and jlx = :jlx
+	     #end
+	      #if(!$ut.isns($mlph))
+	      	and mlph = :mlph
+	     #end
+	     #if(!$ut.isns($mlxz))
+	      	and mlxz = :mlxz
+	     #end
+	      #if(!$ut.isns($zrq))
+	      	and zrq = :zrq
+	     #end
+	     #if(!$ut.isns($xzjd))
+	      	and xzjd = :xzjd
+	     #end
+	     #if(!$ut.isns($jcwh))
+	      	and jcwh = :jcwh
+	     #end
+	     #if(!$ut.isns($czyid))
+	      	and czyid = '${czyid}'
+	     #end
+	     #if(!$ut.isns($xb))
+	      	and xb = :xb
+	     #end
+	     #if(!$ut.isns($zz))
+	      	and zz = :zz
+	     #end
+          and dybz = '${isdy}'
+		]]>	
+	</querylzdy>
+
+	<getQxzjjsInfo>
+		<![CDATA[
+		from PoZJYW_SLXXB a
+			where 1=1
+			and slzt = '73'
+			#if(!$ut.isns($fjpch))
+	      		and a.fjpch = :fjpch
+	    	#end
+	    	#if(!$ut.isns($ssxq))
+	      		and a.ssxq = :ssxq
+	    	#end
+	    order by czsj, nbslid
+		]]>
+	</getQxzjjsInfo>
+	<getQxzjffInfo>
+		<![CDATA[
+		from PoZJYW_SLXXB a
+			where 1=1
+			and ((slzt = '80') or (slzt = '81'))
+			#if(!$ut.isns($fjpch))
+	      		and a.fjpch = :fjpch
+	    	#end
+	    	#if(!$ut.isns($pcs))
+	      		and a.pcs = :pcs
+	    	#end
+	    order by czsj, nbslid
+		]]>
+	</getQxzjffInfo>
+	<getDszjffInfo>
+		<![CDATA[
+		from PoZJYW_SLXXB a
+			where 1=1
+			and slzt = '74'
+			#if(!$ut.isns($fjpch))
+	      		and a.fjpch = :fjpch
+	    	#end
+	    	#if(!$ut.isns($ssxq))
+	      		and a.ssxq = :ssxq
+	    	#end
+	    order by czsj
+		]]>
+	</getDszjffInfo>
+	<getDblkzxxInfo>
+		<![CDATA[
+		from PoYDZJ_DBLKZ a
+			where 1=1
+		]]>	
+	</getDblkzxxInfo>
+	<queryYdbzxx>
+		<![CDATA[
+		from PoYDZJ_SBXXB a
+			where 1=1
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end			
+			#if(!$ut.isns($ssxq))
+		      	and a.ssxq = '${ssxq}'
+		    #end
+		    #if(!$ut.isns($gmsfhm))
+		      	and a.gmsfhm = '${gmsfhm}'
+		    #end
+		    #if(!$ut.isns($xm))
+		      	and a.xm = '${xm}'
+		    #end
+		    #if(!$ut.isns($slzt))
+		      	and a.slzt = '${slzt}'
+		    #end
+		    #if(!$ut.isns($_end_czsj))
+		      	and a.czsj <'${_end_czsj}'
+		    #end
+		    #if(!$ut.isns($_start_czsj))
+		      	and a.czsj >='${_start_czsj}'
+		    #end
+		    #if(!$ut.isns($zlhkzt))
+		      	and a.zlhkzt = '${zlhkzt}'
+		    #end
+		    #if(!$ut.isns($zz))
+		      	and a.zz = '${zz}'
+		    #end
+		    #if(!$ut.isns($slyy))
+		      	and a.slyy = '${slyy}'
+		    #end
+		    #if(!$ut.isns($zzlx))
+		      	and a.zzlx = '${zzlx}'
+		    #end
+		    #if(!$ut.isns($lzfs))
+		      	and a.lzfs = '${lzfs}'
+		    #end
+		    #if(1 == $admin)
+		    	#if(!$ut.isns($sbddm))
+		      	and a.sbddm like :sbddm% 
+		    #end
+		    #else
+		    	#if(!$ut.isns($sbddm))
+		      	and a.sbddm = '${sbddm}'
+		    #end 
+		    #end
+		    
+		    #if(!$ut.isns($zzfy))
+		      	and a.zzfy = '${zzfy}'
+		    #end
+		    #if(!$ut.isns($cym))
+		      	and a.cym = '${cym}'
+		    #end
+		    #if(!$ut.isns($xb))
+		      	and a.xb = '${xb}'
+		    #end
+		    #if(!$ut.isns($mz))
+		      	and a.mz = '${mz}'
+		    #end
+		    #if(!$ut.isns($csrq))
+		      	and a.csrq = '${csrq}'
+		    #end
+		    #if(!$ut.isns($sjrxm))
+		      	and a.sjrxm = '${sjrxm}'
+		    #end
+		    #if(!$ut.isns($sjrlxdh))
+		      	and a.sjrlxdh = '${sjrlxdh}'
+		    #end
+		    #if(!$ut.isns($sjrtxdz))
+		      	and a.sjrtxdz = '${sjrtxdz}'
+		    #end
+		    #if(!$ut.isns($sjryb))
+		      	and a.sjryb = '${sjryb}'
+		    #end
+		    #if(!$ut.isns($czyid))
+		      	and a.czyid = '${czyid}'
+		    #end
+		    #if(!$ut.isns($sblx))
+		      	and a.sblx = '${sblx}'
+		    #end    
+			#if(1 == $sqzt4)
+				#if(1 == $sqzt1&&1 == $sqzt2&&1 == $sqzt3&&1 == $sqzt5)
+				#else
+					#if(!$ut.isns($sqzt1))
+						and a.slzt<> '98' and a.slzt<> '97'
+					#end
+					#if(!$ut.isns($sqzt2))
+						and a.slzt<> '00'
+					#end
+					#if(!$ut.isns($sqzt3))
+						and a.slzt<> '18'
+					#end
+					#if(!$ut.isns($sqzt5))
+						and a.slzt<> '93'
+					#end
+				#end
+			#else 
+			and (
+				#if(1 == $sqzt1)
+					(a.slzt = '98' or a.slzt = '97')
+				#end
+				#if(1 == $sqzt2&&1 == $sqzt1&&(!$ut.isns($sqzt3)||!$ut.isns($sqzt5)))
+					or (a.slzt = '00') 
+				#else 
+					#if(1 == $sqzt2)
+						(a.slzt = '00') 
+					#end
+				#end
+				#if(1 == $sqzt3&&(!$ut.isns($sqzt1)||!$ut.isns($sqzt2)||!$ut.isns($sqzt5)))
+					or (a.slzt = '18')
+				#else 
+					#if(1 == $sqzt3)
+						(a.slzt = '18')
+					#end
+				#end
+				#if(1 == $sqzt5&&(!$ut.isns($sqzt1)||!$ut.isns($sqzt2)||!$ut.isns($sqzt3)))
+					or (a.slzt = '93')
+				#else 
+					#if(1 == $sqzt5)
+						(a.slzt = '93')
+					#end
+				#end
+				)				
+			#end
+		]]>	
+	</queryYdbzxx>
+	<queryYdbzlzxx>
+		<![CDATA[
+		from PoYDZJ_SBXXB a
+			where 1=1
+			#if(!$ut.isns($gmsfhm))
+		      	and a.gmsfhm = '${gmsfhm}'
+		    #end
+		    #if(!$ut.isns($csrq))
+		      	and a.csrq = '${csrq}'
+		    #end
+		    #if(!$ut.isns($xm))
+		      	and a.xm = '${xm}'
+		    #end
+		    #if(!$ut.isns($sbddm))
+		      	and a.sbddm = '${sbddm}'
+		    #end
+		    and a.slzt >= '18'
+		    and a.slzt <= '92'
+		   
+		]]>	
+	</queryYdbzlzxx>
+	<queryZjslxx>
+		<![CDATA[
+		from PoHJXX_CZRKJBXXB 
+			where 1=1
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end	
+    		#if(!$ut.isns($ryid))
+		      	and ryid = '${ryid}'
+		    #end		
+		    #if(!$ut.isns($xm))
+		      	and xm = '${xm}'
+		    #end
+		    #if(!$ut.isns($gmsfhm))
+		      	and gmsfhm = '${gmsfhm}'
+		    #end
+		    #if(!$ut.isns($csrq))
+		      	and csrq = '${csrq}'
+		    #end
+		    #if(!$ut.isns($hh))
+		      	and hh = '${hh}'
+		    #end
+		    and jlbz = '1'
+		    and ryzt = '0'
+		    and cxbz = '0'
+		    and rysdzt = '0'
+		   
+		]]>	
+	</queryZjslxx>
+	
+	<queryLsZjslxx>
+	<![CDATA[
+		from PoZJYW_SLXXB 
+			where 1=1
+		#if(!$ut.isns($slh))
+		   and slh = '${slh}'
+		#end
+		#if(!$ut.isns($gmsfhm))
+		   and gmsfhm = '${gmsfhm}'
+		#end
+		#if(!$ut.isns($xm))
+		   and xm = '${xm}'
+		#end
+		#if(!$ut.isns($pcs))
+		   and pcs = '${pcs}'
+		#end
+		#if(!$ut.isns($slzt))
+		   and slzt = '${slzt}'
+		#end
+		#if(!$ut.isns($ryid))
+		   and ryid = '${ryid}'
+		#end
+		]]>	
+	</queryLsZjslxx>
+	
+	<queryslxx>
+	<![CDATA[
+		from PoZJYW_SLXXB 
+			where 1=1
+		#if(!$ut.isns($gmsfhm))
+		   and gmsfhm = '${gmsfhm}'
+		#end
+		#if(!$ut.isns($xm))
+		   and xm = '${xm}'
+		#end
+			and slzt > '13'
+		#if(1 == $queryFlag)
+			and slzt < '90'
+		#else 
+			#if(2 == $queryFlag)
+				slzt < '93'
+			#end
+		#end
+		]]>		
+	</queryslxx>
+	<queryzjcx>
+		<![CDATA[
+			from PoV_ZJ_JMSFZXXB a 
+			where 1=1 
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end			
+			and zjzt='1'
+			#if(!$ut.isns($ryid))
+				and ryid = '${ryid}'
+			#end
+			#if(!$ut.isns($xm))
+				and xm = '${xm}'
+			#end
+			#if(!$ut.isns($gmsfhm))
+				and gmsfhm = '${gmsfhm}'
+			#end
+			#if(!$ut.isns($_end_csrq))
+	      	     and csrq <'${_end_csrq}'
+	        #end
+	        #if(!$ut.isns($_start_csrq))
+	      	     and csrq >='${_start_csrq}'
+	        #end
+	    	#if(!$ut.isns($_start_yxqxqsrq))
+	    		and yxqxqsrq >= $_start_yxqxqsrq
+	 		#end
+	 		#if(!$ut.isns($_end_yxqxqsrq))
+	   			and yxqxqsrq < $_end_yxqxqsrq
+	 		#end
+         ]]>
+	</queryzjcx>
+	<queryZjjsxx>
+		<![CDATA[
+		from PoZJYW_SLXXB a
+			where 1=1
+			and a.slzt = '83'
+			#if(!$ut.isns($fjpch))
+	      		and a.fjpch = :fjpch
+	    	#end
+	    	#if(!$ut.isns($pcs))
+	      		and a.pcs = :pcs
+	    	#end
+	    order by czsj, nbslid
+		]]>		
+	</queryZjjsxx>
+	<queryZjlqxx>
+		<![CDATA[
+		from PoZJYW_SLXXB a
+			where 1=1
+          	#if(!$ut.isns($where))
+      			and ${where}
+    		#end			
+			and (a.slzt >= '18' and a.slzt <= '92')
+			#if(!$ut.isns($xm))
+	      		and a.xm = :xm
+	    	#end
+	    	#if(!$ut.isns($slh))
+	      		and a.slh = :slh
+	    	#end
+	    	#if(!$ut.isns($gmsfhm))
+	      		and a.gmsfhm = :gmsfhm
+	    	#end
+	    	#if(!$ut.isns($pcs))
+	      		and a.pcs = :pcs
+	    	#end
+		]]>		
+	</queryZjlqxx>
+	<checkslxx>
+	<![CDATA[
+ 	   from PoLSSFZ_SLXXB where 1=1
+	   #if(!$ut.isns($ryid))
+	      	and ryid = '${ryid}'
+	   #end
+		]]>		
+	</checkslxx>
+	<queryMessage>
+	<![CDATA[
+ 	   from PoMESSAGEXXB where 1=1
+	   #if(!$ut.isns($yhid))
+	      	and (fsryhid = '${yhid}' or jsryhid='${yhid}')
+	   #end
+	   and removeflag = '0'
+		]]>		
+	</queryMessage>	
+	<!-- 异步查询是否有未读的消息 -->
+	<checkUnReadMessage>
+		<![CDATA[
+ 	   from PoMESSAGEXXB where 1=1
+	   #if(!$ut.isns($jsryhid))
+	      	and jsryhid = '${jsryhid}' 
+	   #end
+	   and removeflag = '0'
+	   and readflag ='0'
+	   order by messageid desc
+		]]>	
+	</checkUnReadMessage>
+	<!-- 信息维护查询 -->
+	<queryXx>
+		<![CDATA[
+ 	    from PoMESSAGEXXB where 1=1
+	    #if(!$ut.isns($jssj_start))
+    		and jssj >= $jssj_start
+ 		#end
+ 		#if(!$ut.isns($jssj_end))
+   			and jssj <= $jssj_end
+ 		#end
+ 		#if(!$ut.isns($fsryhid))
+   			and fsryhid = $fsryhid
+ 		#end
+ 		#if(!$ut.isns($jsryhid))
+   			and jsryhid = $jsryhid
+ 		#end	
+	   and removeflag = '0'
+	   order by messageid 
+		]]>	
+	</queryXx>
+	<!-- 待销毁证件查询 -->
+	<queryZjxhxx>
+		<![CDATA[
+ 	    from PoV_ZJ_JMSFZXXB where 1=1
+        #if(!$ut.isns($where))
+     		and ${where}
+   		#end 	    
+ 		#if(!$ut.isns($xm))
+   			and xm = '${xm}'
+ 		#end	
+	    #if(!$ut.isns($gmsfhm))
+   			and gmsfhm = '${gmsfhm}'
+ 		#end
+ 		#if(!$ut.isns($_start_csrq))
+    		and csrq >= $_start_csrq
+ 		#end
+ 		#if(!$ut.isns($_end_csrq))
+   			and csrq <= $_end_csrq
+ 		#end
+ 		#if(!$ut.isns($_start_yxqxqsrq))
+    		and yxqxqsrq >= $_start_yxqxqsrq
+ 		#end
+ 		#if(!$ut.isns($_end_yxqxqsrq))
+   			and yxqxqsrq < $_end_yxqxqsrq
+ 		#end
+ 		and zjzt='3'
+		]]>		
+	</queryZjxhxx>
+	<!-- 地址维护信息 -->
+	<dzwhxxcx>
+		<![CDATA[
+ 	    from PoHJXX_MLPXXXXB where 1=1
+        #if(!$ut.isns($where))
+     		and ${where}
+   		#end
+   		$ut.linkSjfw('ssxq') 	    
+ 		#if(!$ut.isns($ssxq))
+   			and ssxq = $ssxq
+ 		#end	
+	    #if(!$ut.isns($pcs))
+   			and pcs = $pcs
+ 		#end
+ 		#if(!$ut.isns($zrq))
+     		and zrq = $zrq
+   		#end 	    
+ 		#if(!$ut.isns($xzjd))
+   			and xzjd = $xzjd
+ 		#end	
+	    #if(!$ut.isns($jcwh))
+   			and jcwh = $jcwh
+ 		#end
+ 		#if(!$ut.isns($jlx))
+     		and jlx = $jlx
+   		#end 	    
+ 		
+ 		#if(!$ut.isns($mlph))
+     		and (mlph like :%mlphToDBC% or mlph like :%mlphToSBC%)
+   		#end
+   		#if(!$ut.isns($mlxz))
+   			and (mlxz like :%mlxzToDBC% or mlxz like :%mlxzToSBC%)
+   		#end
+ 		and jlbz='1'
+ 		and mlpzt='0'
+		]]>		
+	</dzwhxxcx>
+	<!-- 居委会下街路巷模糊查询 -->
+	<searchJlxByJwh>
+			<![CDATA[
+	           select b
+	         	from PoXT_JLXJWHDZXXB a,
+	               	PoXT_JLXXXB   b,
+	               	PoXT_JWHXXB   c
+	         	where (a.jlxdm = b.dm)
+	           		and (a.jwhdm = c.dm)
+	           		and (a.qybz = '1')
+	          		and (b.qybz = '1')
+	           		and (c.qybz = '1')
+	           		#if(!$ut.isns($jcwh))
+		      			and c.dm = '${jcwh}'
+		    		#end
+	           		$ut.linklhSjfw("")
+	           		#if(!$ut.isns($search_code))
+	           			and (
+	           				c.dm like :search_code% 
+	           				or c.mc like :%search_code% 
+	           				or c.wbpy like :search_code% 
+	           				or c.zwpy like :search_code%
+	           			)
+	           		#end
+	           	order by c.dm,b.dm
+         ]]>
+	</searchJlxByJwh>
+	<!-- 省市县区下居委会模糊查询 -->
+	<queryJwhByssxq>
+		<![CDATA[
+			from PoXT_JWHXXB   c
+	         	where 
+	           		1=1
+	           		$ut.linkSjfw("")
+	           		#if(!$ut.isns($dm))
+	           			and c.dm like :dm% 
+	           		#end
+	           	order by c.dm
+         ]]>	
+	</queryJwhByssxq>
+	<!-- 二代证受理历史信息列表查询 -->
+	<getEdzsllsxxlist>
+		<![CDATA[
+			from PoZJLS_SFZYWCZB   
+	         	where 
+           		1=1
+           		#if(!$ut.isns($slh))
+           			and slh = '${slh}'
+           		#end
+         ]]>	
+	</getEdzsllsxxlist>
+	<!-- 二代证受理历史详情信息查询 -->
+	<getEdzsllsxxInfo>
+		<![CDATA[
+			from PoZJYW_SLXXB   
+	         	where 
+           		1=1
+           		#if(!$ut.isns($slh))
+           			and slh = '${slh}'
+           		#end
+         ]]>	
+	</getEdzsllsxxInfo>	
+	<!-- 证件挂失查询 -->
+	<queryzjgscx>
+		<![CDATA[
+		from PoV_ZJ_JMSFZXXB   where 1=1
+        #if(!$ut.isns($where))
+     		and ${where}
+   		#end 	    
+ 		#if(!$ut.isns($xm))
+   			and xm = '${xm}'
+ 		#end	
+ 		#if(!$ut.isns($ryid))
+   			and ryid = '${ryid}'
+ 		#end
+	    #if(!$ut.isns($gmsfhm))
+   			and gmsfhm = '${gmsfhm}'
+ 		#end
+ 		#if(!$ut.isns($_start_csrq))
+    		and csrq >= $_start_csrq
+ 		#end
+ 		#if(!$ut.isns($_end_csrq))
+   			and csrq <= $_end_csrq
+ 		#end
+ 		#if(!$ut.isns($_start_yxqxqsrq))
+    		and yxqxqsrq >= $_start_yxqxqsrq
+ 		#end
+ 		#if(!$ut.isns($_end_yxqxqsrq))
+   			and yxqxqsrq < $_end_yxqxqsrq
+ 		#end
+ 		and zjzt='1'
+         ]]>	
+	</queryzjgscx>	
+	<!-- 查询分局审核信息 -->
+	<queryFjshxx>
+		<![CDATA[
+		from PoZJYW_SLXXB   where 1=1
+        #if(!$ut.isns($where))
+     		and ${where}
+   		#end 	    
+ 		#if(!$ut.isns($xm))
+   			and xm = '${xm}'
+ 		#end	
+	    #if(!$ut.isns($gmsfhm))
+   			and gmsfhm = '${gmsfhm}'
+ 		#end
+ 		#if(!$ut.isns($slh))
+   			and slh = '${slh}'
+ 		#end
+ 		#if(!$ut.isns($pcs))
+   			and pcs = '${pcs}'
+ 		#end
+ 		#if(!$ut.isns($yshxx))
+   			and slzt>'10' and slzt<'14'
+ 		#else
+			and slzt>'00' and slzt<'02'
+		#end
+		#if(!$ut.isns($kzxx))
+   			and zzlx = '2'
+ 		#else
+			and zzlx <> '2'
+		#end
+		#if(!$ut.isns($yzw))
+   			and exists(select b.jmsfzslh from PoVIEW_ZW b where slh=b.jmsfzslh) 
+		#end
+ 		#if(!$ut.isns($rowNum))
+   			and RowNum <= '${rowNum}'
+ 		#end
+ 		order by czsj, nbslid
+         ]]>	
+	</queryFjshxx>	
+	<!-- 历史受理信息查询 -->
+	<queryLsshxx>
+		<![CDATA[
+		from PoZJYW_SLXXB a
+			where 1=1
+			#if(!$ut.isns($ryid))
+	      		and a.ryid = '${ryid}'
+	    	#end
+	    	#if(!$ut.isns($nbslid))
+	      		and a.nbslid <> '${nbslid}'
+	    	#end
+	    order by czsj, nbslid
+		]]>	
+	</queryLsshxx>
+	<!-- 查询分局签发信息 -->
+	<queryFjqfxx>
+		<![CDATA[
+		from PoZJYW_SLXXB   where 1=1
+		and slzt>'10' and slzt<'12'
+        #if(!$ut.isns($where))
+     		and ${where}
+   		#end 	    
+ 		#if(!$ut.isns($xm))
+   			and xm = '${xm}'
+ 		#end	
+	    #if(!$ut.isns($gmsfhm))
+   			and gmsfhm = '${gmsfhm}'
+ 		#end
+ 		#if(!$ut.isns($slh))
+   			and slh = '${slh}'
+ 		#end
+ 		#if(!$ut.isns($pcs))
+   			and pcs = '${pcs}'
+ 		#end
+		#if(!$ut.isns($kzxx))
+   			and zzlx = '2'
+ 		#else
+			and zzlx <> '2'
+		#end
+ 		#if(!$ut.isns($rowNum))
+   			and RowNum <= '${rowNum}'
+ 		#end
+ 		order by czsj, nbslid
+         ]]>	
+	</queryFjqfxx>
+	<queryEchartsData>
+		<![CDATA[
+		from PoECHARTSDATA   where 1=1
+		#if(!$ut.isns($xzqhmc))
+   			and ssqhmc = '${xzqhmc}'
+ 		#end
+ 		order by ssqhdm
+         ]]>		
+	</queryEchartsData>
+	<querySSXQQRSFFBB>
+		<![CDATA[
+			from PoSSXQQRSFFBB   where 1=1
+		#if(!$ut.isns($qhdmTemp))
+   			and qhdm = '${qhdmTemp}'
+ 		#end
+         ]]>
+	</querySSXQQRSFFBB>
+	<!-- 查询市局审核信息 -->
+	<querySjshxx>
+		<![CDATA[
+		from PoZJYW_SLXXB   where 1=1
+        #if(!$ut.isns($where))
+     		and ${where}
+   		#end 	    
+ 		#if(!$ut.isns($xm))
+   			and xm = '${xm}'
+ 		#end	
+	    #if(!$ut.isns($gmsfhm))
+   			and gmsfhm = '${gmsfhm}'
+ 		#end
+ 		#if(!$ut.isns($slh))
+   			and slh = '${slh}'
+ 		#end
+ 		#if(!$ut.isns($pcs))
+   			and pcs = '${pcs}'
+ 		#end
+ 		#if(!$ut.isns($yshxx))
+   			and slzt>'13' and slzt<'18'
+ 		#else
+			and slzt>'12' and slzt<'14'
+		#end
+		#if(!$ut.isns($kzxx))
+   			and zzlx = '2'
+ 		#else
+			and zzlx <> '2'
+		#end
+ 		#if(!$ut.isns($rowNum))
+   			and RowNum <= '${rowNum}'
+ 		#end
+ 		order by czsj, nbslid
+         ]]>	
+	</querySjshxx>
+	<!-- 查询人户分离信息 -->
+	<queryRhfl>
+		<![CDATA[
+			from PoHJXX_RHFLXXB   where 1=1
+				#if(!$ut.isns($rynbid))
+		   			and rynbid = '${rynbid}'
+		 		#end
+		 		order by slsj
+         ]]>	
+	</queryRhfl>
+	<!-- 市局验收查询受理信息 -->
+	<querySjslxx>
+		<![CDATA[
+			from PoZJYW_SLXXB   where 1=1
+				#if(!$ut.isns($xm))
+		   			and xm =:xm
+		 		#end
+				#if(!$ut.isns($gmsfhm))
+		   			and gmsfhm =:gmsfhm
+		 		#end
+		 		and slzt>'13'
+		 		#if(1 == $queryFlag)
+					and slzt < '81'
+				#else 
+					#if(2 == $queryFlag)
+						and slzt < '83'
+					#end
+				#end
+         ]]>		
+	</querySjslxx>
+	<!-- 分局验收查询受理信息 -->
+	<queryFjslxx>
+			<![CDATA[
+			from PoZJYW_SLXXB   where 1=1
+				#if(!$ut.isns($xm))
+		   			and xm =:xm
+		 		#end
+				#if(!$ut.isns($gmsfhm))
+		   			and gmsfhm =:gmsfhm
+		 		#end
+		 		and slzt>'13'
+		 		#if(1 == $queryFlag)
+					and slzt < '71'
+				#else 
+					#if(2 == $queryFlag)
+					and	slzt < '73'
+					#end
+				#end
+         ]]>
+	</queryFjslxx>
+	<queryPoMESSAGEXXB>
+		<![CDATA[
+			from PoMESSAGEXXB   where 1=1
+				#if(!$ut.isns($jsryhid))
+		   			and jsryhid =:jsryhid
+		 		#end
+		 		and removeflag = '0' 
+		 		and readflag ='0' 
+		 		order by messageid desc 
+         ]]>
+	</queryPoMESSAGEXXB>
+	<!-- 未登记户口查询 -->
+	<queryWdjhkcx>
+		<![CDATA[
+			from PoHJXX_CZRKJBXXB a  where 1=1
+			#if(!$ut.isns($xm))
+		      	and a.xm = :xm
+    		#end
+    		#if(!$ut.isns($gmsfhm))
+	      		and a.gmsfhm = :gmsfhm
+    		#end
+    		#if(!$ut.isns($hh))
+	      		and a.hh = :hh
+    		#end
+    		#if(!$ut.isns($csrq))
+				and a.csrq = :csrq
+			#end
+         ]]>
+	</queryWdjhkcx>
+	<!-- 分户查询 -->
+	<queryFhcx>
+		<![CDATA[
+			from PoHJXX_CZRKJBXXB a
+			where 1=1
+			#if(!$ut.isns($gmsfhm))
+	      		and a.gmsfhm = :gmsfhm
+    		#end
+         ]]>
+	</queryFhcx>
+	<!-- 解锁锁定历史查询 -->
+	<queryJssdls>
+		<![CDATA[
+			from PoJSSDLOGXXB a
+			where 1=1
+			#if(!$ut.isns($gmsfhm))
+	      		and a.gmsfhm = :gmsfhm
+    		#end
+    		#if(!$ut.isns($xm))
+	      		and a.xm = :xm
+    		#end
+    		#if(!$ut.isns($_start_czsj))
+	      		and a.czsj >= :_start_czsj
+    		#end
+    		#if(!$ut.isns($_end_czsj))
+	      		and a.czsj <= :_end_czsj
+    		#end
+    		order by czsj desc  
+         ]]>
+	</queryJssdls>	
+		<queryRybk>
+	<![CDATA[
+	from PoHJYW_RKBKXXB a
+		where 1=1
+		#if(!$ut.isns($gmsfhm))
+	      		and a.gmsfhm = :gmsfhm
+    		#end
+    		#if(!$ut.isns($xm))
+	      		and a.xm = :xm
+    		#end
+    		#if(!$ut.isns($bklx))
+	      		and a.bklx = :bklx
+    		#end
+    		#if(!$ut.isns($bksj_start))
+	      		and a.bksj >= '${bksj_start}000000'
+    		#end
+    		#if(!$ut.isns($bksj_end))
+	      		and a.bksj <= '${bksj_end}235959'
+    		#end
+    		order by bksj desc
+    	]]>
+	</queryRybk>
+	<queryRybkgjxx>
+	<![CDATA[
+		from PoHJYW_RKBKXXB_GJ a
+		where 1=1
+		#if(!$ut.isns($gmsfhm))
+      		and a.gmsfhm = :gmsfhm
+   		#end
+   		#if(!$ut.isns($xm))
+      		and a.xm = :xm
+   		#end
+   		#if(!$ut.isns($bklx))
+      		and a.bklx = :bklx
+   		#end
+   		#if(!$ut.isns($bksj_start))
+      		and a.hjywsj >= '${bksj_start}000000'
+   		#end
+   		#if(!$ut.isns($bksj_end))
+      		and a.hjywsj <= '${bksj_end}235959'
+   		#end
+   		order by hjywsj desc
+	]]>
+	</queryRybkgjxx>
+	<!-- 非现金收款详情 add by zjm 20191031 -->
+	<queryFxjsktjInfo>
+		<![CDATA[
+			from PoSFXXB a
+			where 1=1 
+			#if(!$ut.isns($dwjb)&&'1' == $dwjb)
+				and a.qhdm = substring(${dwdm},1,6)
+			#else
+				#if(!$ut.isns($dwjb)&&'2'== $dwjb)
+					and substring(a.qhdm,1,4) = substring(${dwdm},1,4)
+				#end
+				#if(!$ut.isns($dwjb)&&'0'== $dwjb)
+					and a.dwdm = ${dwdm}
+				#end
+    		#end
+			#if(!$ut.isns($sffs))
+				#if('1'== $sffs)
+					and a.sffs = :sffs
+					and bzxjfyy is not null
+				#end
+				#if('0'== $sffs)
+					and a.sffs = :sffs
+				#end
+				#if('3'== $sffs)
+					and ((a.sffs = '1' and  bzxjfyy is not null) or (a.sffs = '0'))
+				#end
+	   		#end
+	   		#if(!$ut.isns($_start_dysj))
+	      		and a.dysj >= :_start_dysj
+    		#end
+    		#if(!$ut.isns($_end_dysj))
+	      		and a.dysj <= :_end_dysj
+    		#end
+    		#if(!$ut.isns($yx))
+	      		and ${yx}
+    		#end
+    		#if(!$ut.isns($zf))
+	      		and ${zf}
+    		#end
+    		#if(!$ut.isns($xm))
+	      		and a.xm = :xm
+    		#end
+    		#if(!$ut.isns($jksj_start))
+	      		and a.jksj >= :jksj_start
+    		#end
+    		#if(!$ut.isns($jksj_end))
+	      		and a.jksj<= :jksj_end
+    		#end
+    		#if(!$ut.isns($yjk))
+	      		and bzxjfyy = '4' and sffs = '1'
+    		#end
+    		#if(!$ut.isns($sjk))
+	      		and jfflag = '1' and bzxjfyy = '4' and sffs = '1'
+    		#end
+    		and dylb ='03'
+	   		order by dysj desc   		
+         ]]>	
+	</queryFxjsktjInfo>
+	<validHhid>
+		<![CDATA[
+			from PoHJXX_HXXB a
+			where 1=1 
+			#if(!$ut.isns($hhid))
+	   			and hhid ='${hhid}'
+	 		#end
+	 		#if(!$ut.isns($hhnbid))
+	   			and hhnbid ='${hhnbid}'
+	 		#end
+	 		and jlbz=1
+		]]>
+	</validHhid>
+	<!-- 查询集体土地户信息 -->
+	<getJttdHxx>
+		<![CDATA[
+         	from PoHJXX_HXXB a
+         	where 1 = 1 
+         		#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end   
+	    		#if(!$ut.isns($hhnbid))
+	      			and a.hhnbid = '${hhnbid}'
+	    		#end
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = '${hh}'
+	    		#end
+	    		#if(!$ut.isns($hlx))
+	      			and a.hlx = '${hlx}'
+	    		#end 
+	    		#if(!$ut.isns($_end_jhsj))
+	      			and a.jhsj <'${_end_jhsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_jhsj))
+	      			and a.jhsj >='${_start_jhsj}'
+	    		#end
+	    		#if(!$ut.isns($_end_chsj))
+	      			and a.chsj< '${_end_chsj}'
+	    		#end
+	    		#if(!$ut.isns($_start_chsj))
+	      			and a.chsj>='${_start_chsj}' 
+	    		#end
+	    		and a.jlbz = '1' 
+				and a.cxbz = '0'
+           	order by a.hh
+         ]]>	
+	</getJttdHxx>
+	<!-- 区域冻结查询 -->
+	<queryQydjRy>
+		<![CDATA[
+         from PoHJXX_CZRKJBXXB a
+         	where 1=1
+				#if(!$ut.isns($where))
+	      			and ${where}
+	    		#end         	
+	    		#if(!$ut.isns($hhnbid))
+	      			and a.hhnbid = '${hhnbid}'
+	    		#end
+	    		#if(!$ut.isns($hh))
+	      			and a.hh = '${hh}'
+	    		#end
+	    		#if(!$ut.isns($jlx))
+			      	and a.jlx = '${jlx}'
+			    #end
+	    		#if(!$ut.isns($jcwh))
+	      			and a.jcwh = '${jcwh}'
+	    		#end	
+	    		#if(!$ut.isns($pcs))
+	      			and a.pcs = '${pcs}'
+	    		#end
+	    		#if(!$ut.isns($ssxq))
+	      			and a.ssxq = '${ssxq}'
+	    		#end
+	    		#if(!$ut.isns($djzt))
+	    			and a.djzt = '${djzt}'
+	    		#end  
+	    		#if(!$ut.isns($mlph))
+	      			and (a.mlph like :%mlphToDBC% or a.mlph like :%mlphToSBC%)
+	    		#end
+	    		#if(!$ut.isns($mlxz))
+	    			and (a.mlxz like :%mlxzToDBC% or a.mlxz like :%mlxzToSBC%)
+	    		#end
+         		and a.ryzt = '0' 
+         		and a.cxbz = '0'
+           		and a.jlbz = '1'
+           	order by a.xm
+         ]]>	
+	</queryQydjRy>
+   			<!-- #if(!$ut.isns($djzt)&&2 == $djzt)
+  				and (a.djzt = '${djzt}' or  a.djzt is null)
+  			#else
+     			and a.djzt = '${djzt}'
+  			#end -->
+	
+	<!-- add by zjm 20200424 居委会会章签名查询 -->
+	<queryjwhhzhqm>
+		<![CDATA[
+	         	from PoXT_JWHXXB  a 
+	         	where 1=1
+	           		and a.qybz = '1'
+	           		#if(!$ut.isns($dwdm))
+				      	and a.dwdm = '${dwdm}'
+				    #end
+		    		#if(!$ut.isns($dm))
+				      	and a.dm = '${dm}'
+				    #end
+	           	order by a.dm
+         ]]>
+	</queryjwhhzhqm>
+	<!-- add by zjm 20200601 不动产查询 -->
+	<queryBdcxx>
+		<![CDATA[
+         	from PoT_DSJJ_WP_BDCXX  a 
+         	where 1=1
+           		#if(!$ut.isns($zjbh))
+			      	and a.bdcqzh like :%zjbh% 
+			    #end
+	    		#if(!$ut.isns($xm))
+			      	and a.qlr =:xm
+			    #end
+			    #if(!$ut.isns($sfz))
+			      	and a.zjhm = '${sfz}'
+			    #end
+         ]]>
+	</queryBdcxx>
+	<!-- add by zjm 20200601 出生证查询 -->
+	<queryCsxx>
+		<![CDATA[
+         	from PoT_DSJJ_WP_CSYXZMXX  a 
+         	where 1=1
+           		#if(!$ut.isns($zjbh))
+			      	and a.cszbh like :%zjbh% 
+			    #end
+	    		#if(!$ut.isns($xm))
+			      	and (a.fqxm = '${xm}' or a.mqxm = '${xm}')
+			    #end
+			    #if(!$ut.isns($sfz))
+			      	and (a.mqsfzh = '${sfz}' or a.fqsfzh = '${sfz}')
+			    #end
+         ]]>
+	</queryCsxx>
+	<!-- add by zjm 20200601 婚姻信息查询 -->
+	<queryHyxx>
+		<![CDATA[
+         	from PoJH_LH_VIEW  a 
+         	where 1=1
+           		#if(!$ut.isns($zjbh))
+			      	and (a.mzjyzh like :%zjbh% or a.gzjyzh like :%zjbh%)
+			    #end
+	    		#if(!$ut.isns($xm))
+			      	and (a.mxm = '${xm}' or a.gxm = '${xm}')
+			    #end
+			    #if(!$ut.isns($sfz))
+			      	and (a.mzjhm = '${sfz}' or a.gzjhm = '${sfz}')
+			    #end
+         ]]>
+	</queryHyxx>
+	<!-- add by zjm 20200814 户籍证明律师查询 -->
+	<queryHjzmlsList>
+		<![CDATA[
+			from PoHZ_ZJ_SB a
+			where 0=0
+			and a.clbs = 0
+			and a.ywlb = 26
+			#if(!$ut.isns($pch))
+				and a.pch = '${pch}'
+			#end
+			order by a.czsj asc
+		]]>
+	</queryHjzmlsList>
+	<querySjkfjList>
+		<![CDATA[
+			from PoSFXXB a
+			where 1=1 
+			#if(!$ut.isns($dwdm))
+	      		and a.dwdm = '${dwdm}'
+    		#end
+    		#if(!$ut.isns($xm))
+		      	and a.xm =:xm
+		    #end
+		    #if(!$ut.isns($gmsfhm))
+		      	and a.gmsfhm =:gmsfhm
+		    #end
+		    #if(!$ut.isns($jfflag))
+		      	and a.jfflag =:jfflag
+		    #end
+		    #if(!$ut.isns($bzxjfyy))
+		      	and a.bzxjfyy =:bzxjfyy
+		    #end
+		    #if(!$ut.isns($sffs))
+		      	and a.sffs =:sffs
+		    #end
+	   		#if(!$ut.isns($_start_dysj))
+	      		and a.dysj >= :_start_dysj
+    		#end
+    		#if(!$ut.isns($_end_dysj))
+	      		and a.dysj <= :_end_dysj
+    		#end
+	   		order by dysj desc 
+		]]>	
+	</querySjkfjList>
+	<queryFxjshqfList>
+		<![CDATA[
+			from PoSFXXB a
+			where 1=1 
+			#if(!$ut.isns($dwdm))
+	      		and a.dwdm = '${dwdm}'
+    		#end
+    		#if(!$ut.isns($qhdm))
+	      		and a.qhdm = '${qhdm}'
+    		#end
+    		#if(!$ut.isns($xm))
+		      	and a.xm =:xm
+		    #end
+		    #if(!$ut.isns($gmsfhm))
+		      	and a.gmsfhm =:gmsfhm
+		    #end
+		    #if(!$ut.isns($jkrid))
+		      	and a.jkrid ='${jkrid}'
+		    #end
+		    #if(!$ut.isns($shzt))
+		      	and a.shzt =:shzt
+		    #end
+		    #if(!$ut.isns($jfflag))
+		      	and a.jfflag =:jfflag
+		    #end
+		    #if(!$ut.isns($jksj_start))
+	      		and a.jksj >= :jksj_start
+    		#end
+    		#if(!$ut.isns($jksj_end))
+	      		and a.jksj<= :jksj_end
+    		#end
+    		and jfflag = 1
+	   		order by jksj desc 
+		]]>	
+	</queryFxjshqfList>
+</sql>

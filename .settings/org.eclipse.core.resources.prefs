@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//WebRoot/WEB-INF/jsp/config.jsp=UTF-8
+encoding//WebRoot/WEB-INF/jsp/cx/echartsZl.jsp=UTF-8
+encoding//src/com/hzjc/hz2004/base/SystemConfig.java=UTF-8
+encoding//src/com/hzjc/hz2004/base/login/LoginFilter.java=UTF-8
+encoding//src/conf/log4j.properties=UTF-8
+encoding//src/conf/makepojo.properties=UTF-8
+encoding//src/conf/system_conf.properties=UTF-8
+encoding//src/conf/system_db.properties=UTF-8
+encoding/<project>=UTF-8

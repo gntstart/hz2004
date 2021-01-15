@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql>
+	<!-- SQL关键字全部小写 -->
+	<!--查询当前用户角色信息-->
+	<querySysRolePage>
+		<![CDATA[
+			from XT_XTCSB order by csid desc
+		]]>
+	</querySysRolePage>
+	<!-- 删除角色授权 -->
+	<deleteRolePermission>
+	<![CDATA[
+			delete from SYS_ROLE_PERMISSION
+			where 1=1 
+			#if(!$ut.isns($role_code))
+				and	role_code=:role_code
+			#end
+			#if(!$ut.isns($xmbm))
+				and	xmbm=:xmbm
+			#end
+			#if(!$ut.isns($menu_code))
+				and	menu_code=:menu_code
+			#end
+			#if(!$ut.isns($funcbm))
+				and	funcbm=:funcbm
+			#end
+
+	]]>
+	</deleteRolePermission>
+	<!-- 插入角色菜单授权 -->
+	<insertRoleMeunPermission>
+	<![CDATA[
+			insert into SYS_ROLE_PERMISSION(RPID,XMBM,ROLE_CODE,MENU_CODE) 
+				select sys_guid(),xmbm,'$role_code',menu_code from SYS_MENU
+				where menu_code in($ut.in($menucodeList))
+	]]>
+	</insertRoleMeunPermission>
+	<!-- 插入角色资源授权 -->
+	<insertRoleFuncPermission>
+	<![CDATA[
+			insert into SYS_ROLE_PERMISSION(RPID,XMBM,ROLE_CODE,MENU_CODE,FUNCBM,FUNCTYPE) 
+				select sys_guid(),XMBM,'$role_code',MENU_CODE,FUNCBM,FUNCTYPE from SYS_FUNC
+				where FUNCBM in($ut.in($funcbmList))
+	]]>
+	</insertRoleFuncPermission>
+	
+	<!-- 删除用户角色 -->
+	<deleteUserRoles>
+	<![CDATA[
+			delete from SYS_USER_ROLE
+			where 1=1 
+			#if(!$ut.isns($role_code))
+				and	role_code=:role_code
+			#end
+			#if(!$ut.isns($xmbm))
+				and	xmbm=:xmbm
+			#end
+			#if(!$ut.isns($userid))
+				and	userid=:userid
+			#end
+	]]>
+	</deleteUserRoles>
+	<!-- 插入用户角色 -->
+	<insertUserRoles>
+	<![CDATA[
+			insert into SYS_USER_ROLE(PZID,USERID,ROLE_CODE,XMBM) 
+				select sys_guid(),'$userid',ROLE_CODE,XMBM from SYS_ROLE
+				where ROLE_CODE in($ut.in($rolecodeList))
+	]]>
+	</insertUserRoles>
+	
+</sql>

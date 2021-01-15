@@ -1,0 +1,100 @@
+1、开发环境
+	SpringMVC 4 + Hibernate4 + Ecilpse
+
+2、配置
+	/hz2004/src/conf/system_conf.properties	系统配置文件
+	/hz2004/src/conf/system_db.properties	数据库配置文件
+
+3、查询语句
+	所有查询，要求写在配置文件中，禁止SQL语句拼接。
+	配置文件存放目录：/hz2004/src/conf/segment
+	分业务模块进行存放配置：
+	/hz2004/src/conf/segment/common.xml	通用查询配置
+	/hz2004/src/conf/segment/qczx.xml	迁出注销业务
+	/hz2004/src/conf/segment/qryw.xml	迁入业务
+	/hz2004/src/conf/segment/scyw.xml	出生业务
+	....
+	
+	查询使用样例：
+	public Page queryPoHJXX_HXXB(ExtMap<String,Object> params){
+		return super.getPageRecords("/conf/segment/common", "queryPoHJXX_HXXB", params);
+	}
+	
+	public Page queryPoHJXX_CZRKJBXXB(ExtMap<String,Object> params){
+		return super.getPageRecords("/conf/segment/common", "queryPoHJXX_CZRKJBXXB", params);
+	}
+
+4、代码结构
+	所有代码结构和HZ2004AXIAS一致，唯一的区别就是action被取消，使用SpringMVC的控制器替代。
+	
+	所有控制器目录：
+	/hz2004/src/com/hzjc/hz2004/controller/
+	以业务为前缀，后+Controller进行命名，如：
+	/hz2004/src/com/hzjc/hz2004/controller/CommonController.java	通用控制器
+	/hz2004/src/com/hzjc/hz2004/controller/DictController.java	字典控制器
+	/hz2004/src/com/hzjc/hz2004/controller/IndexController.java	首页控制器
+	/hz2004/src/com/hzjc/hz2004/controller/LoginController.java	登录控制器
+	/hz2004/src/com/hzjc/hz2004/controller/QczxController.java	迁出注销控制器
+	/hz2004/src/com/hzjc/hz2004/controller/QrywController.java	迁入业务控制器
+	...
+
+	所有业务JSP文件目录（户籍业务存放目录）：
+	/hz2004/WebRoot/WEB-INF/jsp/yw/hjyw，以业务拼音首字简称进行命名。
+	/hz2004/WebRoot/WEB-INF/jsp/yw/hjyw/qczx.jsp	迁出注销业务
+	/hz2004/WebRoot/WEB-INF/jsp/yw/hjyw/qryw.jsp	迁入业务
+	
+	所有业务对应JS文件目录（户籍业务存放目录）
+	/hz2004/WebRoot/static/yw/hjyw，文件名称和业务JSP文件名称保持一直
+	/hz2004/WebRoot/static/yw/hjyw/qczx.js		迁出注销业务的JS
+	/hz2004/WebRoot/static/yw/hjyw/qryw.js		迁入业务的JS
+
+5、JSP文件结构
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ include file = "../../config.jsp"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+  	<base href="<%=basePath%>">
+    	<title>迁出业务</title>
+    	<link rel="stylesheet" type="text/css" href="js/ext/css/ext-all.css">
+    	<link rel="stylesheet" type="text/css" href="js/ext/css/xtheme-gray.css">
+    	<link rel="stylesheet" type="text/css" href="css/common.css">
+  </head>
+  <body>
+    <script type="text/javascript" src="js/ext/ext.js"></script>
+    <script type="text/javascript" src="js/commFrames.js"></script>
+    <script type="text/javascript" src="js/SjpzStore.js"></script>
+    <script type="text/javascript" src="js/SjpzGrid.js"></script>
+    <script type="text/javascript" src="js/SjpzForm.js"></script>
+    ... 其它按需引入通用JS ...
+    <script type="text/javascript" src="static/yw/hjyw/业务.js"></script>
+  </body>
+</html>
+
+6、通用JS
+	/hz2004/WebRoot/js/commFrames.js	系统核心JS，封装了所有的基础组件和方法，以及字典处理。
+	/hz2004/WebRoot/js/SjpzForm.js		系统核心JS，依据配置自动创建用户界面
+	/hz2004/WebRoot/js/SjpzGrid.js		系统核心JS，依据配置自动创建GRID组件
+	/hz2004/WebRoot/js/SjpzStore.js		系统核心JS，依据配置自动创建JsonStore
+	所有通用JS统一有刘抢阳进行维护和提供，有封装需求请说明。
+
+7、业务封装JS
+	/hz2004/WebRoot/js/yw
+	所有业务相关通用组件，都封装在此目录下。
+
+	/hz2004/WebRoot/js/yw/SelectRyxxPanel.js	
+	通用选择人员组件，目前用于迁出业务的人员选择，所有类似场景，都应该采用此组件，禁止编写私有代码。
+
+	/hz2004/WebRoot/js/yw/SelectRh.js
+	入户模式下的人员选择组件。
+
+	/hz2004/WebRoot/js/yw/SelectBzdz.js
+	立户模式下的，标准地址录入界面。
+
+	/hz2004/WebRoot/js/yw/SelectSprh.js
+	审批入户下的人员选择。
+
+	。。。
+	凡是具有可复用的通用组件，都必须进行封装，所有封装可参照上述的所有通用封装。
+
+	
