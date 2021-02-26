@@ -67,6 +67,7 @@ import com.hzjc.hz2004.po.PoHJXX_JWHZPLSB;
 import com.hzjc.hz2004.po.PoHJXX_MLPXXXXB;
 import com.hzjc.hz2004.po.PoHJXX_RHFLXXB;
 import com.hzjc.hz2004.po.PoHJXX_RYZPXXB;
+import com.hzjc.hz2004.po.PoHJYW_RKBKXXB;
 import com.hzjc.hz2004.po.PoPERSON_DY_SET;
 import com.hzjc.hz2004.po.PoSFJFFJB;
 import com.hzjc.hz2004.po.PoXT_DWXXB;
@@ -84,6 +85,7 @@ import com.hzjc.hz2004.service.MessageService;
 import com.hzjc.hz2004.service.QueryService;
 import com.hzjc.hz2004.util.CommonUtil;
 import com.hzjc.hz2004.util.DateHelper;
+import com.hzjc.hz2004.util.ExcelToDBUtil;
 import com.hzjc.util.FileUtils;
 import com.hzjc.hz2004.util.JSONUtil;
 import com.hzjc.hz2004.vo.VoBb;
@@ -1464,5 +1466,112 @@ public class CommonServiceImpl extends ServiceImpl implements CommonService {
 		sfxxb.setJkrid(this.getUser().getYhid());
 		sfxxb.setJksj(time);
 		
+	}
+
+	@Override
+	public PoSFXXB updateSfxxb(PoSFXXB posfxxb) {
+		PoSFXXB sfxxb = super.get(PoSFXXB.class, posfxxb.getSfxxbid());
+		if(sfxxb.getXgcs()>0) {
+			throw new RuntimeException("数据已达修改上限，已不能再修改了！");
+		}
+		if(CommonUtil.isNotEmpty(posfxxb.getBzxjfyy())){
+			sfxxb.setBzxjfyy(posfxxb.getBzxjfyy());
+		}
+		if(posfxxb.getJe()!=null){
+			sfxxb.setJe(posfxxb.getJe());
+		}
+		if(CommonUtil.isNotEmpty(posfxxb.getSffs())){
+			sfxxb.setSffs(posfxxb.getSffs());
+		}
+		sfxxb.setXgcs(1);
+		super.update(sfxxb);
+		return sfxxb;
+	}
+
+	@Override
+	public void downBkMb(HttpServletRequest req, HttpServletResponse rep, ExtMap<String, Object> params) {
+//		String filename = "";
+		String FileDate = DateHelper.formateDate("yyyyMMdd");
+		try {
+			     
+            // 取得文件名。
+            String filename = new String("bkmb.xls".getBytes("UTF-8"),"ISO-8859-1");;
+            // 取得文件的后缀名。
+            String ext = filename.substring(filename.lastIndexOf(".") + 1).toUpperCase();
+            // 以流的形式下载文件。
+            InputStream fis = FileUtils.class.getResourceAsStream("/conf/bkmb.xls");
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            // 清空response
+            rep.reset();
+            // 设置response的Header
+            rep.setHeader("Content-Disposition", "attachment;filename=" + new String(filename.getBytes("utf-8")));
+            OutputStream toClient = new BufferedOutputStream(rep.getOutputStream());
+            rep.setContentType("application/octet-stream");
+            toClient.write(buffer);
+            toClient.flush();
+            toClient.close();
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return; 
+		}
+		
+	}
+
+	@Override
+	public void uploadBkMb(MultipartHttpServletRequest bkMbFile) throws IOException {
+		//获得上传文件对象
+//		Object deptAttachmentObj = bkMbFile.get("bkmb", Object.class);
+//		bkMbFile.getMultiFileMap()
+		MultipartFile logoFile = bkMbFile.getFile("bkmb");
+		String deptAttachmentName = null;
+			if (logoFile instanceof MultipartFile) {//判断是上传文件类型
+			       MultipartFile  deptAttachment = (MultipartFile) logoFile;
+			       //获得上传文件名
+			       deptAttachmentName = deptAttachment.getOriginalFilename() ;
+			       //获得上传文件的输入流
+			 InputStream inputStream;
+			 inputStream = deptAttachment.getInputStream();
+			 //将上传的Excel转换成List
+			 long exStart = System.currentTimeMillis();
+			 List<Map<String, Object>> deptList = ExcelToDBUtil.sheetsToList(deptAttachmentName, inputStream);
+			 if (deptList == null || deptList.isEmpty()) {
+				throw new RuntimeException("上传的表为空！");
+			 }else {
+				 for(Map<String, Object> map:deptList) {
+					 String gmsfhm = (String) map.get("key2");
+					 if(CommonUtil.isNotEmpty(gmsfhm)) {
+						 PoHJYW_RKBKXXB ry1 = (PoHJYW_RKBKXXB)super.getObject("from PoHJYW_RKBKXXB where gmsfhm=?", new Object[] {gmsfhm});
+						 if(ry1!=null) {
+							continue;
+						 }else {
+							 PoHJYW_RKBKXXB bkry = new PoHJYW_RKBKXXB();
+							 String bdlxDict = (String) map.get("key3");
+							 if(CommonUtil.isNotEmpty(bdlxDict)) {
+								 String[] bdlxArray = bdlxDict.split("-");
+								 bkry.setBklx(bdlxArray[0]);
+								 bkry.setBklxmc(bdlxArray[1]);
+							 }
+							 bkry.setBkmjxm(this.getUser().getYhdlm());
+							 bkry.setBksj(DateHelper.formateDate("yyyyMMddHHmmss"));
+							 if(CommonUtil.isNotEmpty((String) map.get("key4"))) {
+								 bkry.setBktx((String) map.get("key4"));
+							 }
+							 bkry.setGmsfhm(gmsfhm);
+							 if(CommonUtil.isNotEmpty((String) map.get("key1"))) {
+								 bkry.setXm((String) map.get("key1"));
+							 }
+							 bkry.setYwid(null);
+							 super.create(bkry);
+						 }
+					 }
+					 
+				 }
+			 }
+		
+			}
 	}
 }

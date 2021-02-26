@@ -78,7 +78,8 @@ public class VoQrspdjxx
   private String kdqqy_fksj;
   private String kdqqy_fkzt;
   private String kdqqy_fknr;
-
+  private String  qyyy;//add by zjm 20210222  新增迁移原因字段
+  private String  sfcsjtb;//add by zjm 20210224  新增是否长三角通办字段
   public String getBzdzst() {
   return bzdzst;
  }
@@ -570,5 +571,17 @@ public class VoQrspdjxx
   public void setHhnbid_rh(String hhnbid_rh) {
     this.hhnbid_rh = hhnbid_rh;
   }
+public String getQyyy() {
+	return qyyy;
+}
+public void setQyyy(String qyyy) {
+	this.qyyy = qyyy;
+}
+public String getSfcsjtb() {
+	return sfcsjtb;
+}
+public void setSfcsjtb(String sfcsjtb) {
+	this.sfcsjtb = sfcsjtb;
+}
 
 }

@@ -530,6 +530,8 @@ public class SpServiceImpl
           poZqzxx.setQyrhkdjjg(poHjspsqxx.getHkszddjjg());
           poZqzxx.setQyrzzssxq(poHjspsqxx.getZzssxq());
           poZqzxx.setQyrzzxz(poHjspsqxx.getZzxz());
+          poZqzxx.setQyyy(poHjspsqxx.getQyyy());//add by zjm 20210223 准迁证迁移原因字段赋值
+          poZqzxx.setSfcsjtb(poHjspsqxx.getSfcsjtb());//add by zjm 20210224 准迁证是否长三角通办字段赋值
           poZqzxx.setQrdhkdjjg(poHjspsqxx.getQrdhkdjjg());
           poZqzxx.setQrdssxq(poHjspsqxx.getQrdqx());
           poZqzxx.setQrdxz(qrdxz);

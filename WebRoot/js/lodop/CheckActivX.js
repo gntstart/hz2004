@@ -296,7 +296,53 @@ function printfunction(num,array,data){
 				 	 							
 					 	 					}else{
 					 	 						if(window.confirm('是否要打印['+array[num].xm+']的户口簿首页？')){
-					 	 							CreateFormPage1(directTable,Ext.util.JSON.encode(data),array[num].rynbid,num,array,data);
+					 	 							Ext.MessageBox.confirm('首次打印确认框', '该笔业务系统判断为首次打印，不收费？' , function(btn) {
+					 	 								if(btn == 'yes') {
+								 	 						// 收费表插入一条记录
+							 	 							var subdata = {
+							 	 								sfxxb : {
+							 	 									sffs : 2,// 2 户口簿首次打印
+							 	 									dylb : directTable,
+							 	 									je : 0,
+							 	 									gmsfhm : array[num].gmsfhm,
+							 	 									xm : array[num].xm
+							 	 								}
+							 	 							};
+							 	 							subdata.sfxxb = Ext.encode(subdata.sfxxb);
+							 	 							Gnt.submit(subdata, "yw/common/insertSfxxb", "收费信息表插入记录中，请稍后...",
+							 	 									function(jsonData, params) {
+							 	 										if (jsonData.list && jsonData.list[0]) {
+//							 	 											sfxxbid = jsonData.list[0].sfxxbid;
+//							 	 											bjf_form.show();
+							 	 										}
+							 	 									});
+							 	 							CreateFormPage1(directTable,Ext.util.JSON.encode(data),array[num].rynbid,num,array,data);
+					 	 								} else {
+					 	 									var je=parseInt(user.personSet.hjsysf);
+							 	 							sffsWin.show();
+							 	 							sffs_form.reset(je,num,array,data);
+					 	 								}
+					 	 							});
+					 	 							
+//					 	 						// 收费表插入一条记录
+//					 	 							var subdata = {
+//					 	 								sfxxb : {
+//					 	 									sffs : 2,// 2 户口簿首次打印
+//					 	 									dylb : directTable,
+//					 	 									je : 0,
+//					 	 									gmsfhm : array[num].gmsfhm,
+//					 	 									xm : array[num].xm
+//					 	 								}
+//					 	 							};
+//					 	 							subdata.sfxxb = Ext.encode(subdata.sfxxb);
+//					 	 							Gnt.submit(subdata, "yw/common/insertSfxxb", "收费信息表插入记录中，请稍后...",
+//					 	 									function(jsonData, params) {
+//					 	 										if (jsonData.list && jsonData.list[0]) {
+////					 	 											sfxxbid = jsonData.list[0].sfxxbid;
+////					 	 											bjf_form.show();
+//					 	 										}
+//					 	 									});
+//					 	 							CreateFormPage1(directTable,Ext.util.JSON.encode(data),array[num].rynbid,num,array,data);
 					 	 						}else{
 					 	 							num ++ ;
 					 	 							return printfunction(num,array,data);
@@ -305,6 +351,12 @@ function printfunction(num,array,data){
 					 					}
 					 	 			}
 				 	   );
+					
+					
+					//Modify by zjm 20210129 不考虑是否首次打印，放在详情干预
+//					var je=parseInt(user.personSet.hjsysf);
+//					sffsWin.show();
+//					sffs_form.reset(je,num,array,data);
 				}else{
 					if(window.confirm('是否要打印['+array[num].xm+']的户口簿首页？')){
 						CreateFormPage1(directTable,Ext.util.JSON.encode(data),array[num].rynbid,num,array,data);
@@ -600,6 +652,9 @@ function printfunction(num,array,data){
 		CreateFormPage1(directTable,Ext.util.JSON.encode(array[num]),array[num].hjywid,num,array,data);
 	}
 	if(directTable=="cg"){//存根打印
+		CreateFormPage1(directTable,Ext.util.JSON.encode(array[num]),array[num].ryid,num,array,data);
+	}
+	if(directTable=="qyzcg"){//迁移证存根打印
 		CreateFormPage1(directTable,Ext.util.JSON.encode(array[num]),array[num].ryid,num,array,data);
 	}
 	if(directTable=="zxqsgxzm"){//直系亲属关系证明打印

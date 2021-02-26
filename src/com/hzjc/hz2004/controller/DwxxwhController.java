@@ -61,6 +61,12 @@ public class DwxxwhController extends BaseController{
 		params.put("qhdm",logoFile.getParameter("qhdm"));
 		params.put("dm",logoFile.getParameter("dm"));
 		params.put("mc",logoFile.getParameter("mc"));
+		/*
+		 * add by zjm 
+		 * 20210220
+		 * 接收单位表新增传入电话号码字段
+		 */
+		params.put("dhhm",logoFile.getParameter("dhhm"));
 		params.put("zwpy",logoFile.getParameter("zwpy"));
 		params.put("wbpy",logoFile.getParameter("wbpy"));
 		params.put("dwjgdm",logoFile.getParameter("dwjgdm"));
@@ -89,6 +95,12 @@ public class DwxxwhController extends BaseController{
 		params.put("qhdm",logoFile.getParameter("qhdm"));
 		params.put("dm",logoFile.getParameter("dm"));
 		params.put("mc",logoFile.getParameter("mc"));
+		/*
+		 * add by zjm 
+		 * 20210220
+		 * 接收单位表新增传入电话号码字段
+		 */
+		params.put("dhhm",logoFile.getParameter("dhhm"));
 		params.put("zwpy",logoFile.getParameter("zwpy"));
 		params.put("wbpy",logoFile.getParameter("wbpy"));
 		params.put("dwjgdm",logoFile.getParameter("dwjgdm"));

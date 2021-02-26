@@ -30,6 +30,7 @@ public class PoV_DWXXWH implements com.hzjc.wsstruts.po.PO
 	private Long	csb1csid;
 	private Long	csb2csid;
 	private	String	mc;
+	private String 	dhhm;//add by zjm 20210220修改单位信息视图，增加电话号码字段
 	private	String	zwpy;
 	private	String	wbpy;
 	private	String	dwjgdm;
@@ -431,5 +432,11 @@ public class PoV_DWXXWH implements com.hzjc.wsstruts.po.PO
 	}
 	public void setZp(byte[] zp) {
 		this.zp = zp;
+	}
+	public String getDhhm() {
+		return dhhm;
+	}
+	public void setDhhm(String dhhm) {
+		this.dhhm = dhhm;
 	} 
 }

@@ -17,6 +17,7 @@ Gnt.ux.SelectDwxxWhAdd= Ext.extend(Ext.Window, {
 				qhdm: '',
 				dm: '',
 				mc:'',
+				dhhm:'',
 				zwpy: '',
 				wbpy: '',
 				dwjgdm:'',
@@ -92,7 +93,18 @@ Gnt.ux.SelectDwxxWhAdd= Ext.extend(Ext.Window, {
 									allowBlank:false,
 									fieldLabel:'单位代码'
 								}]
-						},{
+						},{//表单增加电话号码   20210220
+			                columnWidth:.5,
+		    	           	layout: 'form',
+		    	           	bodyStyle:'padding:5 0 0 0',
+		        	       	items: [{
+								xtype:'textfield',
+								anchor:'100%',
+								name:'dhhm',
+								allowBlank:false,
+								fieldLabel:'电话号码'
+							}]
+					},{
 			                columnWidth:.5,
 		    	           	layout: 'form',
 		    	           	bodyStyle:'padding:5 0 0 0',

@@ -18,6 +18,7 @@ Gnt.ux.SelectDwxxWhModify= Ext.extend(Ext.Window, {
 				qhdm: selRes.data.xzqhbdm,
 				dm: selRes.data.dm,
 				mc: selRes.data.mc,
+				dhhm:selRes.data.dhhm,////表单增加电话号码   20210220
 				zwpy: selRes.data.zwpy,
 				wbpy:selRes.data.wbpy,
 				dwjgdm:selRes.data.dwjgdm,
@@ -113,7 +114,18 @@ Gnt.ux.SelectDwxxWhModify= Ext.extend(Ext.Window, {
 							        }
 			                    }
 							}]
-						},{
+						},{//表单增加电话号码   20210220
+			                columnWidth:.5,
+		    	           	layout: 'form',
+		    	           	bodyStyle:'padding:5 0 0 0',
+		        	       	items: [{
+								xtype:'textfield',
+								anchor:'100%',
+								name:'dhhm',
+								allowBlank:false,
+								fieldLabel:'电话号码'
+							}]
+					},{
 			                columnWidth:.5,
 		    	           	layout: 'form',
 		    	           	bodyStyle:'padding:5 0 0 0',

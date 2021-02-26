@@ -234,7 +234,8 @@ public class LoginFilter implements Filter {
 					|| uri.startsWith(getContextPath() +"/login/") || uri.startsWith(getContextPath() +"/services/")
 					|| uri.startsWith(getContextPath() +"/gl/hyym")|| uri.startsWith(getContextPath() +"/echarts/echartsZlNew")
 					|| uri.startsWith(getContextPath() +"/yw/common/img/dwrender")||uri.startsWith(getContextPath() +"/gl/ggUrlTrans")
-					|| uri.startsWith(getContextPath() +"/yw/common/uploadZp")|| uri.startsWith(getContextPath() +"/yw/common/uploadQdZp")
+					|| uri.startsWith(getContextPath() +"/yw/common/uploadZp")||uri.startsWith(getContextPath() +"/yw/common/uploadQdZp")
+					|| uri.startsWith(getContextPath() +"/yw/common/uploadBkMb")
 					|| uri.startsWith(getContextPath() +"/gl/xtmbgl/dwxxwh/addDwDm")|| uri.startsWith(getContextPath() +"/gl/xtmbgl/dwxxwh/modifyDwDm"));
 //			boolean isjsp = !(!uri.startsWith(getContextPath() + "/zptest/")||uri.startsWith(getContextPath() + "/static/") || uri.startsWith(getContextPath() +"/js")
 //							|| uri.startsWith(getContextPath() +"/images/") || uri.startsWith(getContextPath() +"/css/") || uri.startsWith(getContextPath() +"/login/"));

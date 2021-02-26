@@ -79,7 +79,7 @@ Ext.onReady(function() {
 	    	collapsed: false,
 	   		items:[
 	   			{
-					columnWidth : .25,
+					columnWidth : .33,
 					layout : 'form',
 					bodyStyle : 'padding:0 0 0 0',
 					items : [{
@@ -89,7 +89,7 @@ Ext.onReady(function() {
 								fieldLabel : '姓名'
 							}]
 				}, {
-					columnWidth : .25,
+					columnWidth : .33,
 					layout : 'form',
 					bodyStyle : 'padding:0 0 0 0',
 					items : [{
@@ -99,7 +99,7 @@ Ext.onReady(function() {
 								fieldLabel : '身份证号码'
 							}]
 				},{
-					columnWidth : .25,
+					columnWidth : .33,
 					layout : 'form',
 					bodyStyle : 'padding:0 0 0 0',
 					items : [{
@@ -111,29 +111,36 @@ Ext.onReady(function() {
 								fieldLabel : '布控类型'
 							}]
 				}, {
-							columnWidth : .25,
+							columnWidth : .33,
 							layout : 'form',
 							bodyStyle : 'padding:0 0 0 0',
 							items : [{
 										xtype : 'datefield',
 										anchor : '100%',
 										format : 'Ymd',
-										name : 'bjsj_start',
+										name : 'bksj_start',
 										fieldLabel : '布控时间起'
 									}]
 						}, {
-							columnWidth : .25,
+							columnWidth : .33,
 							layout : 'form',
 							bodyStyle : 'padding:0 0 0 0',
 							items : [{
 										xtype : 'datefield',
 										format : 'Ymd',
 										anchor : '100%',
-										name : 'bjsj_end',
+										name : 'bksj_end',
 										fieldLabel : '布控时间止'
 									}]
 						}
 	   		]
+	});
+
+	var bkmbUploadWindow = new Gnt.ux.SelectBkMbUpload({
+		//选择立户信息回调
+		callback: function(optype, jttdInfo){
+			Ext.getCmp("query").handler();
+		}
 	});
 		
 	var fs = new Ext.form.FormPanel({
@@ -148,6 +155,7 @@ Ext.onReady(function() {
 		labelWidth : 95,
 		items : [baseset],
 		buttons : [new Ext.Button({
+					id:'query',
 					text : '查询',
 					minWidth : 75,
 					handler : function() {
@@ -160,12 +168,26 @@ Ext.onReady(function() {
 									}
 								})
 					}
-				}), new Ext.Button({
+				}),new Ext.Button({
 					text : '新增布控',
 					minWidth : 75,
 					handler : function() {
 						win.show();
 						mxfs.getForm().reset();
+					}
+				}),new Ext.Button({
+					text : '修改布控',
+					minWidth : 75,
+					handler : function() {
+						if(selRecord){
+							var data = selRecord.data;
+							win.show();
+							mxfs.getForm().reset();
+							mxfs.getForm().setValues(data);							
+						}else{
+							alert("必须先选中药修改的某条数据!");
+							return;
+						}
 					}
 				}),new Ext.Button({
 					text : '删除布控',
@@ -198,6 +220,34 @@ Ext.onReady(function() {
 									},
 									icon : Ext.MessageBox.QUESTION
 								});
+					}
+				}),new Ext.Button({
+					text : '下载模板',
+					minWidth : 75,
+					handler : function() {
+						var urlLink = "yw/common/downBkMbZip?type=queryFxjsktj";
+						Ext.Msg.wait("正在下载模板，请稍后...");
+						 var elemIF = document.createElement("iframe");
+	        		        elemIF.src = urlLink;//"yw/common/downZp?dcParams="+Ext.encode('111');
+	        		        elemIF.style.display = "none";
+	        		        elemIF.setAttribute('async', false);
+	        		        document.body.appendChild(elemIF);
+	        		        var timer = setInterval(function () {
+	        		            var iframeDoc = elemIF.contentDocument || elemIF.contentWindow.document;
+	        		            // Check if loading is complete
+	        		            if (iframeDoc.readyState == 'complete' || iframeDoc.readyState == 'interactive') {
+	        		                // do something
+	        		            	Ext.Msg.hide();
+	        		                clearInterval(timer);
+	        		                return;
+	        		            }
+	        		        }, 500);
+					}
+				}),new Ext.Button({
+					text : '批量上传',
+					minWidth : 75,
+					handler : function() {
+						bkmbUploadWindow.show();
 					}
 				})]
 	});
@@ -267,10 +317,15 @@ Ext.onReady(function() {
 					rowdblclick : function(g, rowIndex, e) {
 						selRecord = g.store.getAt(rowIndex);
 						var data = selRecord.data;
-
-						win.show();
-						mxfs.getForm().reset();
-						mxfs.getForm().setValues(data);
+						url = xmdz + "gl/bk/rygjcx"+"?jumpToRygjcx=1&gmsfhm=" + data.gmsfhm;
+						if (parent && parent.openWorkSpace) {
+							parent.openWorkSpace(url, "人员轨迹查询", "rygjcx");
+						} else {
+							window.location.href = url;
+						}
+//						win.show();
+//						mxfs.getForm().reset();
+//						mxfs.getForm().setValues(data);
 						
 						return;
 

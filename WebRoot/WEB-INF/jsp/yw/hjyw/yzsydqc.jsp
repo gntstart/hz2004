@@ -2,7 +2,7 @@
 <%@ include file = "../../config.jsp"%>
 <%
 	AuthToken u = BaseContext.getUser();
-	response.setHeader("Cache-Control","no-store");  
+	response.setHeader("Cache-Control","no-store");
 	response.setHeader("Pragrma","no-cache");  
 	response.setDateHeader("Expires",0); 
 %>
@@ -31,4 +31,7 @@
     <script type="text/javascript" src="static/yw/hjyw/yzsydqc.js?v=<%=Math.random()%>"></script>
     <div id="div1"></div>
   </body>
+  <Script Lanaguage="JavaScript">
+	  var isAdmin = '<%=u.isAdmin()%>';
+  </Script>
 </html>

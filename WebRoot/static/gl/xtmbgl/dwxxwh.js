@@ -34,6 +34,11 @@ Ext.onReady(function(){
 	        dataIndex: "mc",
 	        sortable: true,
 			width: 120
+		},{//grid增加电话号码列   20210220
+			header: "电话号码",
+	        dataIndex: "dhhm",
+	        sortable: true,
+			width: 120
 		},{
 	        header: "中文拼音",
 	        dataIndex: "zwpy",
@@ -124,6 +129,7 @@ Ext.onReady(function(){
 			"xzqhbmc",
 			"dm",
 			"mc",
+			"dhhm",//grid增加电话号码赋值   20210220
 			"zwpy",
 			"wbpy",
 			"dwjgdm",

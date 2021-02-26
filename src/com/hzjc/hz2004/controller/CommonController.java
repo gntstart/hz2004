@@ -890,4 +890,36 @@ public class CommonController extends BaseController{
 		commonService.downExcelZip(req,rep,params);
 		return null;
 	}
+	
+	@RequestMapping(value = { "/updateSfxxb"}, method = RequestMethod.POST)
+	public ModelAndView updateSfxxb() {
+		ExtMap<String, Object> params = CommonUtil.getRequestParamesObject(BaseContext.getContext().getRequest());
+		String sfxxb = params.getString("sfxxb");
+		PoSFXXB posfxxb = null;
+		if(CommonUtil.isNotEmpty(sfxxb)){
+			posfxxb = JSONUtil.getJsonData(sfxxb, "yyyyMMdd", PoSFXXB.class);
+		}
+		return toJson(commonService.updateSfxxb(posfxxb));
+	}
+	
+	@RequestMapping(value = { "/downBkMbZip"}, method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
+	public ModelAndView downBkMbZip() throws IOException,	ServletException{
+		HttpServletRequest req = BaseContext.getContext().getRequest();
+		HttpServletResponse rep = BaseContext.getContext().getResponse();
+		ExtMap<String, Object> params = CommonUtil.getRequestParamesObject(BaseContext.getContext().getRequest());
+		ZipOutputStream out = new ZipOutputStream(rep.getOutputStream());
+		out.setEncoding("GBK");
+		commonService.downBkMb(req,rep,params);
+		return null;
+	}
+	
+	@RequestMapping(value = { "/uploadBkMb"}, method = RequestMethod.POST)
+	@ResponseBody
+	public void uploadBkMb(MultipartHttpServletRequest bkMbFile) throws IOException {
+		HttpServletResponse response = BaseContext.getContext().getResponse();
+		try {
+			commonService.uploadBkMb(bkMbFile);
+		} catch (Exception e) {
+		}
+	}
 }

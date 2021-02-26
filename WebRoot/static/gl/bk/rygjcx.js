@@ -80,6 +80,7 @@ Ext.onReady(function() {
 								xtype : 'textfield',
 								anchor : '100%',
 								name : 'gmsfhm',
+								id:'gmsfhm',
 								fieldLabel : '身份证号码'
 							}]
 				},{
@@ -133,9 +134,13 @@ Ext.onReady(function() {
 		items : [baseset],
 		buttons : [new Ext.Button({
 					text : '查询',
+					id:'queryId',
 					minWidth : 75,
 					handler : function() {
 						var p = fs.getForm().getValues();
+//						if(getQueryParam("jumpToRygjcx")&& getQueryParam("jumpToRygjcx")!=""){
+//				    		p.gmsfhm=getQueryParam("gmsfhm");
+//				    	}
 						store.baseParams = p;
 						store.load({
 									params : {
@@ -250,4 +255,9 @@ Ext.onReady(function() {
 							items : [grid]
 						}]
 			});
-});
+	
+    	if(getQueryParam("jumpToRygjcx")&& getQueryParam("jumpToRygjcx")!=""){
+    		Ext.getCmp('gmsfhm').setValue(getQueryParam("gmsfhm"));
+    		Ext.getCmp("queryId").handler();
+    	}  
+})

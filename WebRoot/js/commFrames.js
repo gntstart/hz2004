@@ -7453,7 +7453,7 @@ Gnt.ux.SdryzlDialog = Ext.extend(Ext.Window, {
 Ext.reg('sdryz_dialog', Gnt.ux.SdryzlDialog);
 
 Gnt.ux.BjfDialog = Ext.extend(Ext.Window, {
-	title : '不在线缴费原因选择框',
+	title : '作废原因选择框',
 	closeAction : 'hide',
 	modal : true,
 	width : 400,
@@ -7614,7 +7614,7 @@ Gnt.ux.SffsConfirmForm = Ext.extend(Ext.form.FormPanel, {
 	labelWidth : 80,
 	region : 'center',
 	reset : function(je, num, array, data) {
-		Ext.getCmp('je').setValue(je);
+//		Ext.getCmp('je').setValue(je);
 		this.dyObj = array[num];
 		this.array = array;
 		this.data = data;
@@ -7643,6 +7643,8 @@ Gnt.ux.SffsConfirmForm = Ext.extend(Ext.form.FormPanel, {
 					name : 'je',
 					anchor : '99%',
 					xtype : 'numberfield',
+					readOnly:true,
+					value:6,
 					autoCreate : {
 						tag : 'input',
 						type : 'text',
@@ -7652,7 +7654,7 @@ Gnt.ux.SffsConfirmForm = Ext.extend(Ext.form.FormPanel, {
 					},
 					fieldLabel : '打印户口簿首页收费共计'
 				} ]
-			}, {
+			}/*,{
 				columnWidth : 1,
 				layout : 'form',
 				bodyStyle : 'width:100%',
@@ -7662,13 +7664,13 @@ Gnt.ux.SffsConfirmForm = Ext.extend(Ext.form.FormPanel, {
 					bodyStyle : 'padding:0px 0px 0px 40px',
 					html : '是否在线收费？'
 				} ]
-			} ],
+			}*/],
 			buttons : [
 					{
 						id : 'btn-query',
 						name : 'btn-query',
 						disabled:true,
-						text : '是',
+						text : '非现金',
 						handler : function() {
 							var rootWin = this.findParentByType("sffs_form");
 							goDelete("yes", Ext.getCmp('je').getValue(),
@@ -7680,10 +7682,10 @@ Gnt.ux.SffsConfirmForm = Ext.extend(Ext.form.FormPanel, {
 					{
 						id : 'btn-query',
 						name : 'btn-query',
-						text : '否',
+						text : '现金',
 						handler : function() {
 							var rootWin = this.findParentByType("sffs_form");
-							goDelete("no", Ext.getCmp('je').getValue(),
+							goDelete("no",6,
 									rootWin.num, rootWin.dyObj, rootWin.array,
 									rootWin.data);
 							sffsWin.hide();
@@ -7750,60 +7752,67 @@ function goDelete(btn, je, num, dyObj, array, data) {
 					}
 				});
 	} else if (btn == "no") {
-		var bjf_form = new Gnt.ux.BjfDialog({
-			callback : function(type, bzxdata) {
-				// 不缴费后续操作
-				//updateSfxxb(sfxxbid, 'bzx', bzxdata.bzxjfyy);
-				// printfunction(0,arrayTemp,data);
-
-				// 收费表插入一条记录
-				var subdata = {
-					sfxxb : {
-						sffs : 1,// 1 不在线收费
-						dylb : dyObj.directTable,
-						je : je,
-						gmsfhm : dyObj.gmsfhm,
-						xm : dyObj.xm,
-						bzxjfyy:bzxdata.bzxjfyy
-					}
-				};
-				subdata.sfxxb = Ext.encode(subdata.sfxxb);
-				Gnt.submit(subdata, "yw/common/insertSfxxb", "收费信息表插入记录中，请稍后...",
-						function(jsonData, params) {
-							if (jsonData.list && jsonData.list[0]) {
-//								sfxxbid = jsonData.list[0].sfxxbid;
-//								bjf_form.show();
-							}
-						});
-				
-				if (window.confirm('是否要打印[' + dyObj.xm + ']的户口簿首页？')) {
-					CreateFormPage1(dyObj.directTable, Ext.util.JSON
-							.encode(data), dyObj.rynbid, num, array, data);
-				} else {
-					num++;
-					return printfunction(num, array, data);
-				}
-			}
-		});
-		bjf_form.show();
-//		// 收费表插入一条记录
-//		var subdata = {
-//			sfxxb : {
-//				sffs : 1,// 1 不在线收费
-//				dylb : dyObj.directTable,
-//				je : je,
-//				gmsfhm : dyObj.gmsfhm,
-//				xm : dyObj.xm
-//			}
-//		};
-//		subdata.sfxxb = Ext.encode(subdata.sfxxb);
-//		Gnt.submit(subdata, "yw/common/insertSfxxb", "收费信息表插入记录中，请稍后...",
-//				function(jsonData, params) {
-//					if (jsonData.list && jsonData.list[0]) {
-//						sfxxbid = jsonData.list[0].sfxxbid;
-//						bjf_form.show();
+//		var bjf_form = new Gnt.ux.BjfDialog({
+//			callback : function(type, bzxdata) {
+//				// 不缴费后续操作
+//				//updateSfxxb(sfxxbid, 'bzx', bzxdata.bzxjfyy);
+//				// printfunction(0,arrayTemp,data);
+//
+//				// 收费表插入一条记录
+//				var subdata = {
+//					sfxxb : {
+//						sffs : 1,// 1 不在线收费
+//						dylb : dyObj.directTable,
+//						je : je,
+//						gmsfhm : dyObj.gmsfhm,
+//						xm : dyObj.xm,
+//						bzxjfyy:bzxdata.bzxjfyy
 //					}
-//				});
+//				};
+//				subdata.sfxxb = Ext.encode(subdata.sfxxb);
+//				Gnt.submit(subdata, "yw/common/insertSfxxb", "收费信息表插入记录中，请稍后...",
+//						function(jsonData, params) {
+//							if (jsonData.list && jsonData.list[0]) {
+////								sfxxbid = jsonData.list[0].sfxxbid;
+////								bjf_form.show();
+//							}
+//						});
+//				
+//				if (window.confirm('是否要打印[' + dyObj.xm + ']的户口簿首页？')) {
+//					CreateFormPage1(dyObj.directTable, Ext.util.JSON
+//							.encode(data), dyObj.rynbid, num, array, data);
+//				} else {
+//					num++;
+//					return printfunction(num, array, data);
+//				}
+//			}
+//		});
+//		bjf_form.show();
+		// 收费表插入一条记录
+		var subdata = {
+			sfxxb : {
+				sffs : 1,// 1 不在线收费
+				dylb : dyObj.directTable,
+				je : je,
+				gmsfhm : dyObj.gmsfhm,
+				xm : dyObj.xm,
+				bzxjfyy:4
+			}
+		};
+		subdata.sfxxb = Ext.encode(subdata.sfxxb);
+		Gnt.submit(subdata, "yw/common/insertSfxxb", "收费信息表插入记录中，请稍后...",
+				function(jsonData, params) {
+					if (jsonData.list && jsonData.list[0]) {
+					}
+				});
+		
+		if (window.confirm('是否要打印[' + dyObj.xm + ']的户口簿首页？')) {
+			CreateFormPage1(dyObj.directTable, Ext.util.JSON
+					.encode(data), dyObj.rynbid, num, array, data);
+		} else {
+			num++;
+			return printfunction(num, array, data);
+		}
 
 	}
 };

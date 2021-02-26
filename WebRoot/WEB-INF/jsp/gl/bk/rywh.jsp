@@ -25,7 +25,10 @@
 	<script type="text/javascript" src="js/SjpzStore.js?v=<%=Math.random()%>"></script>
 	<script type="text/javascript" src="js/SjpzGrid.js?v=<%=Math.random()%>"></script>
 	<script type="text/javascript" src="js/SjpzForm.js?v=<%=Math.random()%>"></script>
+	<script type="text/javascript" src="js/yw/SelectBkMbUpload.js?v=<%=Math.random()%>"></script>
 	<script type="text/javascript" src="static/gl/bk/rywh.js?v=<%=Math.random()%>"></script>
 	<div id="div1"></div>
+	<div id="mydiv1"></div>
+	<div id="mydiv2"></div>
 </body>
 </html>

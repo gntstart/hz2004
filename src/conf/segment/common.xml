@@ -195,7 +195,6 @@
 				    		#else
 				    			$ut.new_allsfz($allsfz,$pageIndex,$hlx)
 				    		#end
-				    		order by a.xm
 				    #else
 				    	 	from PoHJXX_CZRKJBXXB a
 			         		where a.ryzt = '0' 
@@ -239,7 +238,6 @@
 				      			and a.rynbid = '${rynbid}'
 				    		#end
 				    		$ut.new_n_allsfz($allsfz,$pageIndex, $hlx)
-				    		order by a.xm
 				#end
 			#else
 				from PoHJXX_CZRKJBXXB a
@@ -271,7 +269,6 @@
 				      			and a.rynbid = '${rynbid}'
 				    		#end
 				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
-			           	order by a.xm
 			           #end
          ]]>
 	</queryPoHJXX_CZRKJBXXB_NEW>
@@ -320,7 +317,6 @@
 				      			and a.rynbid = '${rynbid}'
 				    		#end
 				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
-			           	order by a.xm
 			#else
 				from PoHJXX_CZRKJBXXB a
 			         	where a.ryzt = '0' 
@@ -348,7 +344,6 @@
 				      			and a.rynbid = '${rynbid}'
 				    		#end
 				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
-			           	order by a.xm
 			           #end
          ]]>
 	</queryPoHJXX_CZRKJBXXB>
@@ -388,7 +383,6 @@
 				      			and a.rynbid = '${rynbid}'
 				    		#end
 				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
-			           	order by a.xm
          ]]>
 	</queryPoHJXX_CZRKJBXXB_HZ>
 	<!-- 特殊，集体户 -->
@@ -400,7 +394,6 @@
 			         		and a.cxbz = '0'
 			           		and a.jlbz = '1'
 				    		$ut.n_allsfz($allsfz,$pageIndex,$hlx)
-			           	order by a.xm
          ]]>
 	</queryPoHJXX_CZRKJBXXB_JTH>
 	<!-- 特殊，单独精确查询 -->
@@ -584,7 +577,6 @@
 		<![CDATA[
 			from PoHJSP_HJSPZB a
 			where spywid='${spywid}'
-			order by xm
 		]]>
 	</queryPoHJSP_HJSPZB>
 	
@@ -1791,7 +1783,6 @@
 	    		#if(!$ut.isns($ryid))
 	      			and a.ryid = '${ryid}'
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoZJYW_SLXXB3>
 	
@@ -1840,7 +1831,6 @@
 	    		#if(!$ut.isns($czyid))
 	      			and a.czyid = '${czyid}'
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoZJYW_SJXXB>
 	
@@ -1909,7 +1899,6 @@
 	    		#if(!$ut.isns($yszt))
 					and a.yszt = :yszt
 				#end
-           	order by a.xm
          ]]>	
 	</queryPoZJYW_YSXXB>
 	<!-- 领取发放信息查询 -->
@@ -1966,7 +1955,6 @@
 	    		#if(!$ut.isns($slendYear))
 	      			and a.slsj <= :slendYear
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoZJYW_LQFFXXB>
 	<!-- 挂失信息查询 -->
@@ -2014,7 +2002,6 @@
 				#if(!$ut.isns($czyid))
 	      			and a.czyid = '${czyid}'
 	    		#end
-           	order by a.xm
          ]]>		
 	</queryPoZJYW_GSXXB>
 	<!-- 制证反馈信息查询 -->
@@ -2059,7 +2046,6 @@
 				#if(!$ut.isns($czyid))
 					and a.czyid = '${czyid}'
 				#end
-			order by a.xm
 		]]>
 	</queryPoZJYW_ZZHKXXB>
 	<!-- 质量反馈信息查询 -->
@@ -2156,7 +2142,6 @@
 	      			and a.hksj <= :hksjsendYear
 	    		#end	    		
          		and ((a.zzxxcwlb is not null) or (a.zlhkzt is not null))
-           	order by a.xm
          ]]>	
 	</queryPoZJYW_SLXXB2>
 	<!-- 分检结果查询 -->
@@ -2204,7 +2189,6 @@
 	    		#if(!$ut.isns($ssxq))
 	      			and a.ssxq = :ssxq
 	    		#end
-           	order by a.xm
          ]]>		
 	</queryPoWW_FJJGRZB>
 	<!-- 分发接收信息查询 -->
@@ -2252,7 +2236,6 @@
          		#if(!$ut.isns($cxbz))
 	      			and a.cxbz = :cxbz
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoZJYW_FFJSXXB>
 	<!-- 身份证信息查询 -->
@@ -2279,7 +2262,6 @@
 	    		#if(!$ut.isns($pcs))
 	      			and a.pcs = :pcs
 	    		#end
-           	order by a.xm
          ]]>			
 	</queryPoV_ZJ_JMSFZXXB>
 	<!-- 重号信息查询 -->
@@ -2318,7 +2300,6 @@
 	    		#if(!$ut.isns($slendYear))
 	      			and a.slsj <= :slendYear
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoV_HJ_CHCLXXB>
 	<!-- 身份号分配信息查询 -->
@@ -2356,7 +2337,6 @@
 	    		#if(!$ut.isns($dwdm))
 	      			and a.dwdm = :dwdm
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoHJYW_GMSFHMSXMFPXXB>
 	<!-- 迁移证查询 -->
@@ -2520,7 +2500,6 @@
 	    		#if(!$ut.isns($yznf))
 	      			and a.yznf = :yznf	
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoHJSP_QYZXXB>
 	<!-- 准迁证查询 -->
@@ -2674,7 +2653,6 @@
 	    		#if(!$ut.isns($czyid))
 	      			and a.czyid = '${czyid}'	
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoV_ZJ_YDZSLXXB>
 	<!-- 审核信息查询 -->
@@ -2744,7 +2722,6 @@
 	      			and a.czyid = '${czyid}'	
 	    		#end
 	    		and  a.jlbz='1'
-           	order by a.xm
          ]]>	
 	</queryPoV_ZJ_SHQFXXB>
 	<!-- 销毁信息查询 -->
@@ -2783,7 +2760,6 @@
 	    		#if(!$ut.isns($czyid))
 	      			and a.czyid = '${czyid}'	
 	    		#end
-           	order by a.xm
          ]]>	
 	</queryPoV_ZJ_XHXXB>
 	<!-- 户关联信息查询 -->
@@ -2849,7 +2825,6 @@
 			      			and b.rynbid = '${rynbid}'
 			    		#end
          		)
-           	order by a.xm
          ]]>
 	</queryPoHJXX_CZRKJBXXB2>
 	
@@ -3011,9 +2986,6 @@
 			    #else
 	         		and a.cxbz = 0
 			    #end
-			    #if(!$ut.isns($mlpnbid))
-	      			order by a.xm
-	    		#end
          ]]>
 	</queryPoHJXX_CZRKJBXXB3>
 	    		<!-- #if(1 == $rkzt1&&$ut.isns($rkzt2)&&$ut.isns($rkzt3))
@@ -3972,7 +3944,7 @@
 			#if(!$ut.isns($wsp))
 				and a.lsbz = :wsp
 			#end
-          	order by a.xm,a.spywid
+          	order by a.spywid
          ]]>
 	</queryQrsp>
 	<!-- 迁入审批子表查询 -->
@@ -3983,7 +3955,6 @@
          		#if(!$ut.isns($spywid))
 	      			and a.spywid = '${spywid}'
 	    		#end
-           	order by a.xm
          ]]>
 	</queryQrspzb>
 	<!-- 迁入审批流程查询 -->
@@ -4042,7 +4013,6 @@
 			#if(!$ut.isns($wsp))
 				and a.lsbz = :wsp
 			#end
-    		order by a.xm
          ]]>
 	</queryBgsp>
 	<!-- 变更审批子表查询 -->
@@ -4262,7 +4232,6 @@
 			#if(!$ut.isns($czendYear))
 				and a.czsj <= :czendYear
 			#end
-    		order by a.xm
          ]]>
 	</queryHbbgsp>
 	<!-- 户别变更审批流程查询 -->
@@ -4312,7 +4281,7 @@
 			#if(!$ut.isns($czendYear))
 				and a.czsj <= :czendYear
 			#end
-    		order by a.xm,a.spywid
+    		order by a.spywid
          ]]>
 	</queryHjblsp>
 	<!-- 户别变更审批流程查询 -->
@@ -4574,7 +4543,6 @@
 				      			and a.rynbid = '${rynbid}'
 				    		#end
 				    		$ut.allsfz($allsfz,$pageIndex,$hlx)
-			           	order by a.xm
          ]]>
 	</queryCphbbg>
 	<queryJwh>
@@ -5262,8 +5230,6 @@
 		   and gmsfhm = '${gmsfhm}'
 		#end
 	</queryzpxx>
-	
-	
 	<queryQshz>
 	<![CDATA[
 		select a,b from PoHJXX_HXXB a,PoHJXX_MLPXXXXB b
@@ -6465,15 +6431,18 @@
 				#if('0'== $sffs)
 					and a.sffs = :sffs
 				#end
+				#if('2'== $sffs)
+					and a.sffs = :sffs
+				#end
 				#if('3'== $sffs)
 					and ((a.sffs = '1' and  bzxjfyy is not null) or (a.sffs = '0'))
 				#end
 	   		#end
 	   		#if(!$ut.isns($_start_dysj))
-	      		and a.dysj >= :_start_dysj
+	      		and a.dysj >= '${_start_dysj}000000'
     		#end
     		#if(!$ut.isns($_end_dysj))
-	      		and a.dysj <= :_end_dysj
+	      		and a.dysj <= '${_end_dysj}235959'
     		#end
     		#if(!$ut.isns($yx))
 	      		and ${yx}
@@ -6483,6 +6452,9 @@
     		#end
     		#if(!$ut.isns($xm))
 	      		and a.xm = :xm
+    		#end
+    		#if(!$ut.isns($czrid))
+	      		and a.czyid = '${czrid}'
     		#end
     		#if(!$ut.isns($jksj_start))
 	      		and a.jksj >= :jksj_start
@@ -6495,6 +6467,9 @@
     		#end
     		#if(!$ut.isns($sjk))
 	      		and jfflag = '1' and bzxjfyy = '4' and sffs = '1'
+    		#end
+    		#if(!$ut.isns($shzt))
+	      		and shzt = :shzt
     		#end
     		and dylb ='03'
 	   		order by dysj desc   		
@@ -6585,7 +6560,6 @@
          		and a.ryzt = '0' 
          		and a.cxbz = '0'
            		and a.jlbz = '1'
-           	order by a.xm
          ]]>	
 	</queryQydjRy>
    			<!-- #if(!$ut.isns($djzt)&&2 == $djzt)
@@ -6698,6 +6672,7 @@
     		#if(!$ut.isns($_end_dysj))
 	      		and a.dysj <= :_end_dysj
     		#end
+    		and sffs <> '2'
 	   		order by dysj desc 
 		]]>	
 	</querySjkfjList>

@@ -285,4 +285,21 @@ public interface CommonService {
 	public void downExcelZip(HttpServletRequest req, HttpServletResponse rep, ExtMap<String, Object> params);
 
 	public void uploadQdZp(MultipartHttpServletRequest logoFile);
+
+	/**
+	 * 收费信息表更新
+	 * @param posfxxb
+	 */
+	public PoSFXXB updateSfxxb(PoSFXXB posfxxb);
+
+	public void downBkMb(HttpServletRequest req, HttpServletResponse rep, ExtMap<String, Object> params);
+
+	/**
+	 * add by zjm  
+	 * 20210202
+	 * 上传布控模板文件
+	 * @param bkMbFile
+	 * @throws IOException 
+	 */
+	public void uploadBkMb(MultipartHttpServletRequest bkMbFile) throws IOException;
 }

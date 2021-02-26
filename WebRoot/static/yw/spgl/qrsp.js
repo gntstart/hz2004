@@ -115,6 +115,8 @@ Ext.onReady(function(){
 				data.whcd = hzywjo.whcd;
 //				data.ysqrgx = hzywjo.btkrgx;
 				
+				//add by zjm 20210223 中间表带入迁移原因
+				data.qyyy = hzywjo.qyldyy;
 				//20190312 省内带入五个申请人的值 
 				data.sqrxm = hzywjo.sqrxm;
 				data.sqrgmsfhm = hzywjo.sqrsfz;

@@ -44,6 +44,7 @@ public class PoSFXXB implements com.hzjc.wsstruts.po.PO, java.io.Serializable {
 	private String shzt;//审核状态
 	private String shsj;//审核时间
 	private Long shrid;//审核人ID
+	private int xgcs;//add By zjm 20210201 修改次数
 	public PoSFXXB(){}
 	public Long getCzyid() {
 		return czyid;
@@ -149,5 +150,12 @@ public class PoSFXXB implements com.hzjc.wsstruts.po.PO, java.io.Serializable {
 	}
 	public void setShrid(Long shrid) {
 		this.shrid = shrid;
+	}
+	
+	public int getXgcs() {
+		return xgcs;
+	}
+	public void setXgcs(int xgcs) {
+		this.xgcs = xgcs;
 	}
 	public static long getSerialversionuid() {			return serialVersionUID;	}}

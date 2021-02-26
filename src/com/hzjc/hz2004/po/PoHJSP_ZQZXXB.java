@@ -74,7 +74,8 @@ public class PoHJSP_ZQZXXB implements com.hzjc.wsstruts.po.PO, java.io.Serializa
 	private String	qcblr;
 	private String	qyfw;
 	private String	yxqjzrq;
-
+	private String  qyyy;//add by zjm 20210222  新增迁移原因字段
+	private String  sfcsjtb;//add by zjm 20210224  是否长三角通办：0否 1是'
 	public PoHJSP_ZQZXXB(){}
 
 	public Long getZqid(){
@@ -451,6 +452,22 @@ public class PoHJSP_ZQZXXB implements com.hzjc.wsstruts.po.PO, java.io.Serializa
 
 	public void setYxqjzrq(String yxqjzrq){
 		this.yxqjzrq=yxqjzrq;
+	}
+
+	public String getQyyy() {
+		return qyyy;
+	}
+
+	public void setQyyy(String qyyy) {
+		this.qyyy = qyyy;
+	}
+
+	public String getSfcsjtb() {
+		return sfcsjtb;
+	}
+
+	public void setSfcsjtb(String sfcsjtb) {
+		this.sfcsjtb = sfcsjtb;
 	}
 
 	public static long getSerialversionuid() {			return serialVersionUID;	}}

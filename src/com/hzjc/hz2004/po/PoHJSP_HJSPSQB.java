@@ -101,7 +101,8 @@ public class PoHJSP_HJSPSQB implements com.hzjc.wsstruts.po.PO, java.io.Serializ
 	private String	kdqqy_czydw;
 	private String	kdqqy_qyzbh;
 	private String	kdqqy_lscxfldm;
-
+	private String  qyyy;//add by zjm 20210222  新增迁移原因字段
+	private String  sfcsjtb;//add by zjm 20210224  是否长三角通办：0否 1是'
 	public PoHJSP_HJSPSQB(){}
 
 	public Long getSpywid(){
@@ -694,6 +695,22 @@ public class PoHJSP_HJSPSQB implements com.hzjc.wsstruts.po.PO, java.io.Serializ
 
 	public void setKdqqy_lscxfldm(String kdqqy_lscxfldm){
 		this.kdqqy_lscxfldm=kdqqy_lscxfldm;
+	}
+
+	public String getQyyy() {
+		return qyyy;
+	}
+
+	public void setQyyy(String qyyy) {
+		this.qyyy = qyyy;
+	}
+
+	public String getSfcsjtb() {
+		return sfcsjtb;
+	}
+
+	public void setSfcsjtb(String sfcsjtb) {
+		this.sfcsjtb = sfcsjtb;
 	}
 
 	public static long getSerialversionuid() {			return serialVersionUID;	}}

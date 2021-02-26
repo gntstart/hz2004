@@ -70,6 +70,7 @@ public class RybkServiceImpl extends ServiceImpl implements RybkService{
 					old.setBklxmc(bkry.getBklxmc());
 					old.setBktx(bkry.getBktx());
 					old.setXm(bkry.getXm());
+					old.setBksj(DateHelper.formateDate("yyyyMMddHHmmss"));
 					super.update(old);
 				}
 			}

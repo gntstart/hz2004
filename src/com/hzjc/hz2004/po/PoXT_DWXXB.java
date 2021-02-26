@@ -30,6 +30,7 @@ public class PoXT_DWXXB implements com.hzjc.wsstruts.po.PO, java.io.Serializable
 	@GeneratedValue(generator = "generator")
 	private String	dm;
 	private String	mc;
+	private String  dhhm;//单位表增加电话号码字段  20210220
 	private String	zwpy;
 	private String	wbpy;
 	private String	dwjgdm;
@@ -163,6 +164,14 @@ public class PoXT_DWXXB implements com.hzjc.wsstruts.po.PO, java.io.Serializable
 
 	public void setZp(byte[] zp) {
 		this.zp = zp;
+	}
+
+	public String getDhhm() {
+		return dhhm;
+	}
+
+	public void setDhhm(String dhhm) {
+		this.dhhm = dhhm;
 	}
 
 	public static long getSerialversionuid() {			return serialVersionUID;	}}

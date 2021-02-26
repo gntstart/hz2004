@@ -172,7 +172,7 @@ Ext.onReady(function(){
 			width:80,
 			renderer:function(value, cellmeta, record, rowIndex,columnIndex, store){
 				if(value==3){
-					return '现金/非现金';
+					return '现金/非现金/首次打印';
 				}
 				return Gnt.ux.Dict.getDictLable("CS_SFFS", value, cellmeta, record, rowIndex,columnIndex, store);
 			}
@@ -292,23 +292,35 @@ Ext.onReady(function(){
 						
 						//办理笔数
 						if(cellIndex==2){
-							store.baseParams.yx = "((bzxjfyy = '4' and sffs = '1') or sffs = '0')";
-							store.load({params:{start:0, limit:20}});
+							if(selRes.data.hkbysy>0){
+								store.baseParams.yx = "((bzxjfyy = '4' and sffs = '1') or sffs = '0' or sffs = '2' )";
+								store.load({params:{start:0, limit:20}});
+							}else{
+								return;
+							}
 						}
 						//办理金额
 						if(cellIndex==3){
-							store.baseParams.yx = "((bzxjfyy = '4' and sffs = '1') or sffs = '0')";
-							store.load({params:{start:0, limit:20}});
+							if(selRes.data.hkbysy>0){
+								store.baseParams.yx = "((bzxjfyy = '4' and sffs = '1') or sffs = '0' or sffs = '2' )";
+								store.load({params:{start:0, limit:20}});
+							}else{
+								return;
+							}
 						}
 						//作废笔数
 						if(cellIndex==4){
-							store.baseParams.zf = "bzxjfyy <> '4'";
-							store.load({params:{start:0, limit:20}});
+							if(selRes.data.hkbzf>0){
+								store.baseParams.zf = "bzxjfyy <> '4'";
+								store.load({params:{start:0, limit:20}});
+							}
 						}
 						//作废金额
 						if(cellIndex==5){
-							store.baseParams.zf = "bzxjfyy <> '4'";
-							store.load({params:{start:0, limit:20}});
+							if(selRes.data.hkbzf>0){
+								store.baseParams.zf = "bzxjfyy <> '4'";
+								store.load({params:{start:0, limit:20}});
+							}
 						}
 						//非现金笔数
 						if(cellIndex==6){
@@ -399,6 +411,13 @@ Ext.onReady(function(){
 				}else{
 					Ext.getCmp('sfqdImg').body.update("<IMG SRC='images/no_pic.gif' width='100%' height='100%' />");
 				}
+				if(selectedSelRes.data.xgcs>0){
+					Ext.getCmp('zf').disable();
+					Ext.getCmp('scdy').disable();
+				}else{
+					Ext.getCmp('zf').enable();
+					Ext.getCmp('scdy').enable();
+				}
 			},
 			rowdblclick:function(g, rowIndex, e){
 				selectedSelRes = g.store.getAt(rowIndex);
@@ -430,7 +449,7 @@ Ext.onReady(function(){
 				border:false,
 				frame: false,
 				region:'north',
-	        	height: 80,
+	        	height: 100,
 	        	bodyStyle:'padding:10px',
 				items:[/*{
 					id: "panelHtmlId" ,
@@ -446,7 +465,7 @@ Ext.onReady(function(){
 				    border:false,
 				    frame:false,
 				    margins: '0 0 0 0',
-				    height:70,
+				    height:90,
 		            items:[form50006,{
 		    		    title: '',
 		    		    collapsible: false,
@@ -616,7 +635,42 @@ Ext.onReady(function(){
 			    	height:10,
 			    	border:false,
 			    	frame:false
-			    },/*new Ext.Button({
+			    },new Ext.Button({
+			    	text:'作废',
+			    	id:'zf',
+					minWidth:100,
+					handler:function(){
+						if(selectedSelRes){
+							var bjf_form = new Gnt.ux.BjfDialog({
+							callback : function(type, bzxdata) {
+								if(bzxdata.bzxjfyy==4){
+									alert("作废操作不可选现金缴费!");
+									return;
+								}else{
+									//将这条记录作废
+									var subdata = {
+										sfxxb : {
+											sfxxbid:selectedSelRes.data.sfxxbid,
+											bzxjfyy:bzxdata.bzxjfyy
+										}
+									};
+									subdata.sfxxb = Ext.encode(subdata.sfxxb);
+									Gnt.submit(subdata, "yw/common/updateSfxxb", "收费信息表作废中，请稍后...",
+											function(jsonData, params) {
+												if (jsonData.list && jsonData.list[0]) {
+													sfxxbInfoGrid.store.reload();
+												}
+											});									
+								}
+							}
+						});
+						bjf_form.show();
+	                	}else{
+	                		alert("必须先选中要作废的数据!");
+	                		return;
+	                	}
+					}
+			    }),/*new Ext.Button({
 					text:'收费清单上传',
 					minWidth:100,
 					handler:function(){
@@ -637,7 +691,38 @@ Ext.onReady(function(){
 			    	height:10,
 			    	border:false,
 			    	frame:false
-			    }]
+			    },new Ext.Button({
+			    	text:'首次打印',
+			    	id:'scdy',
+			    	hidden:true,
+					minWidth:100,
+					handler:function(){
+						if(selectedSelRes){
+							if(window.confirm('是否将['+selectedSelRes.data.xm+']数据设为首次打印？')){
+								//将这条记录作废
+								var subdata = {
+									sfxxb : {
+										sfxxbid:selectedSelRes.data.sfxxbid,
+										sffs:2,// 2 户口簿首次打印
+										je:0,
+										bzxjfyy:''
+									}
+								};
+								subdata.sfxxb = Ext.encode(subdata.sfxxb);
+								Gnt.submit(subdata, "yw/common/updateSfxxb", "收费更新中，请稍后...",
+										function(jsonData, params) {
+											if (jsonData.list && jsonData.list[0]) {
+												sfxxbInfoGrid.store.reload();
+											}
+										});									
+							
+							}
+	                	}else{
+	                		alert("必须先选中要作废的数据!");
+	                		return;
+	                	}
+					}
+			    })]
 			}
 			],
 			buttons:[

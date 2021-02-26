@@ -34,6 +34,10 @@ Ext.onReady(function(){
 	
 	var hzywid = getQueryParam("hzywid");
 	var pch = getQueryParam("pch");
+	//add by zjm 20210219 迁移证双击跳转
+	var qyzDbJump = getQueryParam("qyzDbJump");
+	var qyzDbGmsfhm = getQueryParam("qyzDbGmsfhm");
+	var qyzDbQyzbh = decodeURI(getQueryParam("qyzDbQyzbh"));
 	
 	//本业务需要加载的配置
 	//10019 Hj_户成员信息
@@ -857,7 +861,12 @@ Ext.onReady(function(){
 						
 					});
 				}
-
+				//迁移证双击跳转 add by zjm 20210219
+				if(qyzDbJump&&qyzDbJump!=""&&qyzDbGmsfhm&&qyzDbGmsfhm!=""){
+					if(hzywjo){
+						data.qyzbh = hzywjo.qyzbh;
+					}
+				}	
 				var rr = new store.reader.recordType(data, ywid);
 				/**
 					有出生日期则可以选择有效期限起始日期
@@ -1862,6 +1871,11 @@ Ext.onReady(function(){
         }
     });
 	
+	//迁移证双击跳转 add by zjm 20210219
+	if(qyzDbJump&&qyzDbJump!=""&&qyzDbGmsfhm&&qyzDbGmsfhm!=""){
+		hzywjo = {bsqrsfz:qyzDbGmsfhm,qyzbh:qyzDbQyzbh};
+		Ext.getCmp("sprhBtn").handler();
+	}
 	//户政业务处理
 	if(hzywid && hzywid!=""){
 		Gnt.makeHzyw({

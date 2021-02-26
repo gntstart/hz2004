@@ -58,6 +58,7 @@ public class BggzcxController extends BaseController{
 		Page p = queryService.getBggzxx(params);
 		String daochuFlag = params.getString("daochuFlag");
 		if(daochuFlag!=null) {
+			params.put("pageIndex", 1);
 			params.put("pageSize", p.getTotalCount());
 			BaseContext.getContext().getSession().setAttribute(daochuFlag, params);
 		}

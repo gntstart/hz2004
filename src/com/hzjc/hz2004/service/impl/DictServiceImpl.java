@@ -424,7 +424,7 @@ public class DictServiceImpl  extends ServiceImpl implements DictService {
 		String search_code = params.getString("search_code");
 		String visiontype = params.getString("visiontype");
 		List<Code> list = new ArrayList<Code>();
-		if(search_code!=null){
+		if(search_code!=null&&!visiontype.equals("YHXXB")){
 			params.put("search_code", search_code.toUpperCase().trim());
 		}
 		

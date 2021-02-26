@@ -229,6 +229,8 @@ public String processLodop(String id, String lodopId,String jsonStr,String index
 		return queryGatGwdjzxzm(lodopId,jsonStr,id,index);
 	}else if(lodopId.equals("sftyrxzhczm")) {//公民是否同一人的协助核查证明
 		return querySftyrxzhczm(lodopId,jsonStr,id,index);
+	}else if(lodopId.equals("qyzcg")) {//迁移证存根打印
+		return queryQyzCginfo(lodopId,jsonStr,id,index);
 	}
 	
 	return "";
@@ -984,10 +986,11 @@ private void updateHz_zj_sb(String hzywid) {
 	
 }
 
-private String queryCginfo(String lodopId, String jsonStr, String id, String index) {
+private String queryQyzCginfo(String lodopId, String jsonStr, String id, String index) {
 	//查询套打表中数据
 	String strHQL ="";
-	String StrHqlById ="";
+	String StrHqlQczxxxb ="";
+	String StrHqlQyzxxxb ="";
 	PoLODOP poldop = null;
 	String result = "";
 	String slsj = "";
@@ -995,7 +998,7 @@ private String queryCginfo(String lodopId, String jsonStr, String id, String ind
 	String slsjmm = "";
 	String slsjdd = "";
 	strHQL = "from " + PoLODOP.class.getName() + "" +
-			" where lodopId = '"+lodopId+"' and zxbz = '0' ";
+			" where lodopId = 'qyzcg' and zxbz = '0' ";
 	 List lodopList =super.findAllByHQL(strHQL);
 	 if(lodopList.size()==0) {
 		 result ="符合条件的模板不存在！";
@@ -1006,47 +1009,49 @@ private String queryCginfo(String lodopId, String jsonStr, String id, String ind
 		 result += poldop.getNr();
 		 JSONObject json = JSONObject.parseObject(jsonStr);
          //StringBuilder 再次转回String 替换高度完毕
-		 StrHqlById =" from "+PoHJTJ_RYBDXXB.class.getName()+" a where 1=1  and  hjywid ='"+json.getString("hjywid")+"' order by rybdid ";
-		 List hjtj_rybdxxbList = super.findAllByHQL(StrHqlById);
-		 if(hjtj_rybdxxbList.size()==0) {
-			 throw new ServiceException("查询变动信息无记录!");
+		 StrHqlQczxxxb =" from "+PoHJYW_QCZXXXB.class.getName()+" a where 1=1  and  hjywid ='"+json.getString("hjywid")+"' and  qyzbh ='"+json.getString("qyzbh")+"' ";
+		 String qyz = json.getString("qyzbh");
+		 StrHqlQyzxxxb =" from "+PoHJSP_QYZXXB.class.getName()+" a where 1=1  and  qyzbh ='"+qyz.substring(1)+
+				 "' and czrgmsfhm='"+json.getString("gmsfhm")+"' or gmsfhm1='"+json.getString("gmsfhm")+"' or gmsfhm2='"+json.getString("gmsfhm")+"' or gmsfhm3='"+json.getString("gmsfhm")+"' order by qfrq desc ";
+		 List hjyw_qczxxxbList = super.findAllByHQL(StrHqlQczxxxb);
+		 List hjyw_qyzxxxbList = super.findAllByHQL(StrHqlQyzxxxb);
+		 if(hjyw_qczxxxbList.size()==0) {
+			 throw new ServiceException("查询迁出注销无记录!");
 		 }
-		 Map<String, PoHJTJ_RYBDXXB> map = new HashMap<String,PoHJTJ_RYBDXXB>();
+		 if(hjyw_qyzxxxbList.size()==0) {
+			 throw new ServiceException("查询迁移证无记录!");
+		 }
 		 int mapLength = 0;
-		 for(int i = 0;i<hjtj_rybdxxbList.size();i++) {
-			PoHJTJ_RYBDXXB hjtj_rybdxxb = (PoHJTJ_RYBDXXB) hjtj_rybdxxbList.get(i);
-			if(!map.containsKey(hjtj_rybdxxb.getXm())) {
-				map.put(hjtj_rybdxxb.getXm(),hjtj_rybdxxb);
-				result = result.replace("{xm"+(mapLength+1)+"}",CommonUtil.isEmpty(hjtj_rybdxxb.getXm())?"":hjtj_rybdxxb.getXm());
-				result = result.replace("{xb"+(mapLength+1)+"}",getMcByClsb("8003", hjtj_rybdxxb.getXb()));
-				result = result.replace("{gmsfhm"+(mapLength+1)+"}",CommonUtil.isEmpty(hjtj_rybdxxb.getGmsfhm())?"":hjtj_rybdxxb.getGmsfhm());
+		 PoHJYW_QCZXXXB hjyw_qczxxxbTemp = (PoHJYW_QCZXXXB) hjyw_qczxxxbList.get(0);
+		 for(int i = 0;i<hjyw_qczxxxbList.size();i++) {
+			 PoHJYW_QCZXXXB hjyw_qczxxxb = (PoHJYW_QCZXXXB) hjyw_qczxxxbList.get(i);
+				result = result.replace("{xm"+(mapLength+1)+"}",CommonUtil.isEmpty(hjyw_qczxxxb.getXm())?"":hjyw_qczxxxb.getXm());
+				result = result.replace("{xb"+(mapLength+1)+"}",getMcByClsb("8003", hjyw_qczxxxb.getXb()));
+				result = result.replace("{gmsfhm"+(mapLength+1)+"}",CommonUtil.isEmpty(hjyw_qczxxxb.getGmsfhm())?"":hjyw_qczxxxb.getGmsfhm());
 				mapLength++;
-			}
-		 }
-		 if(hjtj_rybdxxbList.size()>0) {
-			 PoHJTJ_RYBDXXB hjtj_rybdxxb = (PoHJTJ_RYBDXXB) hjtj_rybdxxbList.get(0);
-			 PoHJYW_QCCLXXB hjyw_qcclxxb = super.get(PoHJYW_QCCLXXB.class, json.getLong("qcclid")); 
-			 hjyw_qcclxxb.setClbz("2");
-			 super.update(hjyw_qcclxxb);
-			 if(hjtj_rybdxxbList.size()>0) {
-					int temp =map.size();
-					for(int i =temp+1;i<=4;i++) {
-						result = result.replace("{xm"+i+"}","");
-						result = result.replace("{xb"+i+"}","");
-						result = result.replace("{gmsfhm"+i+"}","");
-					}
-			}
-			 result = result.replace("{qyyy}",getMcByClsb("1056", hjtj_rybdxxb.getBdyy()));
-			 result = result.replace("{yzz}",getHylbzTemp3(hjtj_rybdxxb));
-			 result = result.replace("{qwzz}",getHylbzTemp4(hjtj_rybdxxb));
-			 result = result.replace("{qyrq}",transStringToDateformatter(hjtj_rybdxxb.getBdrq(),1));
-			 result = result.replace("{qcfpcs}",getPcs(hjyw_qcclxxb.getPcs_q()));
-			 result = result.replace("{qcfjwh}",getJcwh(hjyw_qcclxxb.getJcwh_q()));
-			 result = result.replace("{qrfpcs}",getPcs(hjyw_qcclxxb.getPcs_h()));
-			 result = result.replace("{qrfjwh}",getJcwh(hjyw_qcclxxb.getJcwh_h()));
-			 result = generrateFromObj(hjtj_rybdxxb, result);
-		 }
+		}
+		for(int i = mapLength;i<4;i++) { 
+			result = result.replace("{xm"+(i+1)+"}","");
+			result = result.replace("{xb"+(i+1)+"}","");
+			result = result.replace("{gmsfhm"+(i+1)+"}","");
+		}
+		PoHJSP_QYZXXB hjsp_qyzxxb = (PoHJSP_QYZXXB) hjyw_qyzxxxbList.get(0);
+		 result = result.replace("{qyyy}",getMcByClsb("1056", hjsp_qyzxxb.getQyyy()));
+		 result = result.replace("{yzz}",getCsdInfo(hjsp_qyzxxb.getYzzssxq())+(CommonUtil.isNotEmpty(hjsp_qyzxxb.getYzzxz())?hjsp_qyzxxb.getYzzxz():""));
+		 result = result.replace("{qwzz}",getCsdInfo(hjsp_qyzxxb.getQwdssxq())+(CommonUtil.isNotEmpty(hjsp_qyzxxb.getQwdxz())?hjsp_qyzxxb.getQwdxz():""));
+		 result = result.replace("{qyrq}",transStringToDateformatter(hjsp_qyzxxb.getQfrq(),1));
+		 result = result.replace("{qcfpcs}",getCsdInfo(hjsp_qyzxxb.getYzzssxq()));
+		 result = result.replace("{qcfjwh}",CommonUtil.isNotEmpty(hjsp_qyzxxb.getYzzxz())?hjsp_qyzxxb.getYzzxz():"");
+		 result = result.replace("{qrfpcs}",getCsdInfo(hjsp_qyzxxb.getQwdssxq()));
+		 result = result.replace("{qrfjwh}",CommonUtil.isNotEmpty(hjsp_qyzxxb.getQwdxz())?hjsp_qyzxxb.getQwdxz():"");
+		 result = result.replace("{hjywid}",json.getString("hjywid"));
+		 result = result.replace("{zqzbh}",CommonUtil.isNotEmpty(hjyw_qczxxxbTemp.getZqzbh())?hjyw_qczxxxbTemp.getZqzbh():"");
+		 result = result.replace("{qyzbh}",json.getString("qyzbh"));
+		 //迁入方 取迁入办理单位等
+		 //迁出方 取原住址省市县区和详细地址
+		 result = generrateFromObj(hjsp_qyzxxb, result);
 	 }
+
 	return result;
 }
 
@@ -2429,7 +2434,6 @@ public String queryQyzdyinfo(String lodopId, String jsonStr,String index,String 
 					result = result.replace("{qyyy"+i1+"}","");
 				}
 				result = generrateFromObj(hjxx_czrkjbxxb, result);
-				PoHJSP_QYZXXB hjsp_qyzxxb = new PoHJSP_QYZXXB();
 //				PoHJSP_QYZXXB hjsp_qyzxxb = new PoHJSP_QYZXXB();
 //				hjsp_qyzxxb.setBz(bz);
 //	 			Timestamp d = new Timestamp(System.currentTimeMillis()); 
@@ -4621,6 +4625,71 @@ private String queryGmsfzsfdinfo(String lodopId, String jsonStr, String id, Stri
 	 }
 	return result;
 
+}
+private String queryCginfo(String lodopId, String jsonStr, String id, String index) {
+	//查询套打表中数据
+	String strHQL ="";
+	String StrHqlById ="";
+	PoLODOP poldop = null;
+	String result = "";
+	String slsj = "";
+	String slsjyyyy = "";
+	String slsjmm = "";
+	String slsjdd = "";
+	strHQL = "from " + PoLODOP.class.getName() + "" +
+			" where lodopId = '"+lodopId+"' and zxbz = '0' ";
+	 List lodopList =super.findAllByHQL(strHQL);
+	 if(lodopList.size()==0) {
+		 result ="符合条件的模板不存在！";
+	 }else if(lodopList.size()>1){
+		 result="符合条件的模板数目不止一条！";
+	 }else if(lodopList.size()==1){
+		 poldop = (PoLODOP) lodopList.get(0);
+		 result += poldop.getNr();
+		 JSONObject json = JSONObject.parseObject(jsonStr);
+         //StringBuilder 再次转回String 替换高度完毕
+		 StrHqlById =" from "+PoHJTJ_RYBDXXB.class.getName()+" a where 1=1  and  hjywid ='"+json.getString("hjywid")+"' order by rybdid ";
+		 List hjtj_rybdxxbList = super.findAllByHQL(StrHqlById);
+		 if(hjtj_rybdxxbList.size()==0) {
+			 throw new ServiceException("查询变动信息无记录!");
+		 }
+		 Map<String, PoHJTJ_RYBDXXB> map = new HashMap<String,PoHJTJ_RYBDXXB>();
+		 int mapLength = 0;
+		 for(int i = 0;i<hjtj_rybdxxbList.size();i++) {
+			PoHJTJ_RYBDXXB hjtj_rybdxxb = (PoHJTJ_RYBDXXB) hjtj_rybdxxbList.get(i);
+			if(!map.containsKey(hjtj_rybdxxb.getXm())) {
+				map.put(hjtj_rybdxxb.getXm(),hjtj_rybdxxb);
+				result = result.replace("{xm"+(mapLength+1)+"}",CommonUtil.isEmpty(hjtj_rybdxxb.getXm())?"":hjtj_rybdxxb.getXm());
+				result = result.replace("{xb"+(mapLength+1)+"}",getMcByClsb("8003", hjtj_rybdxxb.getXb()));
+				result = result.replace("{gmsfhm"+(mapLength+1)+"}",CommonUtil.isEmpty(hjtj_rybdxxb.getGmsfhm())?"":hjtj_rybdxxb.getGmsfhm());
+				mapLength++;
+			}
+		 }
+		 if(hjtj_rybdxxbList.size()>0) {
+			 PoHJTJ_RYBDXXB hjtj_rybdxxb = (PoHJTJ_RYBDXXB) hjtj_rybdxxbList.get(0);
+			 PoHJYW_QCCLXXB hjyw_qcclxxb = super.get(PoHJYW_QCCLXXB.class, json.getLong("qcclid")); 
+			 hjyw_qcclxxb.setClbz("2");
+			 super.update(hjyw_qcclxxb);
+			 if(hjtj_rybdxxbList.size()>0) {
+					int temp =map.size();
+					for(int i =temp+1;i<=4;i++) {
+						result = result.replace("{xm"+i+"}","");
+						result = result.replace("{xb"+i+"}","");
+						result = result.replace("{gmsfhm"+i+"}","");
+					}
+			}
+			 result = result.replace("{qyyy}",getMcByClsb("1056", hjtj_rybdxxb.getBdyy()));
+			 result = result.replace("{yzz}",getHylbzTemp3(hjtj_rybdxxb));
+			 result = result.replace("{qwzz}",getHylbzTemp4(hjtj_rybdxxb));
+			 result = result.replace("{qyrq}",transStringToDateformatter(hjtj_rybdxxb.getBdrq(),1));
+			 result = result.replace("{qcfpcs}",getPcs(hjyw_qcclxxb.getPcs_q()));
+			 result = result.replace("{qcfjwh}",getJcwh(hjyw_qcclxxb.getJcwh_q()));
+			 result = result.replace("{qrfpcs}",getPcs(hjyw_qcclxxb.getPcs_h()));
+			 result = result.replace("{qrfjwh}",getJcwh(hjyw_qcclxxb.getJcwh_h()));
+			 result = generrateFromObj(hjtj_rybdxxb, result);
+		 }
+	 }
+	return result;
 }
 private List getFamilyMember(Long hhnbid,int type) {
 	if(hhnbid!=null) {

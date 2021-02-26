@@ -10,7 +10,7 @@
 <html>
 <head>
 	<base href="<%=basePath%>">
-	<title>身份证重号</title>
+	<title>人员轨迹查询</title>
 	<link rel="stylesheet" type="text/css" href="js/ext/css/ext-all.css">
 	<link rel="stylesheet" type="text/css" href="js/ext/css/xtheme-gray.css">
 	<link rel="stylesheet" type="text/css" href="css/common.css">

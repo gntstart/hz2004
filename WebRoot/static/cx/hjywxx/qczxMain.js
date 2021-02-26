@@ -862,7 +862,7 @@ Ext.onReady(function(){
 	            frame:false,
 		        layout:'table',
 		        layoutConfig: {
-		        	columns: 20
+		        	columns: 22
 		        },
 		        bodyStyle: 'padding:10px 0px 0px 0px ',
 	            items:[
@@ -1067,7 +1067,7 @@ Ext.onReady(function(){
 		        			text:'迁移证打印',
 		        			minWidth:60,
 		        			handler:function(){
-		        				qyzPrint(selectHjywid);
+		        				qyzPrint(selectHjywid,true);//增加个参数，跳转补扫迁移证 add by zjm 20210202 
 		        				if(hzywid&&ywlb=='12'){
         							Gnt.ux.Dict.getKzcs('10036', function(pz, user) {
         								if(pz.kzz==1){
@@ -1075,6 +1075,33 @@ Ext.onReady(function(){
         								}
         							});
         						}
+		        			}
+		        		})]
+		    		},{
+						frame:false,
+						border:false,
+						xtype:'panel',
+						html:'',
+						width:10
+		            },{
+						border:false,
+						frame: false,
+		    		    items:[new Ext.Button({
+		        			text:'迁移证存根',
+		        			minWidth:60,
+		        			handler:function(){
+		        				if(selRes){
+		    						var arrayTemp=[];
+		    	               	 	var o={};
+		    						o.directTable="qyzcg";
+		    						o.hjywid = selRes.data.hjywid;
+		    						o.qyzbh= selRes.data.qyzbh;
+		    						o.gmsfhm = selRes.data.gmsfhm;
+		    						arrayTemp.push(o);
+		    						printfunction(0,arrayTemp);
+		    					}else{
+		    						alert("请至少选择一条数据！");
+		    					}
 		        			}
 		        		})]
 		    		},{

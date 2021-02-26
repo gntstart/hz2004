@@ -173,10 +173,10 @@ Ext.onReady(function(){
 				hzywid:getQueryParam("hzywid"),
 				handler:function(){
 
-					if (!this.hzywid) {
-						showInfo("户政平台中间表对象不能为空！");
-						return null;
-					}
+//					if (!this.hzywid) {
+//						showInfo("户政平台中间表对象不能为空！");
+//						return null;
+//					}
 					var sbid = "";
 					Gnt.makeHzyw({
 						hzywid : this.hzywid,

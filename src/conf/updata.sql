@@ -4018,3 +4018,139 @@ values ('9000000001000005320', '5030', '1', '审核通过', 'SHTG', null, null, 
 insert into xt_sjpzb (SJPZID, PZLB, PZMC, ID, FIELDNAME, DISPLAYNAME, FIELDTYPE, FIELDTYPENAME, DSNAME, READONLY, VISIBLETYPE, FIELDLENGTH, DISPLAYFIELDLENGTH, ISCHINESE, MBMOD, ALLOWSELFINPUT, CODEFIELD, PYFIELD, NAMEFIELD, PARTMASK, LSFIELD, SHOWLS, ENABLECOPY, ENABLEDEFAULTFILTER, ENTERDROPDOWN, ENTERUNIQUEEXIT, USETABLEFILTERED, USEFORSFZ, CONDITIONOPERATOR, CONDITIONFIELD, CONDITIONTYPE, GROUPS, BDLX, BDSJ, VTYPE)
 values ('9147', '50005', '非现金收款统计查询', '0011', 'shzt', '审签状态', null, 'codeedit', 'CS_SQZT', null, '0111', '20', '8', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '=', 'shzt', '2', null, 'I', '20121205000000', null);
 update xt_sjpzb set id = '0013' where pzlb='50005' and fieldname='jfflag';
+
+-- Modify by zjm 非现金收款统计查询条件增加操作人条件查询
+insert into xt_sjpzb (SJPZID, PZLB, PZMC, ID, FIELDNAME, DISPLAYNAME, FIELDTYPE, FIELDTYPENAME, DSNAME, READONLY, VISIBLETYPE, FIELDLENGTH, DISPLAYFIELDLENGTH, ISCHINESE, MBMOD, ALLOWSELFINPUT, CODEFIELD, PYFIELD, NAMEFIELD, PARTMASK, LSFIELD, SHOWLS, ENABLECOPY, ENABLEDEFAULTFILTER, ENTERDROPDOWN, ENTERUNIQUEEXIT, USETABLEFILTERED, USEFORSFZ, CONDITIONOPERATOR, CONDITIONFIELD, CONDITIONTYPE, GROUPS, BDLX, BDSJ, VTYPE)
+values ('9157', '50006', '非现金收款统计查询', '0007', 'czrid', '操作人姓名', null, 'codeedit', 'yhxxb', null, '111101', '19', '10', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '=', 'czrid', '4', null, 'I', '20121205000000', null);
+-- add by zjm 收费方式增加首次打印字典值
+insert into xt_xtcsb (CSID, CSLB, DM, MC, ZWPY, KZBZB, KZBZC, KZBZD, KZBZE, KZBZF, KZBZG, XGBZ, BDLX, BDSJ)
+values ('9000000001000005321', '9040', '2', '首次打印', 'SCDY', null, null, null, null, '3', '18', '0', 'I', '20180502000002');
+
+-- Modify by zjm 20210127 打印信息form表单中受理时间显示
+update xt_sjpzb set fieldlength = '20'  where pzlb='20041' and fieldname='slsj'; 
+
+-- Modify by zjm 20210127 不在线缴费原因标题改为作废原因
+update xt_sjpzb set displayname = '作废原因'  where pzlb='50004' and fieldname='bzxjfyy'; 
+
+--add by zjm 20210129 增加人员布控维护菜单
+insert into xt_xtgncdb (GNCDID, CDCC, CDBZ, CDLX, ZDLB, CDMC, DQBM, URL)
+values ('410006', '0', '1', '3', '1', '人员布控维护', '3407', 'gl/bk/rywh');
+
+--add By zjm 20210201 收费信息表新增修改次数字段
+alter table SFXXB add xgcs char(1) default 0;
+-- Add comments to the columns 
+comment on column SFXXB.xgcs
+  is '修改次数';
+ 
+--Modify by zjm 增加修改次数
+insert into xt_sjpzb (SJPZID, PZLB, PZMC, ID, FIELDNAME, DISPLAYNAME, FIELDTYPE, FIELDTYPENAME, DSNAME, READONLY, VISIBLETYPE, FIELDLENGTH, DISPLAYFIELDLENGTH, ISCHINESE, MBMOD, ALLOWSELFINPUT, CODEFIELD, PYFIELD, NAMEFIELD, PARTMASK, LSFIELD, SHOWLS, ENABLECOPY, ENABLEDEFAULTFILTER, ENTERDROPDOWN, ENTERUNIQUEEXIT, USETABLEFILTERED, USEFORSFZ, CONDITIONOPERATOR, CONDITIONFIELD, CONDITIONTYPE, GROUPS, BDLX, BDSJ, VTYPE)
+values ('9158', '50005', '非现金收款统计查询', '0031', 'xgcs', '修改次数', null, 'edit', null, null, '000000', '1', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '=', 'xgcs', '2', null, 'I', '20121205000000', null);
+
+--add by zjm 20210207 增加控制参数跨地区省外迁出
+insert into xt_xtkzcsb (CSID, KZLB, KZMC, KZZ, MRZ, BZ, XGBZ, BDLX, BDSJ, CDKZZ)
+values ('38', '10038', '跨地区省外迁出', '0', '0', 'http://192.168.0.155:8082/hz2004qxgl', '1', 'U', '20181112000000', null);
+
+--add by zjm 20210219 迁入登记字段设为必填项
+update xt_sjpzb set displayname='*联系电话' where pzlb='10030' and fieldname='lxdh';  
+
+-- add by zjm 20210220 单位信息表新增电话号码字段 
+alter table XT_DWXXB add dhhm NVARCHAR2(200);
+comment on column XT_DWXXB.dhhm
+  is '电话号码';
+  
+-- modify by zjm 20210220 修改单位信息视图，增加电话号码字段
+create or replace view v_dwxxwh as
+select dwxxb.DM     as dm,
+       xzqhb.DM     as xzqhbdm,
+       csb1.CSID   as csb1csid,
+       csb2.CSID   as csb2csid,
+       dwxxb.MC     as mc,
+       dwxxb.dhhm   as dhhm,
+       dwxxb.ZWPY   as zwpy,
+       dwxxb.WBPY   as wbpy,
+       dwxxb.DWJGDM as dwjgdm,
+       dwxxb.QHDM   as qhdm,
+       dwxxb.DWJB   as dwjb,
+       dwxxb.DZ     as dz,
+       dwxxb.BZ     as bz,
+       dwxxb.QYBZ   as qybz,
+       dwxxb.BDLX   as bdlx,
+       dwxxb.BDSJ   as bdsj,
+       dwxxb.FJJGDM as fjjgdm,
+       dwxxb.FJJGMC as fjjgmc,
+       xzqhb.MC     as xzqhbmc,
+       xzqhb.ZWPY   as xzqhbzwpy,
+       xzqhb.WBPY   as xzqhbwbpy,
+       xzqhb.BZ     as xzqhbbz,
+       xzqhb.QYBZ   as xzqhbqybz,
+       xzqhb.BDLX   as xzqhbbdlx,
+       xzqhb.BDSJ   as xzqhbbdsj,
+       csb1.CSLB   as csb1cslb,
+       csb1.DM     as csb1dm,
+       csb1.MC     as csb1mc,
+       csb1.ZWPY   as csb1zwpy,
+       csb1.KZBZB  as csb1kzbzb,
+       csb1.KZBZC  as csb1kzbzc,
+       csb1.KZBZD  as csb1kzbzd,
+       csb1.KZBZE  as csb1kzbze,
+       csb1.KZBZF  as csb1kzbzf,
+       csb1.KZBZG  as csb1kzbzg,
+       csb1.XGBZ   as csb1xgbz,
+       csb1.BDLX   as csb1bdlx,
+       csb1.BDSJ   as csb1bdsj,
+       csb2.CSLB   as csb2cslb,
+       csb2.DM     as csb2dm,
+       csb2.MC     as csb2mc,
+       csb2.ZWPY   as csb2zwpy,
+       csb2.KZBZB  as csb2kzbzb,
+       csb2.KZBZC  as csb2kzbzc,
+       csb2.KZBZD  as csb2kzbzd,
+       csb2.KZBZE  as csb2kzbze,
+       csb2.KZBZF  as csb2kzbzf,
+       csb2.KZBZG  as csb2kzbzg,
+       csb2.XGBZ   as csb2xgbz,
+       csb2.BDLX   as csb2bdlx,
+       csb2.BDSJ   as csb2bdsj,
+       dwxxb.zp    as zp
+  from XT_DWXXB dwxxb,
+       XT_XZQHB xzqhb,
+       XT_XTCSB csb1,
+       XT_XTCSB csb2
+ where (dwxxb.DWJB = csb1.DM(+))
+   and (csb1.CSLB(+) = '9024')
+   and (dwxxb.QYBZ = csb2.DM(+))
+   and (csb2.CSLB(+) = '9002')
+   and (dwxxb.QHDM = xzqhb.DM)
+ order by dwxxb.QHDM, dwxxb.DM;
+comment on table V_DWXXWH is '单位信息视图';
+
+--Modify by zjm 20210220 审核状态隐藏掉，审核功能不需要了
+update xt_sjpzb set visibletype = '000000'  where sjpzid='9147';
+--Modify by zjm 20210220 将收费信息表中审核状态默认值设为1，收费信息表中原先审核状态都设为1
+alter table SFXXB modify shzt default 1;
+update sfxxb set shzt = 1;
+
+-- Add by zjm 20210222 准迁证信息表新增字段迁移原因
+alter table HJSP_ZQZXXB add qyyy NVARCHAR2(100);
+comment on column HJSP_ZQZXXB.qyyy
+  is '迁移原因';
+-- Add by zjm 20210222 户籍审批申请表新增字段迁移原因  
+alter table HJSP_HJSPSQB add qyyy NVARCHAR2(100);
+comment on column HJSP_HJSPSQB.qyyy
+  is '迁移原因';
+-- add by zjm 20210222  迁入审批信息配置增加迁移原因
+insert into xt_sjpzb (SJPZID, PZLB, PZMC, ID, FIELDNAME, DISPLAYNAME, FIELDTYPE, FIELDTYPENAME, DSNAME, READONLY, VISIBLETYPE, FIELDLENGTH, DISPLAYFIELDLENGTH, ISCHINESE, MBMOD, ALLOWSELFINPUT, CODEFIELD, PYFIELD, NAMEFIELD, PARTMASK, LSFIELD, SHOWLS, ENABLECOPY, ENABLEDEFAULTFILTER, ENTERDROPDOWN, ENTERUNIQUEEXIT, USETABLEFILTERED, USEFORSFZ, CONDITIONOPERATOR, CONDITIONFIELD, CONDITIONTYPE, GROUPS, BDLX, BDSJ, VTYPE)
+values ('9159', '10030', 'Hj_迁入审批信息', '0008', 'qyyy', '*迁移原因', null, 'codeedit', 'cs_qyldyy', null, '0111', '3', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '=', 'qyyy', '4', null, 'I', '20121205000000', null);
+
+-- Add by zjm 20210224 户籍审批申请表新增字段增加是否长三角通办字段  
+alter table HJSP_HJSPSQB add sfcsjtb CHAR(1);
+comment on column HJSP_HJSPSQB.sfcsjtb
+  is '是否长三角通办：0否 1是';
+-- Add by zjm 20210224 准迁证信息表新增字段增加是否长三角通办字段  
+alter table HJSP_ZQZXXB add sfcsjtb CHAR(1);
+comment on column HJSP_ZQZXXB.sfcsjtb
+  is '是否长三角通办：0否 1是'; 
+  
+-- add by zjm 20210224  迁入审批信息配置增加是否长三角通办
+insert into xt_sjpzb (SJPZID, PZLB, PZMC, ID, FIELDNAME, DISPLAYNAME, FIELDTYPE, FIELDTYPENAME, DSNAME, READONLY, VISIBLETYPE, FIELDLENGTH, DISPLAYFIELDLENGTH, ISCHINESE, MBMOD, ALLOWSELFINPUT, CODEFIELD, PYFIELD, NAMEFIELD, PARTMASK, LSFIELD, SHOWLS, ENABLECOPY, ENABLEDEFAULTFILTER, ENTERDROPDOWN, ENTERUNIQUEEXIT, USETABLEFILTERED, USEFORSFZ, CONDITIONOPERATOR, CONDITIONFIELD, CONDITIONTYPE, GROUPS, BDLX, BDSJ, VTYPE)
+values ('9160', '10030', 'Hj_迁入审批信息', '0008', 'sfcsjtb', '*是否长三角通办', null, 'codeedit', 'cs_sfbz', null, '0111', '3', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '=', 'sfcsjtb', '4', null, 'I', '20121205000000', null);

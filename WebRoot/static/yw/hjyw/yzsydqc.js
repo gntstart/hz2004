@@ -156,14 +156,20 @@ Ext.onReady(function () {
             ]
         }, {
             id: "kdqswqc",
-            title: "跨地区省外迁出",
+            title: "跨地区省外迁入迁出",
             listeners: {// 添加监听器，点击此页面的tab时候要重新加载（刷新功能）
                 activate: function () {
-                    var params = "authToken=" + u.authToken + "&sfzh=" + u.gmsfhm + "&yhxm=" + encodeURIComponent(u.xm) + "&yhid=" + u.yhid + "&dwdm=" + u.dwdm + "&yhdlm=" + u.yhdlm;
-                    var url = all_qxglurl + "yw/yzsydqc.jsp?" + params;
-                    var htmlStr = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';
-                    Ext.getCmp('kdqswqc').body.update(htmlStr);
-                    this.getUpdater().refresh();
+                    Gnt.ux.Dict.getKzcs('10038', function(config, userObj, kzdata){
+                        if(config){
+                            var yhdlm = encodeURI(u.yhdlm);
+                            var params = "authToken=" + u.authToken + "&sfzh=" + u.gmsfhm + "&yhxm=" + encodeURIComponent(u.xm) + "&yhid=" + u.yhid + "&dwdm=" + u.dwdm + "&isAdmin=" + isAdmin + "&yhdlm=" + yhdlm + '&rkurl=' + xmdz;
+                            //config.bz
+                            var url = config.bz + "/yw/yzsydqc.jsp?" + params;
+                            var htmlStr = '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + url + '"></iframe>';
+                            Ext.getCmp('kdqswqc').body.update(htmlStr);
+                            this.getUpdater().refresh();
+                        }
+                    });
 
                 }
             }

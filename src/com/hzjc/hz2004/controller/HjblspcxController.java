@@ -33,6 +33,7 @@ public class HjblspcxController extends BaseController{
 		Page p = queryService.queryHjblsp(params);
 		String daochuFlag = params.getString("daochuFlag");
 		if(daochuFlag!=null) {
+			params.put("pageIndex", 1);
 			params.put("pageSize", p.getTotalCount());
 			BaseContext.getContext().getSession().setAttribute(daochuFlag, params);
 		}

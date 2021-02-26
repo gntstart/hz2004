@@ -6031,9 +6031,9 @@ public class QueryServiceImpl extends ServiceImpl implements QueryService {
 		sqlQT.append(" select '合计',sum(t.slzl),sum(t.xjje),sum(t.xjbs),sum(t.fxjje),sum(t.fxjbs),sum(t.yx),sum(t.zf),sum(t.yjkje),sum(t.sjkje),'").append(sffsT).append("',sum(t.blje),sum(t.zfje) ");
 		sql.append(" from (select dwdm,sum(1) as slzl,(case when sffs = '1' then sum(je) else 0 end) as xjje,(case when ")
 		.append(" sffs = '1' then sum(1) else 0 end) as xjbs,(case when sffs = '0' then sum(je) else 0 end) as fxjje ")
-		.append(" ,(case when sffs = '0' then sum(1) else 0 end) as fxjbs,(case when ((bzxjfyy = '4' and sffs = '1') or sffs = '0') then sum(1) else 0 end) as yx ")
+		.append(" ,(case when sffs = '0' then sum(1) else 0 end) as fxjbs,(case when ((bzxjfyy = '4' and sffs = '1') or sffs = '0'  or sffs = '2') then sum(1) else 0 end) as yx ")
 		.append(" ,(case when (bzxjfyy <> '4' and sffs = '1' ) then sum(1) else 0 end) as zf,(case when (bzxjfyy = '4' and sffs = '1' ) then sum(je) else 0 end) as yjkje")
-		.append(" ,(case when (jfflag = '1' and bzxjfyy = '4' and sffs = '1' and shzt='1' ) then sum(je) else 0 end) as sjkje,sffs,qhdm  ")
+		.append(" ,(case when (jfflag = '1' and bzxjfyy = '4' and sffs = '1' ) then sum(je) else 0 end) as sjkje,sffs,qhdm  ")
 		//20210108新增办理金额  作废金额
 		.append(" ,(case when ((bzxjfyy = '4' and sffs = '1') or sffs = '0') then sum(je) else 0 end) as blje ,(case when (bzxjfyy <> '4' and sffs = '1' ) then sum(je) else 0 end) as zfje ")
 		.append(" from SFXXB where dylb = '03' ");
@@ -6063,12 +6063,15 @@ public class QueryServiceImpl extends ServiceImpl implements QueryService {
 //			
 //		}
 		if(CommonUtil.isNotBlank(params.getString("_start_dysj"))) {
-			sql.append(" and dysj >= '"+params.getString("_start_dysj")+"' ");
+			sql.append(" and dysj >= '"+params.getString("_start_dysj")+"000000' ");
 		}
 		if(CommonUtil.isNotBlank(params.getString("_end_dysj"))) {
-			sql.append(" and dysj <= '"+params.getString("_end_dysj")+"' ");
+			sql.append(" and dysj <= '"+params.getString("_end_dysj")+"235959' ");
 		}
-		sql.append(" group by dwdm, sffs, bzxjfyy,jfflag,qhdm,shzt) t  ");
+		if(CommonUtil.isNotBlank(params.getString("czrid"))) {
+			sql.append(" and czyid = '"+params.getString("czrid")+"' ");
+		}
+		sql.append(" group by dwdm, sffs, bzxjfyy,jfflag,qhdm) t  ");
 		sqlQ.append(sql).append(sqlG);
 		//union all 统计查询语句
 		if(!pcsFlag) {
@@ -6675,7 +6678,7 @@ protected PoXT_XTCSB getXTCSB(String cslb, String dm) throws ServiceException,
 			}
 		}
 		sqlQT.append(" select '合计',sum(t.yingjkje),sum(t.yijkje) ");
-		sql.append(" from (select dwdm,(case when (bzxjfyy = '4' and sffs = '1') then sum(je) else 0 end) as yingjkje,(case when (jfflag = '1' and bzxjfyy = '4' and sffs = '1' and shzt = 1) then sum(je) else 0 end) as yijkje ,qhdm from SFXXB where dylb = '03'  ");
+		sql.append(" from (select dwdm,(case when (bzxjfyy = '4' and sffs = '1') then sum(je) else 0 end) as yingjkje,(case when (jfflag = '1' and bzxjfyy = '4' and sffs = '1' ) then sum(je) else 0 end) as yijkje ,qhdm from SFXXB where dylb = '03'  ");
 		//应缴款  非在线支付，且 不在线缴费原因为4现金支付
 		//实缴款  非在线支付，且 不在线缴费原因为4现金支付     同时缴费标志jfflag为1已缴费
 		if(CommonUtil.isNotBlank(sqlT.toString())) {
@@ -6705,7 +6708,7 @@ protected PoXT_XTCSB getXTCSB(String cslb, String dm) throws ServiceException,
 		if(CommonUtil.isNotBlank(params.getString("jkyid"))) {
 			sql.append(" and jkrid = '"+params.getString("jkyid")+"' ");
 		}
-		sql.append(" group by dwdm,qhdm,jfflag,shzt,bzxjfyy,sffs) t  ");
+		sql.append(" group by dwdm,qhdm,jfflag,bzxjfyy,sffs) t  ");
 		sqlQ.append(sql).append(sqlG);
 		//union all 统计查询语句
 		if(!pcsFlag) {
@@ -6751,6 +6754,7 @@ protected PoXT_XTCSB getXTCSB(String cslb, String dm) throws ServiceException,
 					sfxxb.setShzt("1");
 					sfxxb.setShsj(czsj);
 					sfxxb.setShrid(dlrid);
+					sfxxb.setXgcs(1);//修改次数为1，就不让修改了20210202
 					super.update(sfxxb);
 				}
 		     }
